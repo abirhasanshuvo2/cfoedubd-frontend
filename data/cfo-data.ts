@@ -1,0 +1,1323 @@
+export interface Mentor {
+  name: string;
+  role: string;
+  company: string;
+  experience: string;
+  avatar: string;
+}
+
+export interface CourseModule {
+  week: number;
+  title: string;
+  topics: string[];
+  project?: string;
+}
+
+export interface Course {
+  id: string;
+  slug: string;
+  title: string;
+  titleEn: string;
+  category: string;
+  categoryLabel: string;
+  badge: string;
+  batchNumber: string;
+  startDate: string;
+  startDateEn: string;
+  schedule: string;
+  scheduleEn: string;
+  duration: string;
+  durationEn: string;
+  totalClasses: number;
+  seatsLeft: number;
+  totalSeats: number;
+  price: number;
+  originalPrice: number;
+  rating: number;
+  enrolledCount: number;
+  tags: string[];
+  mentors: Mentor[];
+  description: string;
+  descriptionEn: string;
+  syllabus: CourseModule[];
+  skillsLearned: string[];
+  projects: string[];
+  prerequisites: string[];
+  tools: string[];
+  isPopular?: boolean;
+  isFeatured?: boolean;
+}
+
+export interface Workshop {
+  id: string;
+  title: string;
+  titleEn: string;
+  instructor: string;
+  instructorRole: string;
+  instructorCompany: string;
+  date: string;
+  time: string;
+  category: string;
+  registeredCount: number;
+  totalSeats: number;
+  isLiveNow?: boolean;
+}
+
+export interface Testimonial {
+  id: string;
+  name: string;
+  course: string;
+  previousRole: string;
+  currentRole: string;
+  company: string;
+  companyLogoText: string;
+  avatar: string;
+  comment: string;
+  commentEn: string;
+  rating: number;
+}
+
+export const CATEGORIES = [
+  { id: 'all', label: 'সব কোর্স ও ডিপ্লোমা', labelEn: 'All Courses & Diplomas', icon: 'Sparkles' },
+  { id: 'cfo-flagship', label: 'চার্টার্ড ফাইন্যান্সিয়াল অফিসার (CFO)', labelEn: 'Chartered Financial Officer', icon: 'Award' },
+  { id: 'cse-courses', label: 'সিএসই ও সফটওয়্যার কোর্স (CSE)', labelEn: 'CSE & Software Engineering', icon: 'Cpu' },
+  { id: 'tax-vat', label: 'কাস্টমস, ভ্যাট ও ট্যাক্সেশন', labelEn: 'Customs, VAT & TAX', icon: 'FileText' },
+  { id: 'fintech-erp', label: 'ফিনটেক ও এসএপি-ফাইকো (SAP-FICO)', labelEn: 'Fintech & SAP-FICO ERP', icon: 'Cpu' },
+  { id: 'fpa-valuation', label: 'ফাইন্যান্সিয়াল প্ল্যানিং ও ভ্যালুয়েশন (FP&A)', labelEn: 'FP&A & Corporate Valuation', icon: 'TrendingUp' },
+  { id: 'supply-chain', label: 'সাপ্লাই চেইন ও লিন সিক্স সিগমা', labelEn: 'Logistics & Supply Chain', icon: 'Truck' },
+  { id: 'hrm-legal', label: 'এইচআরএম ও বাংলাদেশ শ্রম আইন', labelEn: 'HRM & Labor Law', icon: 'Users' },
+  { id: 'ias-ifrs', label: 'আইএএস, আইএফআরএস ও অডিট (IAS/IFRS)', labelEn: 'IAS, IFRS & Auditing', icon: 'ShieldCheck' },
+];
+
+export interface ApiCourse {
+  id: number;
+  class_id: string;
+  name: string;
+  category: string;
+  educator: string;
+  total_students: number;
+  meet_link: string | null;
+  days: string[];
+  time: string;
+  language: string | null;
+  level: string;
+  min_age: number;
+  max_age: number;
+  start_date: string | null;
+  end_date: string | null;
+  price: number;
+  status: number;
+}
+
+export const INITIAL_API_COURSES: ApiCourse[] = [
+  {
+    id: 6,
+    class_id: "CLS-CRVNJ2AKP1",
+    name: "Flutter Courses",
+    category: "CSE Courses",
+    educator: "Super Admin",
+    total_students: 0,
+    meet_link: null,
+    days: [],
+    time: "morning",
+    language: null,
+    level: "mixed",
+    min_age: 0,
+    max_age: 0,
+    start_date: null,
+    end_date: null,
+    price: 0,
+    status: 1
+  },
+  {
+    id: 5,
+    class_id: "CLS-6A96AF322ED21",
+    name: "Flutter state management",
+    category: "CSE Courses",
+    educator: "Md. Abir Hasan",
+    total_students: 0,
+    meet_link: "https://meet.google.com/def-uvw",
+    days: ["Monday", "Wednesday", "Friday"],
+    time: "evening",
+    language: "English",
+    level: "advanced",
+    min_age: 25,
+    max_age: 60,
+    start_date: "2026-09-01",
+    end_date: "2027-03-20",
+    price: 70000,
+    status: 1
+  },
+  {
+    id: 2,
+    class_id: "CLS-002",
+    name: "Laravel REST API Masterclass",
+    category: "CSE Courses",
+    educator: "Super Admin",
+    total_students: 1,
+    meet_link: "https://meet.google.com/def-uvw",
+    days: ["Monday", "Wednesday", "Friday"],
+    time: "evening",
+    language: "English",
+    level: "intermediate",
+    min_age: 18,
+    max_age: 50,
+    start_date: "2026-09-15",
+    end_date: "2026-12-15",
+    price: 8000,
+    status: 1
+  },
+  {
+    id: 1,
+    class_id: "CLS-001",
+    name: "Machine Learning Course",
+    category: "CSE Courses",
+    educator: "Super Admin",
+    total_students: 2,
+    meet_link: null,
+    days: [],
+    time: "morning",
+    language: "Bengali",
+    level: "beginner",
+    min_age: 0,
+    max_age: 0,
+    start_date: null,
+    end_date: null,
+    price: 5000,
+    status: 1
+  }
+];
+
+export function adaptApiCourseToCfoCourse(item: any): Course {
+  const courseId = item.id ? String(item.id) : String(Math.floor(Math.random() * 1000));
+  const rawName = item.name || item.title || item.course_name || 'Professional Certification Course';
+  const parsedPrice = typeof item.price === 'number' ? item.price : parseInt(item.price, 10) || 0;
+  const isFree = parsedPrice === 0;
+  const days = Array.isArray(item.days) ? item.days : [];
+  const daysText = days.length > 0 ? days.join(', ') : 'রবি, মঙ্গল ও বৃহস্পতি';
+  const time = typeof item.time === 'string' ? item.time : 'evening';
+  const timeText = time === 'morning' ? 'সকাল ৯:০০ - ১১:৩০' : 'সন্ধ্যা ৭:৩০ - ৯:৩০';
+  const timeTextEn = time === 'morning' ? 'Morning 9:00 AM - 11:30 AM' : 'Evening 7:30 PM - 9:30 PM';
+  const rawLevel = typeof item.level === 'string' ? item.level : 'Professional';
+  const levelUpper = rawLevel.toUpperCase();
+  const rawCat = String(item.category || '').toLowerCase();
+
+  let categoryKey = 'cse-courses';
+  let categoryLabel = 'সিএসই ও সফটওয়্যার কোর্স';
+  if (rawCat.includes('cfo') || rawCat.includes('finance') || rawCat.includes('chartered')) {
+    categoryKey = 'cfo-flagship';
+    categoryLabel = 'চার্টার্ড ফাইন্যান্সিয়াল অফিসার (CFO)';
+  } else if (rawCat.includes('tax') || rawCat.includes('vat') || rawCat.includes('customs')) {
+    categoryKey = 'tax-vat';
+    categoryLabel = 'কাস্টমস, ভ্যাট ও ট্যাক্সেশন';
+  } else if (rawCat.includes('sap') || rawCat.includes('erp') || rawCat.includes('fintech')) {
+    categoryKey = 'fintech-erp';
+    categoryLabel = 'ফিনটেক ও এসএপি-ফাইকো (SAP-FICO)';
+  } else if (rawCat.includes('valuation') || rawCat.includes('fp&a') || rawCat.includes('fpa')) {
+    categoryKey = 'fpa-valuation';
+    categoryLabel = 'ফাইন্যান্সিয়াল প্ল্যানিং ও ভ্যালুয়েশন';
+  } else if (rawCat.includes('supply') || rawCat.includes('scm') || rawCat.includes('logistics')) {
+    categoryKey = 'supply-chain';
+    categoryLabel = 'সাপ্লাই চেইন ও লিন সিক্স সিগমা';
+  } else if (rawCat.includes('hrm') || rawCat.includes('law') || rawCat.includes('labor')) {
+    categoryKey = 'hrm-legal';
+    categoryLabel = 'এইচআরএম ও বাংলাদেশ শ্রম আইন';
+  } else if (rawCat.includes('ifrs') || rawCat.includes('ias') || rawCat.includes('audit')) {
+    categoryKey = 'ias-ifrs';
+    categoryLabel = 'আইএএস, আইএফআরএস ও অডিট';
+  }
+
+  const educatorName = item.educator || item.instructor || item.teacher || 'Senior Faculty Member';
+
+  return {
+    id: `api-${courseId}`,
+    slug: rawName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `course-${courseId}`,
+    title: rawName,
+    titleEn: rawName,
+    category: categoryKey,
+    categoryLabel: categoryLabel,
+    badge: isFree ? 'ফ্রি কোর্স' : `${levelUpper} ব্যাচ`,
+    batchNumber: item.class_id || `Batch-${courseId}`,
+    startDate: item.start_date || 'চলতি সেশনে ওপেন',
+    startDateEn: item.start_date || 'Open Admission',
+    schedule: `${daysText} (${timeText})`,
+    scheduleEn: `${daysText} (${timeTextEn})`,
+    duration: item.end_date ? '৬ মাস মেয়াদি হ্যান্ডস-অন ট্র্যাক' : '৩ মাস মেয়াদি স্পেশালাইজড ট্র্যাক',
+    durationEn: item.end_date ? '6 Months Hands-on Track' : '3 Months Specialized Track',
+    totalClasses: levelUpper.includes('ADVANCED') ? 48 : 36,
+    seatsLeft: 12,
+    totalSeats: 35,
+    price: parsedPrice,
+    originalPrice: isFree ? 0 : Math.round(parsedPrice * 1.25),
+    rating: 4.9,
+    enrolledCount: (item.total_students || 0) > 0 ? (item.total_students || 0) * 40 + 25 : 18,
+    tags: [
+      item.category || 'Professional Track',
+      rawLevel,
+      item.language || 'English/Bengali',
+      'Live Online Classes',
+      'Certificate Included',
+    ],
+    mentors: [
+      {
+        name: educatorName,
+        role: 'লিড ফ্যাকাল্টি ও কর্পোরেট ট্রেইনার',
+        company: 'Chartered Officer Limited (cfoedubd.com)',
+        experience: '১০+ বছর প্রফেশনাল এক্সপেরিয়েন্স',
+        avatar: educatorName.toLowerCase().includes('abir')
+          ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=faces'
+          : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=faces',
+      },
+    ],
+    description: item.description || `${rawName} প্রোগ্রামটি আধুনিক ইন্ডাস্ট্রিয়াল রিকোয়ারমেন্টের সাথে সামঞ্জস্য রেখে তৈরি। লাইভ ক্লাস, প্র্যাকটিক্যাল কোডিং ও রিয়েল-ওয়ার্ল্ড প্রজেক্টের মাধ্যমে ক্যারিয়ার গড়ার সুযোগ।`,
+    descriptionEn: item.descriptionEn || `${rawName} is meticulously designed to meet modern industrial requirements. Features live classes, hands-on reviews, and enterprise real-world projects.`,
+    syllabus: [
+      {
+        week: 1,
+        title: 'Core Fundamentals & Executive Overview',
+        topics: ['Program introduction & industry orientation', 'Key frameworks & standards', 'LMS tools & study resources'],
+      },
+      {
+        week: 2,
+        title: 'Advanced Applied Practical Modules',
+        topics: ['Deep-dive practical case studies', 'Real-world problem solving', 'Compliance & reporting standards'],
+      },
+      {
+        week: 3,
+        title: 'Capstone Project & Final Examination',
+        topics: ['End-to-end industrial project', 'Executive board presentation', 'Graduation & certification review'],
+      },
+    ],
+    skillsLearned: ['Executive Decision Making', 'Regulatory Compliance', 'Strategic Implementation', 'Hands-on Analytics'],
+    projects: [`${rawName} Capstone Project`, 'Real-world Case Simulation'],
+    prerequisites: ['Commitment to professional development', 'Willingness to complete live assignments'],
+    tools: ['Enterprise LMS', 'Google Meet', 'Case Study Portfolios'],
+    isFeatured: parsedPrice > 10000 || levelUpper.includes('ADVANCED'),
+  };
+}
+
+export const HIRING_PARTNERS = [
+  { name: 'Beximco Group', role: 'Conglomerate Finance', count: '35+ CFO Graduates' },
+  { name: 'Square Pharmaceuticals', role: 'Corporate Accounts', count: '28+ Officers' },
+  { name: 'Grameenphone', role: 'Treasury & FP&A', count: '24+ Analysts' },
+  { name: 'City Bank PLC', role: 'Commercial & Trade Finance', count: '30+ Managers' },
+  { name: 'BRAC Bank', role: 'Credit & Risk Management', count: '22+ Specialists' },
+  { name: 'Unilever Bangladesh', role: 'Supply Chain & Costing', count: '18+ Leads' },
+  { name: 'BAT Bangladesh', role: 'Corporate Reporting', count: '15+ Accountants' },
+  { name: 'IDLC Finance', role: 'Corporate Investment', count: '19+ Executives' },
+  { name: 'Pran-RFL Group', role: 'Factory VAT & Tax Head', count: '40+ Officers' },
+  { name: 'Walton Hi-Tech', role: 'ERP Financial Systems', count: '25+ Leads' },
+  { name: 'Meghna Group (MGI)', role: 'Customs & Port Logistics', count: '20+ Managers' },
+  { name: 'Apex Footwear Ltd', role: 'Internal Audit & Control', count: '16+ Controllers' },
+];
+
+export const COURSES: Course[] = [
+  {
+    id: 'cfo-flagship-1yr',
+    slug: 'chartered-financial-officer-program',
+    title: 'Chartered Financial Officer (CFO) - ১ বছর মেয়াদি ফ্ল্যাগশিপ প্রোগ্রাম',
+    titleEn: 'Chartered Financial Officer (CFO) - 1-Year Executive Program',
+    category: 'cfo-flagship',
+    categoryLabel: 'ফ্ল্যাগশিপ চার্টার্ড প্রোগ্রাম',
+    badge: 'ফ্ল্যাগশিপ প্রোগ্রাম',
+    batchNumber: 'ব্যাচ ১৮ (ফল সেশন)',
+    startDate: '২৮ সেপ্টেম্বর, ২০২৬',
+    startDateEn: 'Sep 28, 2026',
+    schedule: 'শুক্র ও শনিবার সন্ধ্যা ৭:০০ - ৯:৩০ (অনলাইন ও হাইব্রিড)',
+    scheduleEn: 'Fri & Sat 7:00 PM - 9:30 PM (Online & Campus)',
+    duration: '১ বছর (৩টি সেমিস্টার, ৯০+ ক্লাস)',
+    durationEn: '1 Year (3 Semesters, 90+ Classes)',
+    totalClasses: 92,
+    seatsLeft: 8,
+    totalSeats: 45,
+    price: 45000,
+    originalPrice: 60000,
+    rating: 4.95,
+    enrolledCount: 840,
+    tags: ['CFO Certification', 'Corporate Governance', 'Financial Leadership', 'ACCA Pathway', 'BTEB Recognized'],
+    mentors: [
+      {
+        name: 'মো. শফিকুল আলম, FCA, FCMA',
+        role: 'প্রতিষ্ঠাতা ও প্রিন্সিপাল মেন্টর',
+        company: 'Chartered Officer Limited & Ex-Group CFO',
+        experience: '২৫+ বছর করপোরেট ও ফাইন্যান্সিয়াল লিডারশিপ',
+        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=faces',
+      },
+      {
+        name: 'কাজী জহিরুল ইসলাম, FCA, ACCA',
+        role: 'লিড ফ্যাকাল্টি - করপোরেট ফাইন্যান্স',
+        company: 'পার্টনার, এক্রিডিটেড অডিট ফার্ম ও কনসালট্যান্ট',
+        experience: '১৮+ বছর করপোরেট রিপোর্টিং ও ভ্যালুয়েশন',
+        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=faces',
+      },
+    ],
+    description: 'কর্পোরেট জগতের শীর্ষ ফাইন্যান্সিয়াল লিডার বা CFO হতে প্রয়োজনীয় ফাইন্যান্সিয়াল লিডারশিপ, আইএফআরএস প্র্যাকটিক্যাল অ্যাপ্লিকেশন, এসএপি ফাইকো ইআরপি, ভ্যাট ও ট্যাক্স আইন এবং ট্রেজারি ম্যানেজমেন্টের পূর্ণাঙ্গ প্র্যাকটিক্যাল জ্ঞান অর্জন করুন। ৩টি সেমিস্টারে বিভক্ত ইন্ডাস্ট্রি-ফার্স্ট কারিকুলাম।',
+    descriptionEn: 'Equip yourself with practical leadership skills, SAP-FICO ERP, IFRS implementation, Income Tax Act 2023, VAT Act 2012, and Boardroom Treasury Management across 3 comprehensive semesters to lead as a top Chief Financial Officer.',
+    syllabus: [
+      {
+        week: 1,
+        title: 'সেমিস্টার ১: ফাইন্যান্সিয়াল লিডারশিপ, ফিনটেক ও আইএফআরএস পার্ট-১',
+        topics: [
+          'Financial Leadership & Strategic Change Management in Corporate Sector',
+          'Fintech Foundations: TallyPrime Enterprise & Advanced Financial Excel',
+          'Financial Statement Analysis, Ratio Interpretation & Working Capital Optimization',
+          'Business Application with IAS 1, IAS 2, IAS 16 & IFRS 15 Revenue Accounting',
+          'Live Corporate Case Study: Transitioning from Accountant to Strategic Business Partner',
+        ],
+        project: 'কর্পোরেট ফাইন্যান্সিয়াল ড্যাশবোর্ড ও ৩ বছরের হিস্টোরিক্যাল স্টেটমেন্ট অডিট প্রজেক্ট',
+      },
+      {
+        week: 2,
+        title: 'সেমিস্টার ২: বিজনেস প্ল্যানিং (FP&A), SAP-FICO ও ভ্যাট-ট্যাক্স কমপ্লায়েন্স',
+        topics: [
+          'Strategic Business Planning & Analysis (FP&A): Rolling Forecasts & Zero-Base Budgeting',
+          'Enterprise ERP Implementation: SAP-FICO (GL, AP, AR, Asset Accounting, Cost Center)',
+          'Corporate Income Tax Act 2023: Tax Planning, Allowable Expenses, Minimum Tax & TDS',
+          'VAT Act 2012: Input Tax Credit, Mushak 6.3, 6.5, 9.1 Return Filing & VDS Deductions',
+          'IAS 12 Income Taxes & IFRS 16 Leases Corporate Calculation Models',
+        ],
+        project: 'মাল্টিন্যাশনাল কোম্পানির জন্য পূর্ণাঙ্গ SAP FICO চার্ট অফ অ্যাকাউন্টস ও ভ্যাট রিটার্ন প্রস্তুতকরণ',
+      },
+      {
+        week: 3,
+        title: 'সেমিস্টার ৩: কোম্পানি অ্যাফেয়ার্স, ট্রেজারি, ইন্টারনাল অডিট ও অ্যাডভান্সড রিপোর্টিং',
+        topics: [
+          'Company Act 1994, RJSC Compliance & Secretarial Practices for CFOs',
+          'Banking Relationship, Trade Finance (LC, UPAS, Offshore Banking) & FX Hedging',
+          'Internal Control Framework (COSO), Enterprise Risk Management (ERM) & Fraud Auditing',
+          'Corporate Business Valuation (DCF, Comparable Multiples, M&A Modeling)',
+          'Boardroom Reporting, Investor Pitching & Preparation for Annual Convocation',
+        ],
+        project: 'ক্যাপস্টোন প্রজেক্ট: একটি লিস্টেড কোম্পানির জন্য এক্সিকিউটিভ CFO স্ট্র্যাটেজিক মাস্টারপ্ল্যান',
+      },
+    ],
+    skillsLearned: [
+      'Strategic Financial Leadership',
+      'SAP-FICO ERP Financials',
+      'Corporate Tax Act 2023 & NBR SROs',
+      'VAT Act 2012 & Mushak Compliance',
+      'IFRS & IAS Practical Application',
+      'Treasury & Trade Finance Operations',
+      'Corporate Valuation & Financial Modeling',
+      'Internal Audit & Board Reporting',
+    ],
+    projects: [
+      'লিস্টেড ফার্মের জন্য সম্পূর্ণ আইএফআরএস কমপ্লায়েন্ট অডিটেড ব্যালেন্স শিট প্রস্তুতকরণ',
+      'এসএপি-ফাইকো (SAP-FICO) সিস্টেমে মাল্টি-ব্রাঞ্চ ইআরপি ট্রানজেকশন সিমুলেশন',
+      'কর্পোরেট গ্রুপ অব ইন্ডাস্ট্রিজের জন্য ট্যাক্স-অপ্টিমাইজড ইনকাম ট্যাক্স রিটার্ন ফাইল',
+    ],
+    prerequisites: ['বাণিজ্য বিভাগে স্নাতক/স্নাতকোত্তর বা ন্যূনতম ২ বছরের অ্যাকাউন্টিং/ফাইন্যান্স কাজের অভিজ্ঞতা'],
+    tools: ['SAP-FICO ERP', 'TallyPrime Enterprise', 'Microsoft Excel for Finance', 'Power BI', 'NBR e-Tax Portal'],
+    isPopular: true,
+    isFeatured: true,
+  },
+  {
+    id: 'diploma-vat-tax',
+    slug: 'post-graduate-diploma-customs-vat-tax-trade',
+    title: 'Professional PGD in Customs, VAT, TAX & Trade Management',
+    titleEn: 'Professional PGD in Customs, VAT, TAX & Trade Management',
+    category: 'tax-vat',
+    categoryLabel: 'ট্যাক্স ও ভ্যাট একাডেমি',
+    badge: 'ডিগ্রি ডিপ্লোমা',
+    batchNumber: 'ব্যাচ ১২',
+    startDate: '৫ অক্টোবর, ২০২৬',
+    startDateEn: 'Oct 5, 2026',
+    schedule: 'শুক্র ও শনিবার বিকাল ৪:০০ - ৬:৩০',
+    scheduleEn: 'Fri & Sat 4:00 PM - 6:30 PM',
+    duration: '৬ মাস (৪৮টি লাইভ ক্লাস ও ল্যাব)',
+    durationEn: '6 Months (48 Live Classes)',
+    totalClasses: 48,
+    seatsLeft: 12,
+    totalSeats: 50,
+    price: 22500,
+    originalPrice: 32000,
+    rating: 4.92,
+    enrolledCount: 1120,
+    tags: ['Income Tax Act 2023', 'VAT Act 2012', 'Customs SRO', 'Bonded Warehouse', 'NBR Compliance'],
+    mentors: [
+      {
+        name: 'মোহাম্মদ মনিরুজ্জামান, FCMA',
+        role: 'সাবেক এনবিআর টেক্সটাইল ভ্যাট কমিটির কনসালট্যান্ট',
+        company: 'Tax & VAT Legal Advisory Group',
+        experience: '২২+ বছর ট্যাক্সেশন ও কাস্টমস লিগ্যাল প্র্যাকটিস',
+        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=faces',
+      },
+    ],
+    description: 'নতুন আয়কর আইন ২০২৩, ভ্যাট আইন ২০১২ এবং আন্তর্জাতিক কাস্টমস রুলস অনুযায়ী প্র্যাকটিক্যাল হ্যান্ডস-অন ট্রেনিং। এসআরও ইন্টারপ্রিটেশন, মুসক ৬.৩, মুসক ৯.১ সাবমিশন এবং বন্ডেড ওয়্যারহাউস অডিট সিস্টেম সরাসরি শিখুন।',
+    descriptionEn: 'Master the New Income Tax Act 2023, VAT Act 2012, Customs Act, and international trade operations through real NBR portal filings and case studies.',
+    syllabus: [
+      {
+        week: 1,
+        title: 'সেকশন ১: ইনকাম ট্যাক্স অ্যাক্ট ২০২৩ ও করপোরেট ট্যাক্স প্ল্যানিং',
+        topics: [
+          'আয়কর আইন ২০২৩ এর মূল পরিবর্তন ও কর্পোরেট কর হার',
+          'Tax Deducted at Source (TDS): ধারা ও রুলস অনুযায়ী সঠিক কর্তন',
+          'Allowable vs Inadmissible Expenses under Section 49 & 55',
+          'Transfer Pricing & International Transactions Compliance',
+        ],
+      },
+      {
+        week: 2,
+        title: 'সেকশন ২: মূসক ও সম্পূরক শুল্ক আইন ২০১২ ও প্র্যাকটিক্যাল কমপ্লায়েন্স',
+        topics: [
+          'মূল্য সংযোজন কর (VAT) বেসিক কনসেপ্ট ও ইনপুট ট্যাক্স ক্রেডিট রুলস',
+          'মুসক ৬.১, ৬.২, ৬.৩, ৬.৫ চালান তৈরি ও ইনভয়েস ম্যানেজমেন্ট',
+          'মুসক ৯.১ অনলাইন রিটার্ন প্রস্তুতকরণ এবং সাবমিশন পদ্ধতি',
+          'VDS (ভ্যাট উৎসে কর্তন) ও সরকারি ট্রেজারি চালান যাচাইকরণ',
+        ],
+      },
+      {
+        week: 3,
+        title: 'সেকশন ৩: কাস্টমস আইন, এক্সপোর্ট-ইমপোর্ট ও বন্ডেড ওয়্যারহাউস',
+        topics: [
+          'Customs Assessment, HS Code Classification & Valuation Rules',
+          'Export-Import Letter of Credit (LC) Terms & Incoterms 2020',
+          'Special Bonded Warehouse (SBW) License, Audit & UD/UP Reconciliation',
+          'Handling Customs & VAT Audits, Appeals & Dispute Resolution',
+        ],
+      },
+    ],
+    skillsLearned: ['Income Tax Act 2023', 'VAT Act 2012', 'Mushak 9.1 Filing', 'TDS & VDS Deductions', 'Customs Tariff & HS Code', 'Bonded Warehouse Audit'],
+    projects: ['একটি ম্যানুফ্যাকচারিং প্ল্যান্টের ৩ মাসের ভ্যাট রিটার্ন অডিট ও মুসক ৯.১ আপলোড', 'কর্পোরেট ইনকাম ট্যাক্স রিটার্ন ফাইল অ্যাসেসমেন্ট'],
+    prerequisites: ['অ্যাকাউন্টিং বেসিক্স ও ট্যাক্সেশনের প্রতি আগ্রহ'],
+    tools: ['NBR e-Tax Portal', 'NBR IVAS Online VAT System', 'Excel Tax Calculation Sheets'],
+    isPopular: true,
+    isFeatured: true,
+  },
+  {
+    id: 'pgd-sap-fico-fintech',
+    slug: 'advanced-fintech-sap-fico-financial-analytics',
+    title: 'Advanced Fintech with SAP-FICO & Financial Analytics (Power BI)',
+    titleEn: 'Advanced Fintech with SAP-FICO & Financial Analytics (Power BI)',
+    category: 'fintech-erp',
+    categoryLabel: 'ফিনটেক ও এসএপি ইআরপি',
+    badge: 'প্রফেশনাল ডিপ্লোমা',
+    batchNumber: 'ব্যাচ ০৯',
+    startDate: '১২ অক্টোবর, ২০২৬',
+    startDateEn: 'Oct 12, 2026',
+    schedule: 'রবি ও বুধবার রাত ৮:৩০ - ১০:৩০',
+    scheduleEn: 'Sun & Wed 8:30 PM - 10:30 PM',
+    duration: '৫ মাস (৪০টি লাইভ ল্যাব ক্লাস)',
+    durationEn: '5 Months (40 Live Lab Sessions)',
+    totalClasses: 40,
+    seatsLeft: 10,
+    totalSeats: 40,
+    price: 25000,
+    originalPrice: 35000,
+    rating: 4.88,
+    enrolledCount: 650,
+    tags: ['SAP FICO', 'Enterprise ERP', 'Power BI for Finance', 'Financial Modeling', 'Fintech Tools'],
+    mentors: [
+      {
+        name: 'ফারুক আহমেদ, SAP Certified FICO Consultant',
+        role: 'সিনিয়র এসএপি আর্কিটেক্ট',
+        company: 'গ্লোবাল ইআরপি সলিউশনস পার্টনার',
+        experience: '১৬+ বছর এসএপি রোলআউট ও কনফিগারেশন',
+        avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=faces',
+      },
+    ],
+    description: 'মাল্টিন্যাশনাল ও বড় কর্পোরেট গ্রুপগুলোতে ব্যবহৃত শীর্ষ ইআরপি সফটওয়্যার SAP-FICO এর জেনারেল লেজার, অ্যাকাউন্টস পেয়েবল, অ্যাকাউন্টস রিসিভেবল, ফিক্সড অ্যাসেট এবং কস্টিং কনফিগারেশন শিখুন। সাথে থাকছে পাওয়ার বিআই দিয়ে রিয়েল-টাইম ফাইন্যান্সিয়াল ড্যাশবোর্ড তৈরি।',
+    descriptionEn: 'Configure enterprise-grade SAP-FICO modules (GL, AP, AR, Asset Accounting, Cost Center) and design interactive real-time C-suite executive financial dashboards using Power BI and DAX.',
+    syllabus: [
+      {
+        week: 1,
+        title: 'মডিউল ১: এসএপি ইআরপি এন্টারপ্রাইজ স্ট্রাকচার ও জেনারেল লেজার (FI-GL)',
+        topics: [
+          'SAP Architecture, Company Code, Chart of Accounts, Fiscal Year Variant',
+          'General Ledger Master Data, Posting Periods & Document Splitting',
+          'Foreign Currency Valuation & Accrual/Deferral Posting in SAP',
+        ],
+      },
+      {
+        week: 2,
+        title: 'মডিউল ২: অ্যাকাউন্টস পেয়েবল (AP), রিসিভেবল (AR) ও অ্যাসেট অ্যাকাউন্টিং (AA)',
+        topics: [
+          'Vendor Master Data, Automatic Payment Program (F110) & Withholding Tax in SAP',
+          'Customer Credit Management, Dunning Procedures & Cash Application',
+          'Asset Class, Depreciation Key Setup, Capitalization of CIP & Asset Retirement',
+        ],
+      },
+      {
+        week: 3,
+        title: 'মডিউল ৩: কন্ট্রোলিং (CO) বেসিক ও পাওয়ার বিআই ফাইন্যান্সিয়াল অ্যানালিটিক্স',
+        topics: [
+          'Cost Center Accounting, Profit Center Accounting & Internal Orders',
+          'Connecting SAP Data into Microsoft Power BI via Data Gateway',
+          'Executive KPI Dashboard: EBITDA, Liquidity, DSO, DPO & Variance Analysis',
+        ],
+      },
+    ],
+    skillsLearned: ['SAP FICO Configuration', 'Enterprise GL, AP, AR, AA', 'Power BI Financial Dashboarding', 'DAX Financial Formulas', 'ERP Audit Trails'],
+    projects: ['একটি ম্যানুফ্যাকচারিং কোম্পানির জন্য এন্টারপ্রাইজ এসএপি-ফাইকো ব্লুপ্রিন্ট কনফিগারেশন', 'বোর্ড ডিরেক্টরদের জন্য লাইভ পাওয়ার বিআই এক্সিকিউটিভ ড্যাশবোর্ড'],
+    prerequisites: ['অ্যাকাউন্টিং ডেবিট-ক্রেডিট জ্ঞান ও সাধারণ এক্সেল দক্ষতা'],
+    tools: ['SAP S/4HANA & ECC 6.0', 'Microsoft Power BI', 'Advanced Excel'],
+    isPopular: true,
+    isFeatured: false,
+  },
+  {
+    id: 'pgd-fpa-valuation',
+    slug: 'financial-planning-analysis-corporate-valuation',
+    title: 'Corporate Financial Planning & Analysis (FP&A) and Business Valuation',
+    titleEn: 'Corporate Financial Planning & Analysis (FP&A) and Business Valuation',
+    category: 'fpa-valuation',
+    categoryLabel: 'এফপি অ্যান্ড এ ও ভ্যালুয়েশন',
+    badge: 'এক্সিকিউটিভ কোর্স',
+    batchNumber: 'ব্যাচ ০৭',
+    startDate: '২০ অক্টোবর, ২০২৬',
+    startDateEn: 'Oct 20, 2026',
+    schedule: 'সোম ও বৃহস্পতিবার রাত ৮:০০ - ১০:০০',
+    scheduleEn: 'Mon & Thu 8:00 PM - 10:00 PM',
+    duration: '৪ মাস (৩২টি প্র্যাকটিক্যাল সেশন)',
+    durationEn: '4 Months (32 Live Sessions)',
+    totalClasses: 32,
+    seatsLeft: 14,
+    totalSeats: 35,
+    price: 20000,
+    originalPrice: 28000,
+    rating: 4.9,
+    enrolledCount: 480,
+    tags: ['FP&A', 'DCF Valuation', 'M&A Modeling', 'Strategic Budgeting', 'Scenario Analysis'],
+    mentors: [
+      {
+        name: 'নজরুল ইসলাম, FCA',
+        role: 'ভাইস প্রেসিডেন্ট ও হেড অফ ট্রেজারি',
+        company: 'লিডিং কমার্শিয়াল ব্যাংক পিএলসি',
+        experience: '১৭+ বছর ইনভেস্টমেন্ট ব্যাংকিং ও ফাইন্যান্সিয়াল মডেলিং',
+        avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop&crop=faces',
+      },
+    ],
+    description: 'আধুনিক করপোরেট এফপি&এ স্ট্র্যাটেজি, ৩-স্টেটমেন্ট ডাইনামিক ফাইন্যান্সিয়াল মডেলিং, ডিসকাউন্টেড ক্যাশ ফ্লো (DCF) বিজনেস ভ্যালুয়েশন, মার্জার অ্যান্ড অ্যাকুইজিশন (M&A) অ্যানালাইসিস এবং বাজেট ভ্যারিয়েন্স ট্র্যাকিং শিখুন।',
+    descriptionEn: 'Build 3-statement integrated financial forecast models, perform discounted cash flow (DCF) business valuation, sensitivity stress testing, and scenario planning.',
+    syllabus: [
+      {
+        week: 1,
+        title: 'পার্ট ১: ইন্টিগ্রেটেড ৩-স্টেটমেন্ট ফাইন্যান্সিয়াল মডেলিং',
+        topics: [
+          'Historical Financial Statement Restructuring & Clean-up',
+          'Revenue Drivers, Cost Drivers & CapEx Depreciation Schedules',
+          'Dynamic Debt Schedule, Revolver Mechanics & Circular Reference Resolution',
+        ],
+      },
+      {
+        week: 2,
+        title: 'পার্ট ২: ডিসকাউন্টেড ক্যাশ ফ্লো (DCF) ও কর্পোরেট ভ্যালুয়েশন',
+        topics: [
+          'Free Cash Flow to Firm (FCFF) vs Free Cash Flow to Equity (FCFE)',
+          'Cost of Capital (WACC), Beta Unlevering/Relevering & Terminal Value',
+          'Trading Comps (EV/EBITDA, P/E) & Precedent Transaction Benchmarking',
+        ],
+      },
+      {
+        week: 3,
+        title: 'পার্ট ৩: বাজেট প্ল্যানিং, রোলিং ফোরকাস্ট ও সিনারিও সিমুলেশন',
+        topics: [
+          'Budget vs Actual Variance Analysis & Waterfall Attribution',
+          'Monte Carlo Simulation & Sensitivity Data Tables',
+          'CFO Executive Pitch Deck & Board Investment Memo Preparation',
+        ],
+      },
+    ],
+    skillsLearned: ['Dynamic 3-Statement Modeling', 'WACC & DCF Corporate Valuation', 'Rolling Forecasts & Budgeting', 'Sensitivity Stress Testing', 'M&A Deal Modeling'],
+    projects: ['ঢাকা স্টক এক্সচেঞ্জ (DSE) তালিকাভুক্ত কোম্পানির কমপ্লিট DCF ভ্যালুয়েশন মডেল', 'মাল্টি-সিনারিও করপোরেট ফাইভ ইয়ার বিজনেস প্ল্যান'],
+    prerequisites: ['ফাইন্যান্সিয়াল স্টেটমেন্ট ও ব্যালেন্স শিট বোঝার দক্ষতা'],
+    tools: ['Microsoft Excel (Financial Modeling Toolkit)', 'Capital IQ Benchmark Data'],
+    isPopular: false,
+    isFeatured: true,
+  },
+  {
+    id: 'diploma-supply-chain',
+    slug: 'post-graduate-diploma-supply-chain-lean-six-sigma',
+    title: 'Post Graduate Diploma in Logistics & Supply Chain (with Lean Six Sigma)',
+    titleEn: 'Post Graduate Diploma in Logistics & Supply Chain (with Lean Six Sigma)',
+    category: 'supply-chain',
+    categoryLabel: 'সাপ্লাই চেইন একাডেমি',
+    badge: 'প্রফেশনাল ডিপ্লোমা',
+    batchNumber: 'ব্যাচ ১১',
+    startDate: '২৫ অক্টোবর, ২০২৬',
+    startDateEn: 'Oct 25, 2026',
+    schedule: 'শুক্র ও শনিবার সকাল ১০:০০ - ১২:৩০',
+    scheduleEn: 'Fri & Sat 10:00 AM - 12:30 PM',
+    duration: '৪ মাস (৩২টি লাইভ ক্লাস)',
+    durationEn: '4 Months (32 Live Classes)',
+    totalClasses: 32,
+    seatsLeft: 11,
+    totalSeats: 45,
+    price: 18500,
+    originalPrice: 26000,
+    rating: 4.87,
+    enrolledCount: 520,
+    tags: ['Supply Chain Analytics', 'Lean Six Sigma', 'Warehouse Management', 'Procurement', 'Inventory Optimization'],
+    mentors: [
+      {
+        name: 'সৈয়দ মাহবুবুর রহমান, CSCA',
+        role: 'সাপ্লাই চেইন ডিরেক্টর ও ইন্ডাস্ট্রি কনসালট্যান্ট',
+        company: 'Ex-BAT & Leading FMCG Multinational',
+        experience: '২০+ বছর এন্ড-টু-এন্ড সাপ্লাই চেইন ম্যানেজমেন্ট',
+        avatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=400&h=400&fit=crop&crop=faces',
+      },
+    ],
+    description: 'এন্ড-টু-এন্ড সাপ্লাই চেইন প্ল্যানিং, কৌশলগত সোর্সিং ও প্রকিউরমেন্ট, ওয়্যারহাউস ও ইনভেন্টরি অপটিমাইজেশন (EOQ, Safety Stock) এবং লিন সিক্স সিগমা গ্রিন বেল্ট মেথডোলজি দিয়ে অপারেশনাল অপচয় দূর করার প্র্যাকটিক্যাল গাইড।',
+    descriptionEn: 'Master end-to-end supply chain logistics, demand forecasting, international procurement, warehouse operations, and Lean Six Sigma Green Belt process optimization.',
+    syllabus: [
+      {
+        week: 1,
+        title: 'মডিউল ১: স্ট্র্যাটেজিক সাপ্লাই চেইন প্ল্যানিং ও ডিমান্ড ফোরকাস্টিং',
+        topics: [
+          'Supply Chain Operations Reference (SCOR) Framework',
+          'Demand Planning, Time Series Forecasting & Sales and Operations Planning (S&OP)',
+          'Strategic Sourcing, Supplier Negotiation & Kraljic Matrix Analysis',
+        ],
+      },
+      {
+        week: 2,
+        title: 'মডিউল ২: ওয়্যারহাউস, ইনভেন্টরি কন্ট্রোল ও ট্রান্সপোর্টেশন লজিস্টিকস',
+        topics: [
+          'Economic Order Quantity (EOQ), Safety Stock & ABC-FSN Classification',
+          'Warehouse Layout Design, 5S Implementation & Barcode/RFID Technology',
+          'Port Clearance, Freight Forwarding, Custom Tariffs & Incoterms 2020',
+        ],
+      },
+      {
+        week: 3,
+        title: 'মডিউল ৩: লিন সিক্স সিগমা গ্রিন বেল্ট (DMAIC) মেথডোলজি',
+        topics: [
+          'Define, Measure, Analyze, Improve, Control (DMAIC) Roadmap',
+          'Value Stream Mapping (VSM) & Waste (Muda) Identification',
+          'Statistical Process Control (SPC), Pareto Charts & Root Cause Fishbone Analysis',
+        ],
+      },
+    ],
+    skillsLearned: ['Demand & Supply Planning', 'Inventory Control Models', 'Lean Six Sigma DMAIC', 'Procurement & Negotiation', 'Warehouse Management Systems'],
+    projects: ['একটি এফএমসিজি প্ল্যান্টের জন্য ইনভেন্টরি হোল্ডিং কস্ট ২৫% হ্রাসের লিন কেস স্টাডি', 'এন্ড-টু-এন্ড গ্লোবাল প্রকিউরমেন্ট ও ফ্রেইট অপটিমাইজেশন প্ল্যান'],
+    prerequisites: ['স্নাতক ডিগ্রি বা সাপ্লাই চেইন/অপারেশনসে আগ্রহ'],
+    tools: ['Minitab', 'Advanced Excel SCM Model', 'WMS Software Simulation'],
+    isPopular: false,
+    isFeatured: false,
+  },
+  {
+    id: 'diploma-hrm-labor-law',
+    slug: 'professional-pgd-human-resource-management-labor-law',
+    title: 'Professional PGD in Human Resource Management & Bangladesh Labor Law',
+    titleEn: 'Professional PGD in Human Resource Management & Bangladesh Labor Law',
+    category: 'hrm-legal',
+    categoryLabel: 'এইচআর ও শ্রম আইন',
+    badge: 'প্রফেশনাল ডিপ্লোমা',
+    batchNumber: 'ব্যাচ ১০',
+    startDate: '১ নভেম্বর, ২০২৬',
+    startDateEn: 'Nov 1, 2026',
+    schedule: 'শুক্র ও শনিবার সন্ধ্যা ৬:৩০ - ৯:০০',
+    scheduleEn: 'Fri & Sat 6:30 PM - 9:00 PM',
+    duration: '৪ মাস (৩২টি লাইভ ক্লাস)',
+    durationEn: '4 Months (32 Live Classes)',
+    totalClasses: 32,
+    seatsLeft: 15,
+    totalSeats: 40,
+    price: 18000,
+    originalPrice: 25000,
+    rating: 4.85,
+    enrolledCount: 390,
+    tags: ['Labor Law 2006', 'Labor Rules 2015', 'Payroll Management', 'Strategic HRM', 'Employee Relations'],
+    mentors: [
+      {
+        name: 'ড. ফারহানা ইয়াসমিন',
+        role: 'হেড অফ এইচআর ও করপোরেট লিগ্যাল অ্যাডভাইজার',
+        company: 'মাল্টিন্যাশনাল টেলিকম ও কনসাল্টিং গ্রুপ',
+        experience: '১৮+ বছর হিউম্যান রিসোর্স স্ট্র্যাটেজি ও লেবার ল',
+        avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=faces',
+      },
+    ],
+    description: 'বাংলাদেশ শ্রম আইন ২০০৬ (২০১৮ পর্যন্ত সংশোধিত) এবং বাংলাদেশ শ্রম বিধিমালা ২০১৫ অনুযায়ী নিয়োগ, ডিসিপ্লিনারি অ্যাকশন, গ্র্যাচুইটি, প্রভিডেন্ট ফান্ড ও পে-রোল ম্যানেজমেন্টের খুঁটিনাটি। সাথে আধুনিক স্ট্র্যাটেজিক এইচআর ও কেপিআই মূল্যায়ন।',
+    descriptionEn: 'In-depth practical understanding of the Bangladesh Labor Act 2006 & Labor Rules 2015 covering employment contracts, disciplinary actions, separation, gratuity, provident fund, and payroll.',
+    syllabus: [
+      {
+        week: 1,
+        title: 'অংশ ১: বাংলাদেশ শ্রম আইন ২০০৬ (নিয়োগ, সার্ভিস বুক ও ছুটি বিধিমালা)',
+        topics: [
+          'Classification of Workers, Probation Period, Letter of Appointment & Service Book',
+          'Working Hours, Overtime Calculation, Festival Leaves & Annual Earned Leaves',
+          'Maternity Benefits, Health, Hygiene, Workplace Safety & Emergency Provisions',
+        ],
+      },
+      {
+        week: 2,
+        title: 'অংশ ২: ডিসিপ্লিনারি প্রসিডিংস, শোকজ নোটিশ ও সেপারেশন ম্যানেজমেন্ট',
+        topics: [
+          'Misconduct Definitions, Draft Show Cause Notice & Charge Sheet Formulation',
+          'Domestic Inquiry Protocol, Principles of Natural Justice & Punishment Orders',
+          'Termination, Retrenchment, Discharge, Layoff & Legal Severance Benefits (Gratuity, PF)',
+        ],
+      },
+      {
+        week: 3,
+        title: 'অংশ ৩: স্ট্র্যাটেজিক এইচআরএম, কেপিআই অ্যাসেসমেন্ট ও পে-রোল ম্যানেজমেন্ট',
+        topics: [
+          'HR Budgeting, Salary Structure Formulation (Basic, HRA, Medical, Allowances)',
+          'Balanced Scorecard, OKR vs KPI Performance Management System (PMS)',
+          'Industrial Relations, Trade Unions, Collective Bargaining & Labor Court Litigations',
+        ],
+      },
+    ],
+    skillsLearned: ['Labor Act 2006 & Rules 2015', 'Drafting Legal Show-cause & Inquiries', 'Corporate Payroll & TDS Deductions', 'KPI/OKR Appraisal Models', 'Dispute Resolution & Grievance'],
+    projects: ['একটি পূর্ণাঙ্গ করপোরেট ডিসিপ্লিনারি ইনকোয়ারি প্রসিডিং ফাইল ড্রাফটিং', '৫০০ কর্মচারীর জন্য কমপ্লায়েন্ট পে-রোল ও বেনিফিট স্ট্রাকচার ডিজাইন'],
+    prerequisites: ['এইচআর প্রফেশনাল, অ্যাডমিন কর্মকর্তা বা যে কোনো গ্র্যাজুয়েট'],
+    tools: ['HRIS Software Templates', 'Excel Automated Payroll Sheets', 'Labor Court Case Precedents'],
+    isPopular: false,
+    isFeatured: false,
+  },
+  {
+    id: 'cert-ias-ifrs-isa',
+    slug: 'professional-executive-certificate-ias-ifrs-isa',
+    title: 'Professional Executive Certificate in IAS, IFRS & ISA Implementation',
+    titleEn: 'Professional Executive Certificate in IAS, IFRS & ISA Implementation',
+    category: 'ias-ifrs',
+    categoryLabel: 'অ্যাকাউন্টিং স্ট্যান্ডার্ডস',
+    badge: 'সার্টিফিকেট কোর্স',
+    batchNumber: 'ব্যাচ ০৮',
+    startDate: '৮ নভেম্বর, ২০২৬',
+    startDateEn: 'Nov 8, 2026',
+    schedule: 'শনিবার ও মঙ্গলবার রাত ৮:০০ - ১০:০০',
+    scheduleEn: 'Sat & Tue 8:00 PM - 10:00 PM',
+    duration: '৩ মাস (২৪টি এক্সটেনসিভ সেশন)',
+    durationEn: '3 Months (24 Extensive Sessions)',
+    totalClasses: 24,
+    seatsLeft: 12,
+    totalSeats: 35,
+    price: 16500,
+    originalPrice: 22000,
+    rating: 4.91,
+    enrolledCount: 310,
+    tags: ['IFRS 9', 'IFRS 15', 'IFRS 16', 'IAS 12', 'Auditing Standards ISA'],
+    mentors: [
+      {
+        name: 'মো. শফিকুল আলম, FCA, FCMA',
+        role: 'প্রিন্সিপাল ফ্যাকাল্টি',
+        company: 'Chartered Officer Limited',
+        experience: '২৫+ বছর কর্পোরেট রিপোর্টিং ও অডিট প্র্যাকটিস',
+        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=faces',
+      },
+    ],
+    description: 'আন্তর্জাতিক অ্যাকাউন্টিং স্ট্যান্ডার্ড (IAS) এবং ইন্টারন্যাশনাল ফাইন্যান্সিয়াল রিপোর্টিং স্ট্যান্ডার্ডস (IFRS) এর জটিল মানদণ্ডগুলো (IFRS 9, IFRS 15, IFRS 16) বাস্তব কর্পোরেট ব্যালেন্স শিটে প্রয়োগ করার পূর্ণাঙ্গ প্রায়োগিক প্রশিক্ষণ।',
+    descriptionEn: 'Hands-on practical mastery over major International Financial Reporting Standards (IFRS 9, 15, 16, IAS 12) with full disclosure templates and auditor working papers.',
+    syllabus: [
+      {
+        week: 1,
+        title: 'মডিউল ১: আইএফআরএস ১৫ (রেভিনিউ ফ্রম কন্ট্রাক্টস উইথ কাস্টমারস)',
+        topics: [
+          '5-Step Revenue Recognition Model in Corporate Contracts',
+          'Identifying Performance Obligations, Variable Consideration & Principal vs Agent',
+          'Contract Asset, Contract Liability & Disclosure Requirements',
+        ],
+      },
+      {
+        week: 2,
+        title: 'মডিউল ২: আইএফআরএস ১৬ (লিজেস) ও আইএএস ১২ (ইনকাম ট্যাক্সেস)',
+        topics: [
+          'Right of Use (ROU) Asset & Lease Liability Amortization Schedule',
+          'Short-term & Low-value Lease Exemptions and Remeasurement Rules',
+          'Deferred Tax Asset (DTA) vs Deferred Tax Liability (DTL) Reconciliation',
+        ],
+      },
+      {
+        week: 3,
+        title: 'মডিউল ৩: আইএফআরএস ৯ (ফাইন্যান্সিয়াল ইন্সট্রুমেন্টস) ও আইএসএ অডিট ফ্রেমওয়ার্ক',
+        topics: [
+          'Classification and Measurement of Financial Assets (Amortized Cost, FVOCI, FVTPL)',
+          'Expected Credit Loss (ECL) Impairment Provisioning Model for Banks & Corporates',
+          'International Standards on Auditing (ISA) Audit Evidence & Key Audit Matters (KAM)',
+        ],
+      },
+    ],
+    skillsLearned: ['IFRS 15 Revenue 5-Step Model', 'IFRS 16 Lease Calculation Schedules', 'IFRS 9 Expected Credit Loss', 'Deferred Tax Calculations', 'ISA Audit Standards'],
+    projects: ['একটি রিয়েল এস্টেট ও ম্যানুফ্যাকচারিং কোম্পানির জন্য আইএফআরএস ১৫ ও ১৬ কমপ্লায়েন্স শিট', 'এক্সিকিউটিভ অডিটেড ফাইনাল অ্যাকাউন্টস ডিসক্লোজার প্যাক'],
+    prerequisites: ['অ্যাকাউন্টিং ডিগ্রি বা হিসাবরক্ষণ কাজের অভিজ্ঞতা'],
+    tools: ['Excel IFRS Calculation Engines', 'Published Annual Reports of Listed Firms'],
+    isPopular: false,
+    isFeatured: false,
+  },
+];
+
+export const WORKSHOPS: Workshop[] = [
+  {
+    id: 'ws-cfo-roadmap',
+    title: 'করপোরেট ফাইন্যান্সিয়াল লিডার ও CFO হওয়ার পূর্ণাঙ্গ রোডম্যাপ',
+    titleEn: 'Roadmap to Becoming a Chief Financial Officer (CFO) in Bangladesh',
+    instructor: 'মো. শফিকুল আলম, FCA, FCMA',
+    instructorRole: 'প্রতিষ্ঠাতা ও প্রিন্সিপাল মেন্টর',
+    instructorCompany: 'Chartered Officer Limited (COL)',
+    date: '২০ সেপ্টেম্বর, ২০২৬',
+    time: 'রাত ৮:৩০ - ১০:০০',
+    category: 'cfo-flagship',
+    registeredCount: 540,
+    totalSeats: 600,
+    isLiveNow: false,
+  },
+  {
+    id: 'ws-tax-act-2023',
+    title: 'নতুন আয়কর আইন ২০২৩ ও বার্ষিক কর্পোরেট ট্যাক্স রিটার্ন ফাইলিং মাস্টারক্লাস',
+    titleEn: 'Masterclass on Income Tax Act 2023 & Corporate Tax Filing',
+    instructor: 'মোহাম্মদ মনিরুজ্জামান, FCMA',
+    instructorRole: 'ভ্যাট ও ট্যাক্স স্পেশালিস্ট',
+    instructorCompany: 'Tax Advisory Group',
+    date: '২২ সেপ্টেম্বর, ২০২৬',
+    time: 'রাত ৮:০০ - ৯:৩০',
+    category: 'tax-vat',
+    registeredCount: 680,
+    totalSeats: 700,
+    isLiveNow: true,
+  },
+  {
+    id: 'ws-sap-fico-demo',
+    title: 'মাল্টিন্যাশনাল কোম্পানিতে এসএপি-ফাইকো (SAP-FICO) ইআরপির বাস্তব ব্যবহার',
+    titleEn: 'Practical Implementation of SAP-FICO ERP in Multinationals',
+    instructor: 'ফারুক আহমেদ',
+    instructorRole: 'এসএপি সার্টিফাইড আর্কিটেক্ট',
+    instructorCompany: 'Global ERP Solutions',
+    date: '২৫ সেপ্টেম্বর, ২০২৬',
+    time: 'রাত ৯:০০ - ১০:৩০',
+    category: 'fintech-erp',
+    registeredCount: 420,
+    totalSeats: 500,
+    isLiveNow: false,
+  },
+  {
+    id: 'ws-dcf-valuation',
+    title: 'মার্জার ও ইনভেস্টমেন্টের জন্য ডিসকাউন্টেড ক্যাশ ফ্লো (DCF) ভ্যালুয়েশন টেকনিকস',
+    titleEn: 'Discounted Cash Flow (DCF) Valuation for M&A & Private Equity',
+    instructor: 'নজরুল ইসলাম, FCA',
+    instructorRole: 'ভাইস প্রেসিডেন্ট',
+    instructorCompany: 'Leading Commercial Bank PLC',
+    date: '২৮ সেপ্টেম্বর, ২০২৬',
+    time: 'রাত ৮:৩০ - ১০:০০',
+    category: 'fpa-valuation',
+    registeredCount: 390,
+    totalSeats: 450,
+    isLiveNow: false,
+  },
+];
+
+export interface FaqItem {
+  question: string;
+  questionEn: string;
+  answer: string;
+  answerEn: string;
+}
+
+export const FAQS: FaqItem[] = [
+  {
+    question: 'চার্টার্ড ফাইন্যান্সিয়াল অফিসার (CFO) প্রোগ্রামের যোগ্যতা ও মেয়াদ কত?',
+    questionEn: 'What is the eligibility and duration of the Chartered Financial Officer (CFO) program?',
+    answer: 'এই ফ্ল্যাগশিপ প্রোগ্রামটি ১ বছর মেয়াদি এবং ৩টি সেমিস্টারে বিভক্ত। বাণিজ্য অনুষদে স্নাতক/স্নাতকোত্তর বা হিসাববিজ্ঞান, অর্থায়ন বা কর্পোরেট সংস্থায় ন্যূনতম ২ বছরের কাজের অভিজ্ঞতাসম্পন্ন পেশাদাররা এতে ভর্তির যোগ্য।',
+    answerEn: 'This flagship program spans 1 year divided across 3 semesters. Graduates in business or working professionals with 2+ years experience in accounting, finance, or corporate sectors are eligible.',
+  },
+  {
+    question: 'প্রোগ্রামটি কি সরকারিভাবে অনুমোদিত এবং বিটিইবি (BTEB) নিবন্ধিত?',
+    questionEn: 'Is this program government recognized and registered under BTEB?',
+    answer: 'হ্যাঁ, চার্টার্ড অফিসার লিমিটেড (COL) বাংলাদেশ কারিগরি শিক্ষা বোর্ড (BTEB) নিবন্ধিত এবং বাণিজ্য মন্ত্রণালয়ের অধীন যৌথ মূলধন কোম্পানি ও ফার্মসমূহের পরিদপ্তর (RJSC)-এ বিধিবদ্ধভাবে নিবন্ধিত পেশাদার শিক্ষা প্রতিষ্ঠান। সফলভাবে সম্পন্ন করার পর বিটিইবি অনুমোদিত ডিপ্লোমা ও সনদ প্রদান করা হয়।',
+    answerEn: 'Yes, Chartered Officer Limited (COL) is officially registered with the Bangladesh Technical Education Board (BTEB) and RJSC under the Ministry of Commerce. Certified graduates receive BTEB-accredited diplomas and credentials.',
+  },
+  {
+    question: 'ভর্তি ফি কি কিস্তিতে (Installments) পরিশোধ করা যায়?',
+    questionEn: 'Are installment facilities available for program tuition fees?',
+    answer: 'হ্যাঁ, ১ বছর মেয়াদি CFO প্রোগ্রামের মোট ফি ৩টি সেমিস্টারে আলাদা কিস্তিতে (প্রতি সেমিস্টার ৳১৫,০০০) পরিশোধের সুবিধা রয়েছে। এছাড়া বিকাশ, নগদ, ভিসা/মাস্টারকার্ড এবং ব্যাংক স্থানান্তরের (BEFTN) মাধ্যমে ফি জমা দেওয়া যায়।',
+    answerEn: 'Yes, tuition fees for the 1-year CFO program can be paid in 3 semester installments (BDT 15,000 per semester). Payments can be made via bKash, Nagad, cards, or bank transfer.',
+  },
+  {
+    question: 'ক্লাসগুলো কি অনলাইনে নাকি মতিঝিল ক্যাম্পাসে অনুষ্ঠিত হয়?',
+    questionEn: 'Are classes held online or at the Motijheel City Centre campus?',
+    answer: 'ক্লাসগুলো হাইব্রিড পদ্ধতিতে পরিচালিত হয়। কর্মজীবী পেশাদারদের সুবিধার্থে শুক্রবার ও শনিবার সরাসরি মতিঝিল সিটি সেন্টার (লেভেল-২৫) ক্যাম্পাসে এবং পাশাপাশি রিয়েল-টাইম ইন্টারেক্টিভ লাইভ জুম/গুগল মিটের মাধ্যমে দূরবর্তী স্থান থেকে অংশ নেওয়া যায়। সকল সেশনের হাই-ডেফিনিশন রেকর্ডিং স্টুডেন্ট এলএমএস পোর্টালে সংরক্ষিত থাকে।',
+    answerEn: 'Classes are conducted in a flexible hybrid format: in-person at Motijheel City Centre (Level 25) on weekends and via interactive live streams for distance learners with recorded archives on LMS.',
+  },
+  {
+    question: 'কোর্স শেষে কি সার্টিফিকেট যাচাইকরণ ও কনভোকেশন সুবিধা রয়েছে?',
+    questionEn: 'Is there an official certificate verification portal and convocation ceremony?',
+    answer: 'হ্যাঁ, প্রতিটি গ্র্যাজুয়েটকে একটি ইউনিক রেজিস্ট্রেশন আইডি (যেমন: COL-CFO-2024-XXXX) সহ সনদপত্র প্রদান করা হয়, যা আমাদের ওয়েবসাইট (cfoedubd.com/verify-certificate)-এ যেকোনো নিয়োগদাতা বা প্রতিষ্ঠান অনলাইনে তাৎক্ষণিক যাচাই করতে পারে। এছাড়া প্রতি বছর শিক্ষার্থীদের সম্মানে বর্ণাঢ্য সমাবর্তন (Annual Convocation) অনুষ্ঠিত হয়।',
+    answerEn: 'Yes, every graduate receives a unique certificate registration ID verifiable 24/7 on cfoedubd.com/verify-certificate by employers, alongside the annual grand convocation ceremony.',
+  },
+];
+
+export const TESTIMONIALS: Testimonial[] = [
+  {
+    id: 't-1',
+    name: 'তানভীর আহমেদ চৌধুরী',
+    course: 'Chartered Financial Officer (CFO) Program',
+    previousRole: 'সিনিয়র ফাইন্যান্স ম্যানেজার',
+    currentRole: 'চিফ ফাইন্যান্সিয়াল অফিসার (CFO)',
+    company: 'শীর্ষস্থানীয় টেক্সটাইল গ্রুপ',
+    companyLogoText: 'DSE Listed Group',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=faces',
+    comment: 'চার্টার্ড অফিসার লিমিটেড (COL)-এর এক বছরের CFO প্রোগ্রাম আমার পেশাগত দৃষ্টিভঙ্গি সম্পূর্ণরূপে পরিবর্তন করে দিয়েছে। শুধু অ্যাকাউন্টিং নয়, বোর্ডরুম গভর্নেন্স, ট্রেজারি অপারেশন ও এসএপি-ফাইকো প্র্যাকটিক্যালি শেখার কারণে আমি সফলভাবে সিএফও পদে উন্নীত হয়েছি।',
+    commentEn: 'The 1-year CFO program at Chartered Officer Limited transformed my corporate leadership approach. Practical exposure to boardroom governance and SAP-FICO helped me step into the CFO role with confidence.',
+    rating: 5,
+  },
+  {
+    id: 't-2',
+    name: 'ফারজানা আক্তার, ACA',
+    course: 'PGD in Customs, VAT, TAX & Trade Management',
+    previousRole: 'ট্যাক্স এক্সিকিউটিভ',
+    currentRole: 'হেড অফ ট্যাক্স ও রেগুলেটরি অ্যাফেয়ার্স',
+    company: 'গ্লোবাল ফার্মাসিউটিক্যালস পিএলসি',
+    companyLogoText: 'Pharma Leader',
+    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&crop=faces',
+    comment: 'নতুন আয়কর আইন ২০২৩ ও ভ্যাট আইন ২০১২ এর প্রায়োগিক সূক্ষ্মতাগুলো মনিরুজ্জামান স্যারের ক্লাসে যে পরিচ্ছন্নভাবে শিখেছি, তা বাজারে অন্য কোথাও পাওয়া অসম্ভব। মুসক ৯.১ এবং বন্ড অডিটের প্র্যাকটিস আমাদের কোম্পানির লাখ লাখ টাকা সাশ্রয় করেছে।',
+    commentEn: 'The clarity with which new Tax Act 2023 and VAT compliance were taught is unmatched. Our company saved millions through streamlined VAT 9.1 return filing and bonded warehouse audits.',
+    rating: 5,
+  },
+  {
+    id: 't-3',
+    name: 'মাহমুদুল হাসান',
+    course: 'Advanced Fintech with SAP-FICO & Power BI',
+    previousRole: 'অ্যাকাউন্টস অফিসার',
+    currentRole: 'সিনিয়র ইআরপি ফাইন্যান্সিয়াল স্পেশালিস্ট',
+    company: 'মাল্টিন্যাশনাল এফএমসিজি',
+    companyLogoText: 'Global FMCG',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=faces',
+    comment: 'থিওরি মুখস্থ না করিয়ে সরাসরি এসএপি কনফিগারেশন এবং পাওয়ার বিআই-তে রিয়েল টাইম ব্যালেন্স শিট তৈরি করার অভিজ্ঞতা সত্যিই অভূতপূর্ব। ইন্টারভিউতে লাইভ পোর্টফোলিও শোকেস করে আমি বর্তমান মাল্টিন্যাশনাল চাকরিতে যুক্ত হতে পেরেছি।',
+    commentEn: 'Hands-on SAP FICO configuration and real-time C-suite Power BI reporting gave me the competitive edge to secure my senior ERP specialist position.',
+    rating: 5,
+  },
+  {
+    id: 't-4',
+    name: 'আহমেদ সাদিক',
+    course: 'PGD in Logistics & Supply Chain Analytics',
+    previousRole: 'লজিস্টিকস সুপারভাইজার',
+    currentRole: 'অ্যাসিস্ট্যান্ট জেনারেল ম্যানেজার (সাপ্লাই চেইন)',
+    company: 'লিস্টেড ইলেকট্রনিক্স কর্পোরেশন',
+    companyLogoText: 'Electronics Conglomerate',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=faces',
+    comment: 'লিন সিক্স সিগমা মেথডোলজি এবং ইনভেন্টরি অপটিমাইজেশন টেকনিক্স আমাদের ফ্যাক্টরির ডেলিভারি সাইকেল ৩০% দ্রুততর করেছে। চার্টার্ড অফিসারের সার্টিফিকেট ইন্ডাস্ট্রি মহলে ব্যাপকভাবে প্রশংসিত।',
+    commentEn: 'Lean Six Sigma methodology and inventory optimization reduced our factory lead times by 30%. Chartered Officer credentials carry tremendous weight across corporate Bangladesh.',
+    rating: 5,
+  },
+];
+
+export interface VerifiedCertificate {
+  id: string;
+  credentialId: string;
+  studentName: string;
+  studentEmail: string;
+  courseTitle: string;
+  courseTitleEn: string;
+  batchNumber: string;
+  issueDate: string;
+  verificationCode: string;
+  btebRegistrationNo: string;
+  grade: string;
+  score?: number;
+  status: 'Verified & Active' | 'Active' | 'Revoked';
+  leadFaculty: string;
+  modulesCompleted: number;
+  capstoneProject: string;
+}
+
+export const CERTIFICATES_DB: VerifiedCertificate[] = [
+  {
+    id: 'COL-CFO-2025-9921',
+    credentialId: 'COL-CFO-2025-9921',
+    studentName: 'তানভীর আহমেদ চৌধুরী',
+    studentEmail: 'tanvir.ahmed@conglomerate-bd.com',
+    courseTitle: 'Chartered Financial Officer (CFO) 1-Year Program',
+    courseTitleEn: 'Chartered Financial Officer (CFO) 1-Year Program',
+    batchNumber: 'ব্যাচ ১৮ (Cohort 18)',
+    issueDate: '১৫ আগস্ট, ২০২৫',
+    verificationCode: 'BTEB-COL-992184-AUTH',
+    btebRegistrationNo: 'BTEB/TR/COL/2024/09812',
+    grade: 'Executive Distinction (CGPA 3.96 / 4.00)',
+    status: 'Verified & Active',
+    leadFaculty: 'মো. শফিকুল আলম, FCA, FCMA',
+    modulesCompleted: 36,
+    capstoneProject: 'DSE তালিকাভুক্ত টেক্সটাইল গ্রুপ পুনর্বিন্যাস ও ৩০০ কোটি টাকার করপোরেট বন্ড ইস্যু মডেলিং',
+  },
+  {
+    id: 'COL-VAT-2024-8842',
+    credentialId: 'COL-VAT-2024-8842',
+    studentName: 'ফারজানা আক্তার, ACA',
+    studentEmail: 'farzana.akhtar@pharmagroup.com',
+    courseTitle: 'PGD in Customs, VAT, TAX & Trade Management',
+    courseTitleEn: 'Post Graduate Diploma in Customs, VAT, TAX & Trade Management',
+    batchNumber: 'ব্যাচ ১২ (Cohort 12)',
+    issueDate: '১০ ডিসেম্বর, ২০২৪',
+    verificationCode: 'BTEB-COL-884210-AUTH',
+    btebRegistrationNo: 'BTEB/TR/COL/2024/07421',
+    grade: 'A+ (Top 1% Percentile)',
+    status: 'Verified & Active',
+    leadFaculty: 'মোহাম্মদ মনিরুজ্জামান, FCMA',
+    modulesCompleted: 24,
+    capstoneProject: 'নতুন আয়কর আইন ২০২৩ অনুযায়ী মাল্টিন্যাশনাল ফার্মা ট্রান্সফার প্রাইসিং ও মুসক ৯.১ ফাইল',
+  },
+  {
+    id: 'COL-SAP-2025-4120',
+    credentialId: 'COL-SAP-2025-4120',
+    studentName: 'মাহমুদুল হাসান',
+    studentEmail: 'mahmud.h@fmcg-corp.com',
+    courseTitle: 'Advanced Fintech with SAP-FICO & Power BI Analytics',
+    courseTitleEn: 'Advanced Fintech with SAP-FICO & Power BI Analytics',
+    batchNumber: 'ব্যাচ ০৯ (Cohort 09)',
+    issueDate: '২২ মে, ২০২৫',
+    verificationCode: 'BTEB-COL-412078-AUTH',
+    btebRegistrationNo: 'BTEB/TR/COL/2025/03119',
+    grade: 'Executive Distinction (A+)',
+    status: 'Verified & Active',
+    leadFaculty: 'ফারুক আহমেদ (SAP Solution Architect)',
+    modulesCompleted: 16,
+    capstoneProject: 'এন্টারপ্রাইজ এসএপি এস/৪ হানা জেনারেল লেজার (GL) ও পাওয়ার বিআই ড্যাশবোর্ড বাস্তবায়ন',
+  },
+  {
+    id: 'COL-SCM-2025-3319',
+    credentialId: 'COL-SCM-2025-3319',
+    studentName: 'আহমেদ সাদিক',
+    studentEmail: 'ahmed.sadiq@electronics-plc.com',
+    courseTitle: 'PGD in Logistics, Port Customs & Supply Chain Analytics',
+    courseTitleEn: 'PGD in Logistics, Port Customs & Supply Chain Analytics',
+    batchNumber: 'ব্যাচ ০৭ (Cohort 07)',
+    issueDate: '৫ মার্চ, ২০২৫',
+    verificationCode: 'BTEB-COL-331945-AUTH',
+    btebRegistrationNo: 'BTEB/TR/COL/2024/05914',
+    grade: 'A+ (Honors)',
+    status: 'Verified & Active',
+    leadFaculty: 'মো. শফিকুল আলম, FCA, FCMA',
+    modulesCompleted: 18,
+    capstoneProject: 'চট্টগ্রাম বন্দর সিঅ্যান্ডএফ কাস্টমস ক্লিয়ারেন্স ও লিন সিক্স সিগমা ইনভেন্টরি অটোমেশন',
+  },
+];
+
+export interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  titleEn: string;
+  category: string;
+  categoryLabel: string;
+  excerpt: string;
+  excerptEn: string;
+  keyTakeaways: string[];
+  content: string[];
+  readTime: string;
+  date: string;
+  publishedDate: string;
+  author: {
+    name: string;
+    role: string;
+    avatar: string;
+  };
+  coverImage: string;
+  tags: string[];
+  relatedCourseId: string;
+}
+
+export const BLOG_POSTS: BlogPost[] = [
+  {
+    id: 'blog-1',
+    slug: 'income-tax-act-2023-corporate-implications',
+    title: 'নতুন আয়কর আইন ২০২৩: করপোরেট প্রতিষ্ঠান ও সিএফওদের প্রস্তুতি নির্দেশিকা',
+    titleEn: 'Income Tax Act 2023: Comprehensive Strategic Guide for Corporate CFOs',
+    category: 'tax-vat',
+    categoryLabel: 'করপোরেট ট্যাক্স ও অডিট',
+    excerpt: 'নতুন আয়কর আইনের আওতায় ন্যূনতম করের হার, উইথহোল্ডিং ট্যাক্স ও ধারা ৮২সি এর প্রয়োগ সংক্রান্ত খুঁটিনাটি বিশ্লেষণ।',
+    excerptEn: 'Detailed analytical roadmap for corporate tax compliance, withholding tax schedules, and Section 82C minimum tax under Income Tax Act 2023.',
+    keyTakeaways: [
+      'ধারা ৮২সি অনুযায়ী গ্রস রিসিপ্টসের উপর ন্যূনতম করের পরিধি এবং রিয়াত কাঠামো।',
+      'ত্রৈমাসিক ও মাসিক ভিত্তিতে এনবিআরের অনলাইন পোর্টালে উইথহোল্ডিং ট্যাক্স রিটার্ন জমাদান।',
+      'মাল্টিন্যাশনাল প্রতিষ্ঠানের ইন্টার-কোম্পানি ট্রানজেকশনে আর্মস লেন্থ প্রাইসিং ও ট্রান্সফার প্রাইসিং কমপ্লায়েন্স।'
+    ],
+    content: [
+      'আয়কর আইন ২০২৩ বাংলাদেশের করপোরেট ফিন্যান্সের ক্ষেত্রে একটি বড় রূপান্তর নিয়ে এসেছে। নতুন এই বিধিমালার অধীনে ট্যাক্স ডিডাকশন অ্যাট সোর্স (TDS), ক্যাপিটাল এক্সপেন্ডিচার অ্যালাউন্স, এবং ই-রিটার্ন কমপ্লায়েন্স প্রতিটি সিএফও এবং হেড অব ফিন্যান্সের জন্য কেন্দ্রীয় আলোচ্য বিষয় হয়ে উঠেছে।',
+      'ধারা ৮২সি ও মিনিমাম ট্যাক্স কাঠামো: নতুন বিধিমালার আলোকে গ্রস রিসিপ্টসের উপর ন্যূনতম করের হিসাব এবং কোনো কোনো খাতে আগাম করই চূড়ান্ত করদায় হিসেবে গণ্য হবে তা নির্ধারণ করা আবশ্যক। বিশেষ করে রপ্তানিমুখী তৈরি পোশাক ও শিল্প খাতে উৎসে কর কর্তনের বিধানাবলী সূক্ষ্মভাবে পর্যালোচনা করা প্রয়োজন।',
+      'ইন্টারন্যাশনাল ট্রান্সফার প্রাইসিং (TP): মাল্টিন্যাশনাল সাবসিডিয়ারি এবং সিস্টার কনসার্নদের মধ্যে ইন্টার-কোম্পানি লেনদেনের ক্ষেত্রে আর্মস লেন্থ প্রাইসিং নীতি বজায় রাখা ও চার্টার্ড অ্যাকাউন্ট্যান্টস ফার্ম দ্বারা ভেরিফাইড অডিট রিপোর্ট জমাদান বাধ্যতামূলক করা হয়েছে।',
+      'চার্টার্ড অফিসার লিমিটেড (COL) পরিচালিত পোস্ট গ্র্যাজুয়েট ডিপ্লোমা ইন ট্যাক্সেশন অ্যান্ড করপোরেট ল প্রোগ্রামে বাস্তব কেস স্টাডির মাধ্যমে এই প্রতিটি ধারা প্র্যাকটিক্যালি শেখানো হয়।'
+    ],
+    readTime: '৬ মিনিট পাঠ',
+    date: '১৪ জুন, ২০২৫',
+    publishedDate: '১৪ জুন, ২০২৫',
+    author: {
+      name: 'মো. শফিকুল আলম, FCA, FCMA',
+      role: 'প্রধান ফ্যাকাল্টি ও এক্সিকিউটিভ ডিরেক্টর, COL',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=faces',
+    },
+    coverImage: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=500&fit=crop',
+    tags: ['আয়কর আইন ২০২৩', 'Corporate Tax', 'CFO Leadership', 'Tax Return', 'NBR Rules'],
+    relatedCourseId: 'vat-tax-customs-diploma',
+  },
+  {
+    id: 'blog-2',
+    slug: 'financial-modeling-dcf-valuation-bangladesh',
+    title: 'বাংলাদেশের শীর্ষ করপোরেট প্রতিষ্ঠানে ডিসিএফ (DCF) ভ্যালুয়েশন ও ফিন্যান্সিয়াল মডেলিংয়ের ব্যবহার',
+    titleEn: 'Discounted Cash Flow (DCF) Valuation in Bangladeshi Conglomerates',
+    category: 'cfo-finance',
+    categoryLabel: 'ফিন্যান্সিয়াল মডেলিং',
+    excerpt: 'ডিএসই এবং ওটিসি প্ল্যাটফর্মে তালিকাভুক্ত কোম্পানিগুলোর মার্জার ও অধিগ্রহণে (M&A) ডব্লিউএসিসি এবং ফ্রি ক্যাশ ফ্লো নির্ণয়ের ধাপে ধাপে গাইড।',
+    excerptEn: 'Step-by-step masterclass on DCF financial modeling, Free Cash Flow to Firm (FCFF), and WACC computations for DSE listed companies.',
+    keyTakeaways: [
+      'ফ্রি ক্যাশ ফ্লো টু ফার্ম (FCFF) এবং ফ্রি ক্যাশ ফ্লো টু ইক্যুইটি (FCFE) এর তাত্ত্বিক ও ব্যবহারিক পার্থক্য।',
+      'ওয়েটেড অ্যাভারেজ কস্ট অব ক্যাপিটাল (WACC) নির্ধারণে দেশীয় কর কাঠামো ও ট্রেজারি বিল ইল্ড কার্ভ ব্যবহার।',
+      'টার্মিনাল গ্রোথ রেট এবং এক্সিট ইভি/ইবিআইটিডিএ মাল্টিপল ভিত্তিক সেনসিটিভিটি ম্যাট্রিক্স তৈরি।'
+    ],
+    content: [
+      'কৌশলগত বিনিয়োগ এবং অধিগ্রহণের ক্ষেত্রে সঠিক ভ্যালুয়েশন ছাড়া বোর্ড অব ডিরেক্টরস অনুমোদন দিতে পারে না। বাংলাদেশের শিল্পখাতে বর্তমানে ফ্রি ক্যাশ ফ্লো টু ফার্ম (FCFF) এবং ওয়াক (WACC) নির্ধারণে উন্নত মাইক্রোসফট এক্সেল ও পাওয়ার বিআই ব্যবহৃত হচ্ছে।',
+      'ঐতিহাসিক ৩-৫ বছরের পিঅ্যান্ডএল ও ব্যালান্স শিট নরমালাইজেশন করে নন-অপারেটিং ইনকাম এবং এককালীন ব্যয়গুলো বাদ দিয়ে অপারেটিং মার্জিন আলাদা করা হয়।',
+      'টার্মিনাল ভ্যালু এবং এক্সিট মাল্টিপল নির্ধারণের ক্ষেত্রে দেশীয় জিডিপি প্রবৃদ্ধি ও দীর্ঘমেয়াদি মুদ্রাস্ফীতির হার বিবেচনায় নিয়ে সেনসিটিভিটি টেবিল তৈরি করা জরুরি।'
+    ],
+    readTime: '৮ মিনিট পাঠ',
+    date: '২ মে, ২০২৫',
+    publishedDate: '২ মে, ২০২৫',
+    author: {
+      name: 'মোহাম্মদ তানভীর আহমেদ, এফসিএ',
+      role: 'গ্রুপ সিএফও ও লিড ট্রেইনার',
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=faces',
+    },
+    coverImage: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=500&fit=crop',
+    tags: ['DCF Valuation', 'Financial Modeling', 'WACC', 'Excel Modeling', 'Investment Banking'],
+    relatedCourseId: 'cfo-executive-program',
+  },
+  {
+    id: 'blog-3',
+    slug: 'sap-fico-enterprise-automation-guide',
+    title: 'এসএপি এস/৪ হানা (SAP S/4HANA) ফিকো দিয়ে করপোরেট অ্যাকাউন্টস অটোমেশন',
+    titleEn: 'Automating Corporate Finance & Ledger Reporting with SAP-FICO',
+    category: 'fintech-erp',
+    categoryLabel: 'ফিনটেক ও এন্টারপ্রাইজ ইআরপি',
+    excerpt: 'জেনারেল লেজার (FI-GL), অ্যাকাউন্টস পেয়াবল (FI-AP) এবং অটোমেটিক মান্থ-এন্ড ক্লোজিং কনফিগারেশনের বিস্তারিত।',
+    excerptEn: 'Comprehensive guide to SAP S/4HANA FI-GL, FI-AP, and automated month-end financial closing workflows.',
+    keyTakeaways: [
+      'চার্ট অব অ্যাকাউন্টস (COA) স্ট্রাকচারিং ও রিয়েল-টাইম সাব-লেজার ইন্টিগ্রেশন।',
+      'ব্যাংক অটো-রিকনসিলিয়েশন ও ভেন্ডর পেমেন্ট ক্লিয়ারিং প্রসেস অপটিমাইজেশন।',
+      'মাসিক আর্থিক বিবরণী (P&L, Balance Sheet) নিমিষে এক্সট্রাক্ট করার কনফিগারেশন।'
+    ],
+    content: [
+      'ম্যানুয়াল স্প্রেডশিটের যুগ শেষ। শীর্ষস্থানীয় ফার্মাসিউটিক্যালস, টেক্সটাইল এবং এফএমসিজি প্রতিষ্ঠানগুলো এখন সম্পূর্ণভাবে এসএপি এস/৪ হানা ইআরপি সিস্টেমে নিজেদের অর্থ ও হিসাবরক্ষণ পরিচালনা করছে।',
+      'জেনারেল লেজার (FI-GL) এবং অ্যাকাউন্টস পেয়াবল (FI-AP) এর মাধ্যমে শত শত ভেন্ডর ইনভয়েস ও ব্যাংক লেনদেনের স্বয়ংক্রিয় রিকনসিলিয়েশন নিশ্চিত করা যায়, যা অডিটে শতভাগ স্বচ্ছতা আনে।',
+      'চার্টার্ড অফিসার লিমিটেডের ল্যাবে শিক্ষার্থীরা সরাসরি লাইভ এসএপি এস/৪ হানা সার্ভারে কনফিগারেশন প্র্যাকটিস করার সুযোগ পান।'
+    ],
+    readTime: '৫ মিনিট পাঠ',
+    date: '২১ এপ্রিল, ২০২৫',
+    publishedDate: '২১ এপ্রিল, ২০২৫',
+    author: {
+      name: 'ফারুক আহমেদ',
+      role: 'এসএপি সলিউশন আর্কিটেক্ট ও সিনিয়র ফ্যাকাল্টি',
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=faces',
+    },
+    coverImage: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=800&h=500&fit=crop',
+    tags: ['SAP FICO', 'ERP', 'Finance Automation', 'Accounting', 'PowerBI'],
+    relatedCourseId: 'fintech-sap-fico-mastery',
+  },
+];
+
+export interface PracticeChallenge {
+  id: string;
+  title: string;
+  titleEn: string;
+  category: string;
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+  timeEstimate: string;
+  tags: string[];
+  description: string;
+  descriptionEn: string;
+  starterCode: string;
+  solutionCode: string;
+  testCases: {
+    input: string;
+    expected: string;
+    expectedOutput: string;
+    description: string;
+  }[];
+}
+
+export const PRACTICE_CHALLENGES: PracticeChallenge[] = [
+  {
+    id: 'calc-wacc',
+    title: 'ডব্লিউএসিসি (WACC) মূলধন ব্যয় নির্ধারণ অ্যালগরিদম',
+    titleEn: 'Weighted Average Cost of Capital (WACC) Calculation',
+    category: 'JavaScript',
+    difficulty: 'Easy',
+    timeEstimate: '১৫ মিনিট',
+    tags: ['WACC', 'Corporate Finance', 'Valuation', 'CFO Core'],
+    description: 'একটি প্রতিষ্ঠানের ইক্যুইটি অনুপাত, ডেট অনুপাত, কস্ট অব ইক্যুইটি (Ke), কস্ট অব ডেট (Kd) এবং করপোরেট কর হার (t) ইনপুট নিয়ে সঠিক WACC (দশমিকে ২ স্থান পর্যন্ত) রিটার্ন করুন।',
+    descriptionEn: 'Calculate the WACC given weight of equity, weight of debt, cost of equity, pre-tax cost of debt, and corporate tax rate.',
+    starterCode: `function calculateWACC(weightEquity, weightDebt, costEquity, costDebt, taxRate) {
+  // WACC = (E/V * Re) + (D/V * Rd * (1 - Tc))
+  // Return the calculated rate rounded to 2 decimal places (e.g. 10.45)
+  return 0;
+}`,
+    solutionCode: `function calculateWACC(weightEquity, weightDebt, costEquity, costDebt, taxRate) {
+  const equityPart = weightEquity * costEquity;
+  const debtPart = weightDebt * costDebt * (1 - taxRate);
+  return Number((equityPart + debtPart).toFixed(2));
+}`,
+    testCases: [
+      {
+        input: '0.6, 0.4, 14, 8, 0.25',
+        expected: '10.8',
+        expectedOutput: '10.8',
+        description: 'সাধারণ মূলধন কাঠামো (৬০% ইক্যুইটি, ৪০% ডেট, ২৫% কর)',
+      },
+      {
+        input: '1.0, 0.0, 12, 0, 0.25',
+        expected: '12',
+        expectedOutput: '12',
+        description: '১০০% ইক্যুইটি ভিত্তিক প্রতিষ্ঠান',
+      },
+    ],
+  },
+  {
+    id: 'calc-vat-mushak',
+    title: 'মুসক ৯.১ ভ্যাট ও নিট প্রদেয় কর ক্যালকুলেটর',
+    titleEn: 'NBR VAT 9.1 Net Payable Computation',
+    category: 'React',
+    difficulty: 'Medium',
+    timeEstimate: '২০ মিনিট',
+    tags: ['NBR VAT', 'Mushak 9.1', 'Input Tax', 'Taxation'],
+    description: 'মোট বিক্রয়মূল্য (Gross Sales) এবং ইনপুট কাঁচামালের ক্রয়ের উপর প্রদত্ত ভ্যাট (Input Tax Credit) থেকে ১৫% স্ট্যান্ডার্ড রেটে নেট সরকারি ট্রেজারি পেমেন্ট নির্ধারণ করুন।',
+    descriptionEn: 'Compute the net VAT payable to government treasury after deducting eligible input tax credit.',
+    starterCode: `function calculateNetVAT(grossSales, inputTaxCredit, vatRate = 0.15) {
+  // Output VAT = grossSales * vatRate
+  // Net Payable = Output VAT - inputTaxCredit
+  return 0;
+}`,
+    solutionCode: `function calculateNetVAT(grossSales, inputTaxCredit, vatRate = 0.15) {
+  const outputVAT = grossSales * vatRate;
+  const payable = Math.max(0, outputVAT - inputTaxCredit);
+  return Math.round(payable);
+}`,
+    testCases: [
+      {
+        input: '1000000, 90000, 0.15',
+        expected: '60000',
+        expectedOutput: '60000',
+        description: '১৫% স্ট্যান্ডার্ড ভ্যাট রেটে ইনপুট ক্রেডিট কর্তন',
+      },
+    ],
+  },
+  {
+    id: 'dcf-npv',
+    title: 'ডিসকাউন্টেড ক্যাশ ফ্লো (DCF) এবং নিট বর্তমান মূল্য (NPV)',
+    titleEn: 'Discounted Cash Flow Net Present Value (NPV)',
+    category: 'Algorithms',
+    difficulty: 'Hard',
+    timeEstimate: '২৫ মিনিট',
+    tags: ['DCF', 'NPV', 'Capital Budgeting', 'Financial Modeling'],
+    description: 'প্রারম্ভিক বিনিয়োগ (Initial Investment), ডিসকাউন্ট রেট (r), এবং পরবর্তী বছরগুলোর নগদ প্রবাহের অ্যারে নিয়ে নিট প্রেজেন্ট ভ্যালু (NPV) নির্ধারণ করুন।',
+    descriptionEn: 'Calculate NPV given initial outlay, discount rate, and an array of periodic future cash flows.',
+    starterCode: `function calculateNPV(initialOutlay, discountRate, cashFlows) {
+  // NPV = Sum of [ CF_t / (1 + r)^t ] - initialOutlay
+  return 0;
+}`,
+    solutionCode: `function calculateNPV(initialOutlay, discountRate, cashFlows) {
+  let pvSum = 0;
+  for (let t = 0; t < cashFlows.length; t++) {
+    pvSum += cashFlows[t] / Math.pow(1 + discountRate, t + 1);
+  }
+  return Math.round(pvSum - initialOutlay);
+}`,
+    testCases: [
+      {
+        input: '500000, 0.10, [150000, 200000, 250000, 180000]',
+        expected: '111669',
+        expectedOutput: '111669',
+        description: '১০% ডিসকাউন্ট রেটে ৪ বছরের ক্যাশফ্লো এনপিভি',
+      },
+    ],
+  },
+];
+
+
+
+
