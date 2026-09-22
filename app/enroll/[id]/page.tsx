@@ -32,6 +32,14 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
+function generateReceiptId(gateway: string, dbId?: number | string): { studentId: string; trxId: string } {
+  const ts = Date.now().toString().slice(-6);
+  return {
+    studentId: dbId ? `COL-${dbId}` : `COL-CFO-${ts}`,
+    trxId: `TRX-${gateway.toUpperCase()}-${ts}99`,
+  };
+}
+
 export default function EnrollmentCheckoutPage({ params }: PageProps) {
   const { id } = use(params);
   const router = useRouter();
@@ -110,18 +118,15 @@ export default function EnrollmentCheckoutPage({ params }: PageProps) {
       });
 
       setIsLiveBackend(res.isLiveBackend ?? false);
-      const generatedStudentId = res.data?.id ? `COL-${res.data.id}` : `COL-CFO-${Math.floor(100000 + Math.random() * 900000)}`;
-      const generatedTrxId = `TRX-${selectedGateway.toUpperCase()}-${Math.floor(10000000 + Math.random() * 90000000)}`;
-
-      setStudentId(generatedStudentId);
-      setTrxId(generatedTrxId);
+      const receipt = generateReceiptId(selectedGateway, res.data?.id);
+      setStudentId(receipt.studentId);
+      setTrxId(receipt.trxId);
       enrollInCourse(course);
     } catch {
       setIsLiveBackend(false);
-      const generatedStudentId = `COL-CFO-${Math.floor(100000 + Math.random() * 900000)}`;
-      const generatedTrxId = `TRX-${selectedGateway.toUpperCase()}-${Math.floor(10000000 + Math.random() * 90000000)}`;
-      setStudentId(generatedStudentId);
-      setTrxId(generatedTrxId);
+      const receipt = generateReceiptId(selectedGateway);
+      setStudentId(receipt.studentId);
+      setTrxId(receipt.trxId);
       enrollInCourse(course);
     } finally {
       setIsProcessing(false);

@@ -23,21 +23,56 @@ import {
   Award,
   ShieldCheck,
   Building2,
-  RefreshCw
+  RefreshCw,
+  UserCheck,
+  X,
 } from 'lucide-react';
 
 function CoursesContent() {
   const searchParams = useSearchParams();
-  const initialCategory = searchParams.get('category') || 'all';
-  const initialSearch = searchParams.get('search') || '';
+  const urlCategory = searchParams.get('category') || 'all';
+  const urlSearch = searchParams.get('search') || '';
+  const urlFacilitator = searchParams.get('facilitator') || '';
 
   const { lang, courses, refreshCourses, coursesLoading, isLiveApiConnected } = useCfo();
-  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
-  const [searchQuery, setSearchQuery] = useState<string>(initialSearch);
+  const [selectedCategory, setSelectedCategory] = useState<string>(urlCategory);
+  const [searchQuery, setSearchQuery] = useState<string>(urlSearch);
+  const [clearedFacilitator, setClearedFacilitator] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<'featured' | 'rating' | 'price-asc' | 'price-desc'>('featured');
+
+  const selectedFacilitator = clearedFacilitator ? '' : urlFacilitator;
 
   const filteredCourses = useMemo(() => {
     let list = [...(courses && courses.length > 0 ? courses : [])];
+
+    // Filter by Specific Facilitator / Educator
+    if (selectedFacilitator.trim()) {
+      const target = selectedFacilitator.toLowerCase().trim();
+      // Extract first/last tokens for robust matching (e.g. "Abir Hasan" matches "Md. Abir Hasan")
+      const tokens = target.split(/\s+/).filter((t) => t.length > 2 && !['md', 'md.', 'mr', 'mr.', 'ms', 'mrs'].includes(t));
+
+      list = list.filter((c) => {
+        // 1. Direct educator string match
+        if (c.educator) {
+          const ed = c.educator.toLowerCase();
+          if (ed.includes(target) || target.includes(ed)) return true;
+          if (tokens.some((token) => ed.includes(token))) return true;
+        }
+
+        // 2. Mentors list
+        if (c.mentors && c.mentors.length > 0) {
+          const mentorMatches = c.mentors.some((m) => {
+            const mn = m.name.toLowerCase();
+            if (mn.includes(target) || target.includes(mn)) return true;
+            if (tokens.some((token) => mn.includes(token))) return true;
+            return false;
+          });
+          if (mentorMatches) return true;
+        }
+
+        return false;
+      });
+    }
 
     // Filter by Category
     if (selectedCategory !== 'all') {
@@ -52,7 +87,9 @@ function CoursesContent() {
           c.title.toLowerCase().includes(q) ||
           c.titleEn.toLowerCase().includes(q) ||
           c.categoryLabel.toLowerCase().includes(q) ||
-          c.tags.some((t) => t.toLowerCase().includes(q))
+          c.tags.some((t) => t.toLowerCase().includes(q)) ||
+          c.educator?.toLowerCase().includes(q) ||
+          c.mentors?.some((m) => m.name.toLowerCase().includes(q))
       );
     }
 
@@ -66,7 +103,7 @@ function CoursesContent() {
     }
 
     return list;
-  }, [selectedCategory, searchQuery, sortBy, courses]);
+  }, [selectedFacilitator, selectedCategory, searchQuery, sortBy, courses]);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
@@ -165,6 +202,34 @@ function CoursesContent() {
           </div>
         </div>
 
+        {/* Active Facilitator Filter Badge */}
+        {selectedFacilitator && (
+          <div className="mb-6 p-4 rounded-2xl bg-amber-50/80 border border-[#C8963E]/30 flex flex-wrap items-center justify-between gap-3 animate-in fade-in duration-200">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-[#0A192F] text-[#E5A93C] flex items-center justify-center shrink-0">
+                <UserCheck className="w-4 h-4" />
+              </div>
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-wider text-amber-900">
+                  {lang === 'bn' ? 'নির্বাচিত ফ্যাকাল্টি ফিল্টার' : 'Filtered by Facilitator'}
+                </p>
+                <p className="text-sm font-bold text-slate-900">
+                  {selectedFacilitator}
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setClearedFacilitator(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-amber-300 text-amber-900 hover:bg-amber-100 text-xs font-bold transition-colors cursor-pointer shadow-2xs"
+            >
+              <X className="w-3.5 h-3.5" />
+              <span>{lang === 'bn' ? 'সব শিক্ষকের কোর্স দেখুন' : 'Show All Facilitators'}</span>
+            </button>
+          </div>
+        )}
+
         {/* Category Pills */}
         <div className="mb-8">
           <CategoryPills
@@ -198,6 +263,7 @@ function CoursesContent() {
               onClick={() => {
                 setSelectedCategory('all');
                 setSearchQuery('');
+                setClearedFacilitator(true);
               }}
               className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#C8963E] to-[#B8860B] text-slate-950 font-serif font-black text-xs cursor-pointer shadow-xs"
             >

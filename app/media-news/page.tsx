@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -37,23 +37,26 @@ export default function MediaNewsPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  // Load articles
-  const loadArticles = useCallback(async (page: number = 1) => {
-    setIsLoading(true);
-    try {
-      const res = await fetchNewsArticles(page);
-      setArticles(res.items);
-      setPagination(res.pagination);
-    } catch {
-      // Keep initial
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
-    loadArticles(currentPage);
-  }, [loadArticles, currentPage]);
+    let ignore = false;
+    fetchNewsArticles(currentPage)
+      .then((res) => {
+        if (!ignore) {
+          setArticles(res.items);
+          setPagination(res.pagination);
+          setIsLoading(false);
+        }
+      })
+      .catch(() => {
+        if (!ignore) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, [currentPage]);
 
   // Dynamic categories from API records
   const dynamicCategories = React.useMemo(() => {

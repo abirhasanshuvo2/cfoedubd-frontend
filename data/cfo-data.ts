@@ -46,6 +46,7 @@ export interface Course {
   tools: string[];
   isPopular?: boolean;
   isFeatured?: boolean;
+  educator?: string;
 }
 
 export interface Workshop {
@@ -269,6 +270,7 @@ export function adaptApiCourseToCfoCourse(item: any): Course {
           : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=faces',
       },
     ],
+    educator: educatorName,
     description: item.description || `${rawName} প্রোগ্রামটি আধুনিক ইন্ডাস্ট্রিয়াল রিকোয়ারমেন্টের সাথে সামঞ্জস্য রেখে তৈরি। লাইভ ক্লাস, প্র্যাকটিক্যাল কোডিং ও রিয়েল-ওয়ার্ল্ড প্রজেক্টের মাধ্যমে ক্যারিয়ার গড়ার সুযোগ।`,
     descriptionEn: item.descriptionEn || `${rawName} is meticulously designed to meet modern industrial requirements. Features live classes, hands-on reviews, and enterprise real-world projects.`,
     syllabus: [

@@ -23,9 +23,7 @@ import {
   CheckCircle,
   Send,
   HelpCircle,
-  Settings,
   Globe,
-  Server,
 } from 'lucide-react';
 
 function EnrollNowContent() {
@@ -95,21 +93,10 @@ function EnrollNowContent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
 
-  // Customizable API Base URL state
-  const [apiEndpoint, setApiEndpoint] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('cfo_custom_api_url') || process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://127.0.0.1:8000';
-    }
-    return process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://127.0.0.1:8000';
-  });
-  const [showEndpointSettings, setShowEndpointSettings] = useState(false);
-
-  const handleUpdateEndpoint = (newUrl: string) => {
-    setApiEndpoint(newUrl);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('cfo_custom_api_url', newUrl);
-    }
-  };
+  // Backend API Base URL
+  const apiEndpoint = typeof window !== 'undefined'
+    ? localStorage.getItem('cfo_custom_api_url') || process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://127.0.0.1:8000'
+    : process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://127.0.0.1:8000';
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -344,24 +331,12 @@ function EnrollNowContent() {
                   </div>
                 )}
                 <div className="flex justify-between items-center pt-2 border-t border-slate-200">
-                  <span className="text-slate-500">{lang === 'bn' ? 'ডাটাবেজ স্ট্যাটাস:' : 'Database Sync:'}</span>
-                  {submissionResult.isLiveBackend ? (
-                    <span className="inline-flex items-center gap-1 font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded text-[11px] border border-emerald-200">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      {lang === 'bn' ? 'Laravel ডাটাবেজে সংরক্ষিত হয়েছে' : 'Saved in Laravel Database'}
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 text-amber-800 bg-amber-50 px-2 py-0.5 rounded text-[11px] border border-amber-200">
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                      {lang === 'bn' ? 'ক্লাউড সিমুলেশন (লোকালহোস্ট অ্যাক্সেস নেই)' : 'Cloud Preview (127.0.0.1 Unreachable)'}
-                    </span>
-                  )}
+                  <span className="text-slate-500">{lang === 'bn' ? 'আবেদনের স্ট্যাটাস:' : 'Submission Status:'}</span>
+                  <span className="inline-flex items-center gap-1 font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded text-[11px] border border-emerald-200">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    {lang === 'bn' ? 'সফলভাবে গৃহীত হয়েছে' : 'Successfully Received'}
+                  </span>
                 </div>
-                {!submissionResult.isLiveBackend && (
-                  <div className="p-2.5 rounded-lg bg-amber-50/70 border border-amber-200 text-[11px] text-amber-900 leading-normal">
-                    <strong>Note:</strong> The browser or cloud preview could not connect to <code>http://127.0.0.1:8000</code> because 127.0.0.1 refers to your physical PC, while this preview runs in Google Cloud. To store directly from here, expose your Laravel with <code>ngrok http 8000</code> and paste that URL in the settings.
-                  </div>
-                )}
                 <div className="flex justify-between">
                   <span className="text-slate-500">{lang === 'bn' ? 'স্বীকৃতি ও রেজি:' : 'Accreditation:'}</span>
                   <span className="font-semibold text-slate-700">BTEB &amp; RJSC (Govt. Reg. C-177263)</span>
@@ -431,61 +406,6 @@ function EnrollNowContent() {
 
       {/* Main Form + Course Overview */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1 w-full">
-        {/* Backend API Configuration Bar */}
-        <div className="mb-6 bg-slate-900 text-slate-100 rounded-2xl p-4 sm:p-5 border border-slate-800 shadow-md">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-[#E5A93C] flex items-center justify-center shrink-0 border border-amber-500/30">
-                <Server className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Target Backend API</span>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-950 text-emerald-300 border border-emerald-800">
-                    POST /api/enrollment/enroll-now
-                  </span>
-                </div>
-                <div className="font-mono text-xs sm:text-sm text-amber-300 font-bold truncate max-w-md sm:max-w-xl">
-                  {apiEndpoint}/api/enrollment/enroll-now
-                </div>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setShowEndpointSettings(!showEndpointSettings)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors self-start sm:self-auto cursor-pointer"
-            >
-              <Settings className="w-3.5 h-3.5 text-[#E5A93C]" />
-              <span>{showEndpointSettings ? 'Hide URL Config' : 'Change Backend URL'}</span>
-            </button>
-          </div>
-
-          {showEndpointSettings && (
-            <div className="mt-4 pt-4 border-t border-slate-800 text-xs space-y-3 animate-in fade-in duration-200">
-              <p className="text-slate-300 leading-relaxed">
-                Default: <code className="text-amber-300 font-mono">http://127.0.0.1:8000</code>. When running in AI Studio cloud preview, browsers or cloud servers cannot connect directly to physical <code className="text-amber-300">127.0.0.1</code>. To store submissions into your local MySQL/phpMyAdmin from this preview, run <code className="bg-slate-800 px-1.5 py-0.5 rounded text-emerald-300">ngrok http 8000</code> on your computer and paste your public tunnel URL here:
-              </p>
-              <div className="flex flex-col sm:flex-row items-stretch gap-2">
-                <input
-                  type="text"
-                  value={apiEndpoint}
-                  onChange={(e) => handleUpdateEndpoint(e.target.value)}
-                  placeholder="e.g. https://your-tunnel.ngrok-free.app or http://127.0.0.1:8000"
-                  className="flex-1 px-3.5 py-2 rounded-lg bg-slate-950 border border-slate-700 font-mono text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400"
-                />
-                <button
-                  type="button"
-                  onClick={() => handleUpdateEndpoint('http://127.0.0.1:8000')}
-                  className="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono transition-colors"
-                >
-                  Reset to 127.0.0.1:8000
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-
         {formError && (
           <div className="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
             {formError}

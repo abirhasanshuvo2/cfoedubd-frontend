@@ -214,12 +214,14 @@ export default function FacilitatorPage() {
                           ? educator.courses
                           : ['Chartered Financial Officer (CFO)', 'Corporate Tax & Financial Modeling']
                         ).map((c, i) => (
-                          <span
+                          <Link
                             key={i}
-                            className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-semibold text-slate-700 shadow-2xs"
+                            href={`/courses?search=${encodeURIComponent(c)}`}
+                            className="px-2.5 py-1 rounded-lg bg-white hover:bg-amber-50 border border-slate-200 hover:border-[#C8963E]/40 text-[11px] font-semibold text-slate-700 hover:text-amber-900 shadow-2xs transition-colors"
+                            title={`View batches for ${c}`}
                           >
                             {c}
-                          </span>
+                          </Link>
                         ))}
                       </div>
                     </div>
@@ -235,10 +237,11 @@ export default function FacilitatorPage() {
                     </div>
 
                     <Link
-                      href="/courses"
-                      className="font-bold text-[#0A192F] hover:text-[#C8963E] transition-colors flex items-center gap-1"
+                      href={`/courses?facilitator=${encodeURIComponent(educator.full_name)}`}
+                      className="font-bold text-[#0A192F] hover:text-[#C8963E] transition-colors flex items-center gap-1 group/btn"
                     >
-                      View Batches →
+                      <span>View Batches</span>
+                      <span className="transition-transform group-hover/btn:translate-x-0.5">→</span>
                     </Link>
                   </div>
                 </div>
