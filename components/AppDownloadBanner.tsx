@@ -50,26 +50,30 @@ export default function AppDownloadBanner({ lang }: AppDownloadBannerProps) {
             {/* Store Badges */}
             <div className="flex flex-wrap items-center gap-3 pt-3">
               {/* Google Play */}
-              <button
-                onClick={() => alert(lang === 'bn' ? 'Google Play Store রিডাইরেক্ট হচ্ছে...' : 'Redirecting to Google Play...')}
+              <a
+                href="https://play.google.com"
+                target="_blank"
+                rel="noreferrer"
                 className="px-4 py-2.5 rounded-xl bg-slate-950 hover:bg-slate-900 text-white flex items-center gap-3 transition-colors cursor-pointer shadow-md"
               >
                 <div className="text-left">
                   <p className="text-[9px] uppercase font-semibold text-slate-300">GET IT ON</p>
                   <p className="text-xs font-bold">Google Play</p>
                 </div>
-              </button>
+              </a>
 
               {/* App Store */}
-              <button
-                onClick={() => alert(lang === 'bn' ? 'Apple App Store রিডাইরেক্ট হচ্ছে...' : 'Redirecting to App Store...')}
+              <a
+                href="https://apps.apple.com"
+                target="_blank"
+                rel="noreferrer"
                 className="px-4 py-2.5 rounded-xl bg-slate-950 hover:bg-slate-900 text-white flex items-center gap-3 transition-colors cursor-pointer shadow-md"
               >
                 <div className="text-left">
                   <p className="text-[9px] uppercase font-semibold text-slate-300">Download on the</p>
                   <p className="text-xs font-bold">App Store</p>
                 </div>
-              </button>
+              </a>
             </div>
           </div>
 

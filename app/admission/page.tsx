@@ -37,13 +37,33 @@ export default function AdmissionPage() {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [applicationId, setApplicationId] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
     const randomId = 'COL-ADM-' + Math.floor(100000 + Math.random() * 900000);
     setApplicationId(randomId);
-    setSubmitted(true);
+
+    try {
+      await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          subject: `Admission Application: ${formData.selectedProgram} (${randomId})`,
+          message: `Education: ${formData.education}, Experience: ${formData.workExperience}, Payment Plan: ${formData.paymentPlan}, Mode: ${formData.deliveryMode}`,
+        }),
+      });
+    } catch {
+      // Graceful fallback
+    } finally {
+      setSubmitting(false);
+      setSubmitted(true);
+    }
   };
 
   const steps = [
@@ -348,9 +368,14 @@ export default function AdmissionPage() {
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#C8963E] to-[#B8860B] hover:from-[#d4af37] hover:to-[#C8963E] text-slate-950 font-serif font-black text-sm shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
+                    disabled={submitting}
+                    className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#C8963E] to-[#B8860B] hover:from-[#d4af37] hover:to-[#C8963E] disabled:opacity-50 text-slate-950 font-serif font-black text-sm shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
                   >
-                    <span>{lang === 'bn' ? 'ভর্তি আবেদনপত্র জমা দিন' : 'Submit Admission Application'}</span>
+                    <span>
+                      {submitting
+                        ? (lang === 'bn' ? 'আবেদন জমা হচ্ছে...' : 'Submitting Application...')
+                        : (lang === 'bn' ? 'ভর্তি আবেদনপত্র জমা দিন' : 'Submit Admission Application')}
+                    </span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
                   <p className="text-[11px] text-slate-500 text-center mt-2">

@@ -148,7 +148,7 @@ export default function LearningMethodology({
           </div>
 
           <Link
-            href="/courses/cfo-flagship-1yr"
+            href="/enroll-now?course=Chartered%20Financial%20Officer%20(CFO)"
             className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#C8963E] to-[#B8860B] hover:from-[#d4af37] hover:to-[#C8963E] text-slate-950 font-serif font-black text-xs sm:text-sm flex items-center gap-2 shrink-0 shadow-md transition-all cursor-pointer"
           >
             <span>{lang === 'bn' ? 'CFO প্রোগ্রাম ও ভর্তি ফর্ম' : 'Apply for CFO Program'}</span>

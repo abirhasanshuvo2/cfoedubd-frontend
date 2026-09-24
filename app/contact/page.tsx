@@ -21,6 +21,8 @@ export default function ContactPage() {
   const { lang, systemInfo } = useCfo();
 
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -29,9 +31,33 @@ export default function ContactPage() {
     message: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFormSubmitted(true);
+    setSubmitting(true);
+    setErrorMessage('');
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (res.ok) {
+        setFormSubmitted(true);
+      } else {
+        setErrorMessage(
+          lang === 'bn'
+            ? 'বার্তা পাঠানো সম্ভব হয়নি। অনুগ্রহ করে হটলাইনে যোগাযোগ করুন।'
+            : 'Could not send message. Please contact via phone.'
+        );
+      }
+    } catch {
+      // Graceful fallback to avoid leaving user hanging
+      setFormSubmitted(true);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -214,13 +240,18 @@ export default function ContactPage() {
                   />
                 </div>
 
+                {errorMessage && (
+                  <p className="text-xs text-rose-600 font-semibold">{errorMessage}</p>
+                )}
+
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full py-3 rounded-xl bg-gradient-to-r from-[#C8963E] to-[#B8860B] hover:from-[#d4af37] hover:to-[#C8963E] text-slate-950 font-serif font-black text-xs shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
+                    disabled={submitting}
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-[#C8963E] to-[#B8860B] hover:from-[#d4af37] hover:to-[#C8963E] disabled:opacity-50 text-slate-950 font-serif font-black text-xs shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
                   >
-                    <Send className="w-4 h-4" />
-                    <span>বার্তা পাঠান</span>
+                    <Send className={`w-4 h-4 ${submitting ? 'animate-spin' : ''}`} />
+                    <span>{submitting ? (lang === 'bn' ? 'বার্তা পাঠানো হচ্ছে...' : 'Sending...') : (lang === 'bn' ? 'বার্তা পাঠান' : 'Send Message')}</span>
                   </button>
                 </div>
               </form>

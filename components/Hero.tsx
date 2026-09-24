@@ -157,10 +157,10 @@ export default function Hero({
             {/* Action Buttons */}
             <div className="flex flex-wrap items-center gap-3.5 pt-2">
               <Link
-                href="/courses/cfo-flagship-1yr"
+                href="/enroll-now?course=Chartered%20Financial%20Officer%20(CFO)"
                 className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#C8963E] to-[#B8860B] hover:from-[#d4af37] hover:to-[#C8963E] text-slate-950 font-serif font-black text-xs sm:text-sm flex items-center gap-2 shadow-lg transition-all transform active:scale-95 cursor-pointer"
               >
-                <span>{lang === 'bn' ? 'CFO প্রোগ্রামের বিস্তারিত ও ভর্তি' : 'CFO Flagship Program'}</span>
+                <span>{lang === 'bn' ? 'CFO অনলাইন ভর্তি ফরম' : 'Apply for CFO Program'}</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
 
@@ -169,36 +169,42 @@ export default function Hero({
                 className="px-5 py-3.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-slate-200 font-semibold text-xs sm:text-sm flex items-center gap-2 shadow-sm hover:border-[#C8963E]/60 transition-all cursor-pointer"
               >
                 <FileText className="w-4 h-4 text-[#C8963E]" />
-                <span>{lang === 'bn' ? 'সব কোর্স ও ডিপ্লোমা' : 'All Courses & Diplomas'}</span>
+                <span>{lang === 'bn' ? 'সকল লাইভ কোর্স' : 'All Live Batches'}</span>
               </Link>
 
               <Link
-                href="/admission"
+                href="/certificates"
                 className="px-4 py-3.5 rounded-xl bg-[#1E3A8A]/30 hover:bg-[#1E3A8A]/50 text-slate-200 border border-[#1E3A8A] font-semibold text-xs sm:text-sm flex items-center gap-1.5 transition-all cursor-pointer"
               >
                 <GraduationCap className="w-4 h-4 text-[#C8963E]" />
-                <span>{lang === 'bn' ? 'ভর্তি নির্দেশিকা' : 'Admission Guide'}</span>
+                <span>{lang === 'bn' ? 'সনদ যাচাই করুন' : 'Verify Certificate'}</span>
               </Link>
             </div>
 
             {/* Live Ticker Stats */}
             <div className="pt-6 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div>
-                <p className="text-2xl sm:text-3xl font-serif font-black text-white">২৫,০০০+</p>
+                <p className="text-2xl sm:text-3xl font-serif font-black text-white">
+                  {systemInfo.graduates ? `${systemInfo.graduates}+` : '২৫,০০০+'}
+                </p>
                 <p className="text-xs text-slate-400 font-medium">
                   {lang === 'bn' ? 'গ্র্যাজুয়েট প্রফেশনাল' : 'Graduated Leaders'}
                 </p>
               </div>
               <div>
-                <p className="text-2xl sm:text-3xl font-serif font-black text-[#E5A93C]">১৮তম</p>
+                <p className="text-2xl sm:text-3xl font-serif font-black text-[#E5A93C]">
+                  {systemInfo.classes ? `${systemInfo.classes}+` : '১৮তম'}
+                </p>
                 <p className="text-xs text-slate-400 font-medium">
-                  {lang === 'bn' ? 'চলমান সিএফও ব্যাচ' : 'CFO Batch Enrolling'}
+                  {lang === 'bn' ? 'চলমান ব্যাচ ও কোর্স' : 'Live Batches & Classes'}
                 </p>
               </div>
               <div>
-                <p className="text-2xl sm:text-3xl font-serif font-black text-white">২৫+</p>
+                <p className="text-2xl sm:text-3xl font-serif font-black text-white">
+                  {systemInfo.students ? `${systemInfo.students}+` : '২৫+'}
+                </p>
                 <p className="text-xs text-slate-400 font-medium">
-                  {lang === 'bn' ? 'এফসিএ/এফসিএমএ ফ্যাকাল্টি' : 'FCA/FCMA Mentors'}
+                  {lang === 'bn' ? 'অ্যাক্টিভ শিক্ষার্থী / ফ্যাকাল্টি' : 'Active Students / Mentors'}
                 </p>
               </div>
               <div>
@@ -341,13 +347,13 @@ export default function Hero({
 
                   <div className="flex items-center gap-2">
                     <Link
-                      href={`/courses/${featuredCourse.id}`}
+                      href="/courses"
                       className="px-3.5 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-colors cursor-pointer text-center"
                     >
-                      {lang === 'bn' ? 'সিলেবাস' : 'Syllabus'}
+                      {lang === 'bn' ? 'কোর্সের তালিকা' : 'Courses'}
                     </Link>
                     <Link
-                      href={`/enroll/${featuredCourse.id}`}
+                      href={`/enroll-now?course=${encodeURIComponent(featuredCourse.titleEn || featuredCourse.title)}`}
                       className="px-4 py-2.5 rounded-lg bg-gradient-to-r from-[#C8963E] to-[#B8860B] hover:from-[#d4af37] hover:to-[#C8963E] text-slate-950 text-xs font-serif font-black shadow-md transition-all cursor-pointer text-center"
                     >
                       {lang === 'bn' ? 'অনলাইন ভর্তি' : 'Apply Now'}

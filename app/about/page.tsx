@@ -26,9 +26,24 @@ export default function AboutPage() {
   const { lang, systemInfo } = useCfo();
 
   const metrics = [
-    { number: '৮৪০+', numberEn: '840+', label: 'সার্টিফাইড CFO ও PGD প্রফেশনাল', labelEn: 'Certified CFO Graduates' },
-    { number: '২৫+', numberEn: '25+', label: 'বছর সিনিয়র মেন্টরদের গড় অভিজ্ঞতা', labelEn: 'Years Faculty Experience' },
-    { number: '১৫০+', numberEn: '150+', label: 'শীর্ষ কর্পোরেট রিক্রুটমেন্ট নেটওয়ার্ক', labelEn: 'Corporate Hiring Partners' },
+    { 
+      number: systemInfo.graduates ? `${systemInfo.graduates}+` : '৮৪০+', 
+      numberEn: systemInfo.graduates ? `${systemInfo.graduates}+` : '840+', 
+      label: 'সার্টিফাইড CFO ও PGD প্রফেশনাল', 
+      labelEn: 'Certified CFO Graduates' 
+    },
+    { 
+      number: systemInfo.students ? `${systemInfo.students}+` : '২৫+', 
+      numberEn: systemInfo.students ? `${systemInfo.students}+` : '25+', 
+      label: 'বছর সিনিয়র মেন্টরদের গড় অভিজ্ঞতা', 
+      labelEn: 'Years Faculty Experience' 
+    },
+    { 
+      number: systemInfo.classes ? `${systemInfo.classes}+` : '১৫০+', 
+      numberEn: systemInfo.classes ? `${systemInfo.classes}+` : '150+', 
+      label: 'কর্পোরেট ব্যাচ ও রিক্রুটমেন্ট নেটওয়ার্ক', 
+      labelEn: 'Corporate Batches & Network' 
+    },
     { number: '১০০%', numberEn: '100%', label: 'বিটিইবি ও আরজেএসসি সরকারি স্বীকৃতি', labelEn: 'BTEB & RJSC Accreditations' },
     { number: '৪.৯২/৫', numberEn: '4.92/5', label: 'গড় শিক্ষার্থী ও কর্পোরেট সন্তুষ্টি', labelEn: 'Executive Satisfaction' }
   ];
@@ -154,10 +169,10 @@ export default function AboutPage() {
             <h3 className="text-xl font-serif font-bold text-slate-900">
               {lang === 'bn' ? 'আন্তর্জাতিক মানসম্পন্ন করপোরেট লিডারশিপ তৈরি' : 'Empowering Global Financial Leadership'}
             </h3>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              {lang === 'bn'
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed whitespace-pre-line">
+              {systemInfo.about_first_section || (lang === 'bn'
                 ? 'বাংলাদেশের ব্যবসা-বাণিজ্য ও করপোরেট সেক্টরকে আন্তর্জাতিক মানে উন্নীত করতে সক্ষম সিএফও, ট্যাক্স পার্টনার এবং ফাইন্যান্সিয়াল আর্কিটেক্ট গড়ে তোলা, যারা সততা ও বাস্তব অভিজ্ঞতার সমন্বয়ে বোর্ডরুমে সিদ্ধান্ত দেবেন।'
-                : 'To be the benchmark center of executive finance learning in South Asia, producing leaders capable of navigating complex macroeconomic, tax, and governance realities.'}
+                : 'To be the benchmark center of executive finance learning in South Asia, producing leaders capable of navigating complex macroeconomic, tax, and governance realities.')}
             </p>
           </div>
 
@@ -169,10 +184,10 @@ export default function AboutPage() {
             <h3 className="text-xl font-serif font-bold text-slate-900">
               {lang === 'bn' ? 'তত্ত্ব ও বাস্তব কাজের দূরত্বের অবসান' : 'Bridging Academic Theory with Real Practice'}
             </h3>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              {lang === 'bn'
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed whitespace-pre-line">
+              {systemInfo.about_second_section || (lang === 'bn'
                 ? 'বিশ্বমানের কারিকুলাম, সরাসরি এসএপি-ফাইকো ক্লাউড ল্যাব, জাতীয় রাজস্ব বোর্ডের বাস্তব রিটার্ন ফাইলিং এবং আইসিএবি/আইসিএমএবি ফেলোদের সরাসরি মেন্টরশিপের মাধ্যমে পেশাদারদের হাতে-কলমে দক্ষ করা।'
-                : 'Delivering hands-on boardroom case study pedagogy, automated tax modeling, and enterprise ERP training backed by recognized government credentials.'}
+                : 'Delivering hands-on boardroom case study pedagogy, automated tax modeling, and enterprise ERP training backed by recognized government credentials.')}
             </p>
           </div>
         </div>

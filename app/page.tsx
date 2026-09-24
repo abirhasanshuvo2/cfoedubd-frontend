@@ -9,7 +9,6 @@ import CourseCard from '@/components/CourseCard';
 import CourseDetailsModal from '@/components/CourseDetailsModal';
 import EnrollmentModal from '@/components/EnrollmentModal';
 import StudentLmsModal from '@/components/StudentLmsModal';
-import FreeWorkshops from '@/components/FreeWorkshops';
 import LearningMethodology from '@/components/LearningMethodology';
 import HiringPartners from '@/components/HiringPartners';
 import Testimonials from '@/components/Testimonials';
@@ -25,12 +24,7 @@ import {
   ArrowUpDown,
   CheckCircle2,
   ArrowRight,
-  Code,
-  ShieldCheck,
   BookOpen,
-  Briefcase,
-  Terminal,
-  Award,
   RefreshCw
 } from 'lucide-react';
 
@@ -251,149 +245,6 @@ export default function Home() {
         lang={lang}
         onExploreCourses={scrollToCourses}
       />
-
-      {/* Free Workshops & Masterclasses */}
-      <FreeWorkshops lang={lang} />
-
-      {/* Futuristic Ecosystem: Code Arena, Verified Credentials, Blog, Talent Pool */}
-      <section className="bg-slate-950 text-white py-16 px-4 sm:px-6 lg:px-8 border-y border-slate-800 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(255,192,0,0.12),rgba(0,0,0,0))]" />
-        
-        <div className="max-w-7xl mx-auto relative z-10 space-y-12">
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-700 text-xs font-semibold text-[#FFC000]">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>{lang === 'bn' ? 'আধুনিক এডটেক ইকোসিস্টেম' : 'Next-Gen Learning Ecosystem'}</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white">
-              {lang === 'bn' ? (
-                <>
-                  শুধু কোর্স নয়, ক্যারিয়ার গঠনের <span className="text-[#FFC000]">পরিপূর্ণ প্ল্যাটফর্ম</span>
-                </>
-              ) : (
-                <>
-                  Beyond Lectures: A Complete <span className="text-[#FFC000]">Engineering Foundry</span>
-                </>
-              )}
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-400">
-              {lang === 'bn'
-                ? 'ইন্টারেক্টিভ ইন-ব্রাউজার কোডিং স্যান্ডবক্স, অফিসিয়াল ভেরিফিকেশন লেজার ও ডিরেক্ট টেক হায়ারিং নেটওয়ার্ক।'
-                : 'Interactive in-browser execution sandbox, tamper-proof credential verification, and dedicated talent matching.'}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Card 1: Code Arena */}
-            <Link
-              href="/practice"
-              className="group p-6 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-amber-400/80 transition-all shadow-lg flex flex-col justify-between hover:-translate-y-1"
-            >
-              <div className="space-y-4">
-                <div className="w-12 h-12 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Terminal className="w-6 h-6" />
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-emerald-400 tracking-wider uppercase">Interactive Sandbox</span>
-                  <h3 className="text-base font-black text-white mt-1 group-hover:text-[#FFC000] transition-colors">
-                    {lang === 'bn' ? 'ওস্তাদ কোড এরিনা' : 'Code Arena & Sandbox'}
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                    {lang === 'bn'
-                      ? 'ব্রাউজারে রিয়েল কোড রান করে অ্যালগরিদম ও জব ইন্টারভিউ টাস্ক সল্ভ করুন।'
-                      : 'Solve technical interview coding challenges with live test execution directly in-browser.'}
-                  </p>
-                </div>
-              </div>
-              <div className="pt-4 mt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-amber-400">
-                <span>{lang === 'bn' ? 'প্র্যাকটিস শুরু করুন' : 'Launch Sandbox'}</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </Link>
-
-            {/* Card 2: Verify Certificate */}
-            <Link
-              href="/verify-certificate"
-              className="group p-6 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-amber-400/80 transition-all shadow-lg flex flex-col justify-between hover:-translate-y-1"
-            >
-              <div className="space-y-4">
-                <div className="w-12 h-12 rounded-xl bg-amber-950/80 border border-amber-500/40 text-[#FFC000] flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <ShieldCheck className="w-6 h-6" />
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-[#FFC000] tracking-wider uppercase">Blockchain Ledger</span>
-                  <h3 className="text-base font-black text-white mt-1 group-hover:text-[#FFC000] transition-colors">
-                    {lang === 'bn' ? 'সার্টিফিকেট ভেরিফিকেশন' : 'Credential Verification'}
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                    {lang === 'bn'
-                      ? 'অনন্য ক্রেডেনশিয়াল আইডি দিয়ে শিক্ষার্থীর সত্যতা ও ফলাফল এক ক্লিকে যাচাই করুন।'
-                      : 'Recruiters can authenticate student graduation, batch score, and instructor signatures.'}
-                  </p>
-                </div>
-              </div>
-              <div className="pt-4 mt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-amber-400">
-                <span>{lang === 'bn' ? 'আইডি যাচাই করুন' : 'Verify Certificate'}</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </Link>
-
-            {/* Card 3: CFO Finance Blog */}
-            <Link
-              href="/blog"
-              className="group p-6 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-amber-400/80 transition-all shadow-lg flex flex-col justify-between hover:-translate-y-1"
-            >
-              <div className="space-y-4">
-                <div className="w-12 h-12 rounded-xl bg-purple-950/80 border border-purple-500/40 text-purple-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <BookOpen className="w-6 h-6" />
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-purple-400 tracking-wider uppercase">Executive Insights</span>
-                  <h3 className="text-base font-black text-white mt-1 group-hover:text-[#FFC000] transition-colors">
-                    {lang === 'bn' ? 'সিএফও ফিন্যান্স ও করপোরেট ব্লগ' : 'CFO Finance & Leadership Insights'}
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                    {lang === 'bn'
-                      ? 'নতুন আয়কর আইন ২০২৩, এসএপি ফাইকো এবং সিএফও স্ট্র্যাটেজি গাইডলাইন পড়ুন।'
-                      : 'High-yield technical and financial articles written by practicing CFOs and lead FCAs.'}
-                  </p>
-                </div>
-              </div>
-              <div className="pt-4 mt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-amber-400">
-                <span>{lang === 'bn' ? 'ব্লগ পড়ুন' : 'Read Articles'}</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </Link>
-
-            {/* Card 4: Talent Pool */}
-            <Link
-              href="/talent-pool"
-              className="group p-6 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-amber-400/80 transition-all shadow-lg flex flex-col justify-between hover:-translate-y-1"
-            >
-              <div className="space-y-4">
-                <div className="w-12 h-12 rounded-xl bg-blue-950/80 border border-blue-500/40 text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Briefcase className="w-6 h-6" />
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-blue-400 tracking-wider uppercase">Corporate Placement</span>
-                  <h3 className="text-base font-black text-white mt-1 group-hover:text-[#FFC000] transition-colors">
-                    {lang === 'bn' ? 'ট্যালেন্ট পুল নেটওয়ার্ক' : 'Talent Pool & Hiring'}
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                    {lang === 'bn'
-                      ? '১৫০+ পার্টনার টেক ফার্মের রিক্রুটারদের কাছে ভেরিফাইড প্রজেক্ট পোর্টফোলিও শোকেস।'
-                      : 'Direct pipeline connecting qualified graduates with top software engineering firms.'}
-                  </p>
-                </div>
-              </div>
-              <div className="pt-4 mt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-amber-400">
-                <span>{lang === 'bn' ? 'ট্যালেন্ট পুল এক্সপ্লোর' : 'Explore Talent'}</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </Link>
-          </div>
-        </div>
-      </section>
 
       {/* Hiring Partners Network */}
       <HiringPartners lang={lang} />
