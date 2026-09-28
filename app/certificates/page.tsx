@@ -6,7 +6,6 @@ import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useCfo } from '@/context/CfoContext';
-import { createCertificatePdfDocument } from '@/lib/certificate-pdf';
 import {
   ShieldCheck,
   Search,
@@ -28,6 +27,8 @@ import {
   Sparkles,
   X,
   FileText,
+  Maximize2,
+  FileDown,
 } from 'lucide-react';
 
 export interface CertificateItem {
@@ -56,7 +57,6 @@ function CertificateVerificationContent() {
   const [regIdInput, setRegIdInput] = useState<string>(initialRegId);
   const [certificates, setCertificates] = useState<CertificateItem[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [copySuccess, setCopySuccess] = useState<boolean>(false);
@@ -74,7 +74,7 @@ function CertificateVerificationContent() {
       try {
         let results: CertificateItem[] = [];
 
-        // 1. Try querying the internal Next.js proxy route first (which connects to live backend or returns mock)
+        // 1. Try querying the internal Next.js proxy route first
         try {
           const proxyRes = await fetch(
             `/api/enrollment/certificates/lookup?registration_id=${encodeURIComponent(trimmedId)}`
@@ -86,7 +86,7 @@ function CertificateVerificationContent() {
             }
           }
         } catch {
-          // Internal proxy call failed; proceed to direct backend attempt
+          // Internal proxy call failed
         }
 
         // 2. Direct browser fetch to local Laravel backend if running locally
@@ -137,7 +137,6 @@ function CertificateVerificationContent() {
     [lang]
   );
 
-  // If page loads with ?registration_id=..., automatically perform search
   useEffect(() => {
     if (!initialRegId) return;
     const timer = setTimeout(() => {
@@ -163,50 +162,9 @@ function CertificateVerificationContent() {
     }
   };
 
-  // Instant high-quality PDF download handler
-  const handleDownload = async (cert: CertificateItem) => {
-    const regId = String(cert.registration_id);
-    setDownloadingId(regId);
-
-    try {
-      // 1. Try downloading from the API proxy route (which streams live backend PDF if available)
-      const proxyUrl = `/api/enrollment/certificates/${encodeURIComponent(regId)}/download`;
-      const res = await fetch(proxyUrl);
-
-      if (res.ok) {
-        const blob = await res.blob();
-        const blobUrl = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = blobUrl;
-        const cleanName = cert.student_name ? cert.student_name.replace(/[^a-zA-Z0-9]/g, '_') : 'Student';
-        link.download = `Certificate_${cleanName}_${regId}.pdf`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(blobUrl);
-        return;
-      }
-    } catch {
-      // Proxy download failed; fallback to client-side vector jsPDF generation
-    }
-
-    // 2. Client-side vector jsPDF fallback
-    try {
-      const doc = createCertificatePdfDocument(cert);
-      const cleanName = cert.student_name ? cert.student_name.replace(/[^a-zA-Z0-9]/g, '_') : 'Student';
-      doc.save(`Certificate_${cleanName}_${regId}.pdf`);
-    } catch (err) {
-      console.error('Failed to generate PDF:', err);
-    } finally {
-      setDownloadingId(null);
-    }
-  };
-
-  const handlePrint = (cert: CertificateItem) => {
-    setPreviewModalCert(cert);
-    setTimeout(() => {
-      window.print();
-    }, 300);
+  const getPdfViewUrl = (cert: CertificateItem) => {
+    // Proxies from server with Content-Disposition: inline to embed directly in browser
+    return `/api/enrollment/certificates/${encodeURIComponent(cert.registration_id)}/view`;
   };
 
   const sampleIds = ['222', '5', '8', 'COL-CFO-2025-9921'];
@@ -236,15 +194,15 @@ function CertificateVerificationContent() {
               </>
             ) : (
               <>
-                Verify &amp; Download <span className="text-[#E5A93C]">Official Certificates</span>
+                Verify &amp; View <span className="text-[#E5A93C]">Official Certificate PDF</span>
               </>
             )}
           </h1>
 
           <p className="text-xs sm:text-sm text-slate-300 max-w-2xl mx-auto leading-relaxed">
             {lang === 'bn'
-              ? 'নিয়োগকারী কর্তৃপক্ষ ও শিক্ষার্থীরা চার্টার্ড অফিসার লিমিটেড (cfoedubd.com) কর্তৃক ইস্যুকৃত সনদপত্রের সত্যতা যাচাই করতে ও অরিজিনাল পিডিএফ ডাউনলোড করতে রেজিস্ট্রেশন আইডি দিন।'
-              : 'Enter your Registration ID to instantly verify credentials and download high-resolution authenticated certificates issued by Chartered Officer Limited.'}
+              ? 'নিয়োগকারী কর্তৃপক্ষ ও শিক্ষার্থীরা চার্টার্ড অফিসার লিমিটেড কর্তৃক ইস্যুকৃত মূল পিডিএফ সনদপত্র দেখতে ও ডাউনলোড করতে রেজিস্ট্রেশন আইডি দিন।'
+              : 'Enter your Registration ID to view the actual authenticated certificate PDF directly on this page and download the original file.'}
           </p>
 
           {/* Verification Search Form */}
@@ -281,7 +239,7 @@ function CertificateVerificationContent() {
                 ) : (
                   <>
                     <ShieldCheck className="w-4 h-4" />
-                    <span>{lang === 'bn' ? 'যাচাই ও ডাউনলোড' : 'Verify & Download'}</span>
+                    <span>{lang === 'bn' ? 'সনদ দেখুন ও ডাউনলোড' : 'View & Download PDF'}</span>
                   </>
                 )}
               </button>
@@ -307,7 +265,7 @@ function CertificateVerificationContent() {
                       : 'bg-slate-800 hover:bg-[#C8963E] hover:text-slate-950 text-slate-300 border-slate-700'
                   }`}
                 >
-                  ID: #{id} {id === '222' ? '⭐ (Md Ali Hosen)' : ''}
+                  ID: #{id} {id === '222' ? '★ (Md Ali Hosen)' : ''}
                 </button>
               ))}
             </div>
@@ -316,14 +274,14 @@ function CertificateVerificationContent() {
       </section>
 
       {/* Main Results Container */}
-      <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+      <main className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
         {loading && (
           <div className="text-center py-16 bg-white rounded-3xl border border-slate-200 shadow-xs space-y-3">
             <div className="w-10 h-10 border-3 border-[#C8963E] border-t-transparent rounded-full animate-spin mx-auto" />
             <p className="text-sm font-bold text-slate-800">
               {lang === 'bn'
-                ? 'অফিসিয়াল ডাটাবেজে সনদপত্র যাচাই করা হচ্ছে...'
-                : 'Verifying credential with central academic database...'}
+                ? 'অফিসিয়াল ডাটাবেজে সনদপত্র ও পিডিএফ লোড হচ্ছে...'
+                : 'Retrieving official certificate PDF from database...'}
             </p>
             <p className="text-xs text-slate-500 font-mono">Registration ID: #{regIdInput}</p>
           </div>
@@ -370,17 +328,17 @@ function CertificateVerificationContent() {
                   <h4 className="text-sm font-serif font-bold text-emerald-950 flex items-center gap-2">
                     <span>
                       {lang === 'bn'
-                        ? 'সনদপত্রটি ১০০% ভেরিফাইড ও ডাউনলোডযোগ্য'
-                        : 'Official Verified & Download-Ready Credential'}
+                        ? 'অরিজিনাল সনদপত্র পিডিএফ ভিউয়ার ও ডাউনলোড'
+                        : 'Official Certificate PDF Document Loaded'}
                     </span>
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-200 text-emerald-900 border border-emerald-300">
-                      Active Record
+                      Live PDF
                     </span>
                   </h4>
                   <p className="text-xs text-emerald-800">
                     {lang === 'bn'
-                      ? 'বাংলাদেশ কারিগরি শিক্ষা বোর্ড (BTEB) ও চার্টার্ড অফিসার কেন্দ্রীয় ডাটাবেজে স্থায়ীভাবে নথিবদ্ধ'
-                      : 'Permanently registered in Chartered Officer Limited Central Academic Ledger'}
+                      ? 'সার্ভার হতে প্রাপ্ত অরিজিনাল সনদপত্রটি নিচে প্রদর্শিত হচ্ছে এবং সরাসরি ডাউনলোড করা যাবে।'
+                      : 'Displaying the exact authenticated PDF certificate served directly by your backend.'}
                   </p>
                 </div>
               </div>
@@ -405,201 +363,181 @@ function CertificateVerificationContent() {
               </div>
             </div>
 
-            {/* List of Verified Certificates */}
-            {certificates.map((cert) => (
-              <div
-                key={cert.registration_id}
-                className="relative bg-white rounded-3xl p-6 sm:p-10 border-4 border-[#C8963E]/40 shadow-xl overflow-hidden space-y-6"
-              >
-                {/* Certificate Inner Frame */}
-                <div className="border-2 border-dashed border-[#C8963E]/30 rounded-2xl p-6 sm:p-8 text-center space-y-6 relative bg-gradient-to-b from-amber-50/30 via-white to-amber-50/20">
-                  {/* Brand Header */}
-                  <div className="flex flex-col sm:flex-row items-center justify-between pb-6 border-b border-slate-200 gap-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-[#0A192F] text-[#E5A93C] font-serif font-black flex items-center justify-center text-xl border border-[#C8963E]/40 shadow-sm">
-                        COL
-                      </div>
-                      <div className="text-left">
-                        <span className="text-xl sm:text-2xl font-serif font-black text-slate-900 tracking-tight block">
-                          Chartered Officer Limited
-                        </span>
-                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
-                          Affiliated with Bangladesh Technical Education Board (BTEB) &amp; RJSC
-                        </p>
-                      </div>
-                    </div>
+            {/* Render Each Certificate: Direct PDF Viewer + API Details */}
+            {certificates.map((cert) => {
+              const pdfUrl = getPdfViewUrl(cert);
+              const directDownload = cert.download_url || `/api/enrollment/certificates/${cert.registration_id}/download`;
 
-                    <div className="text-center sm:text-right space-y-1">
-                      <div>
-                        <span className="text-[10px] text-slate-500 uppercase font-semibold block">
-                          Registration ID
+              return (
+                <div
+                  key={cert.registration_id}
+                  className="bg-white rounded-3xl border-2 border-[#C8963E]/40 shadow-xl overflow-hidden space-y-6"
+                >
+                  {/* Top Details & Action Bar */}
+                  <div className="bg-[#0A192F] text-white p-5 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-[#1E3A8A]">
+                    <div className="space-y-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="px-2.5 py-0.5 rounded-md text-[11px] font-mono font-bold bg-[#C8963E] text-slate-950">
+                          ID: #{cert.registration_id}
                         </span>
-                        <span className="font-mono text-sm font-black text-[#0A192F] bg-amber-100/70 border border-amber-300 px-3 py-0.5 rounded-md inline-block">
-                          #{cert.registration_id}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-slate-400 font-mono">
+                        <span className="text-xs text-slate-300 font-mono">
                           Serial: #{cert.serial_number}
                         </span>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                          Grade: {cert.grade}
+                        </span>
                       </div>
+
+                      <h2 className="text-xl sm:text-2xl font-serif font-black text-white">
+                        {cert.student_name}
+                      </h2>
+
+                      <p className="text-xs text-[#E5A93C] font-semibold">
+                        {cert.class_name} {cert.session_title ? `(${cert.session_title})` : ''}
+                      </p>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+                      {/* 1. Main Download Button linking directly to download_url */}
+                      <a
+                        href={directDownload}
+                        download={`Certificate_${cert.student_name.replace(/[^a-zA-Z0-9]/g, '_')}_${cert.registration_id}.pdf`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 md:flex-initial px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#C8963E] to-[#B8860B] hover:from-[#d4af37] hover:to-[#C8963E] text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all cursor-pointer"
+                      >
+                        <Download className="w-4 h-4 text-slate-950" />
+                        <span>{lang === 'bn' ? 'পিডিএফ ডাউনলোড' : 'Download PDF'}</span>
+                      </a>
+
+                      {/* 2. Fullscreen Viewer Modal Trigger */}
+                      <button
+                        type="button"
+                        onClick={() => setPreviewModalCert(cert)}
+                        className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-[#E5A93C] font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer border border-slate-700"
+                      >
+                        <Maximize2 className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline">{lang === 'bn' ? 'ফুলস্ক্রিন' : 'Fullscreen'}</span>
+                      </button>
+
+                      {/* 3. Open Raw in New Tab */}
+                      <a
+                        href={pdfUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs flex items-center gap-1.5 transition-colors cursor-pointer border border-slate-700"
+                        title="Open PDF in new tab"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+                        <span className="hidden sm:inline">{lang === 'bn' ? 'নতুন ট্যাব' : 'New Tab'}</span>
+                      </a>
                     </div>
                   </div>
 
-                  {/* Certificate Core Statement */}
-                  <div className="py-2 space-y-3">
-                    <p className="text-xs font-serif font-bold uppercase tracking-widest text-[#C8963E] flex items-center justify-center gap-2">
-                      <Award className="w-4 h-4 text-[#C8963E]" />
-                      <span>OFFICIAL PROFESSIONAL CREDENTIAL &amp; TRANSCRIPT</span>
-                    </p>
-
-                    <p className="text-xs sm:text-sm text-slate-500">
-                      This is officially conferred to certify that
-                    </p>
-
-                    <h2 className="text-2xl sm:text-4xl font-serif font-black text-[#0A192F]">
-                      {cert.student_name}
-                    </h2>
-
-                    {/* Parents Information */}
-                    {(cert.father_name || cert.mother_name) && (
-                      <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-xs text-slate-600 bg-slate-50 border border-slate-200 px-4 py-1.5 rounded-full">
-                        {cert.father_name && (
-                          <span>
-                            <strong className="text-slate-700">Father:</strong> {cert.father_name}
-                          </span>
-                        )}
-                        {cert.father_name && cert.mother_name && (
-                          <span className="text-slate-300">•</span>
-                        )}
-                        {cert.mother_name && (
-                          <span>
-                            <strong className="text-slate-700">Mother:</strong> {cert.mother_name}
-                          </span>
-                        )}
-                      </div>
-                    )}
-
-                    <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed pt-1">
-                      has successfully completed the curriculum, practical coursework, and executive requirements for
-                    </p>
-
-                    <h3 className="text-xl sm:text-2xl font-serif font-bold text-[#966718]">
-                      {cert.class_name}
-                    </h3>
-
-                    {/* Metadata Badges */}
-                    <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs font-bold text-slate-800 pt-2">
-                      <span className="px-3 py-1 rounded-full bg-slate-100 border border-slate-200">
-                        Grade: <span className="text-[#C8963E] font-black">{cert.grade}</span>
-                      </span>
-                      {cert.session_title && (
-                        <span className="px-3 py-1 rounded-full bg-amber-50 text-[#966718] border border-amber-200">
-                          Session: {cert.session_title}
+                  {/* Summary Attributes Strip */}
+                  <div className="px-6 py-3 bg-amber-50/50 border-b border-amber-100 flex flex-wrap items-center justify-between text-xs text-slate-700 gap-3">
+                    <div className="flex flex-wrap items-center gap-4">
+                      {cert.father_name && (
+                        <span>
+                          <strong className="text-slate-900">Father:</strong> {cert.father_name}
+                        </span>
+                      )}
+                      {cert.mother_name && (
+                        <span>
+                          <strong className="text-slate-900">Mother:</strong> {cert.mother_name}
                         </span>
                       )}
                       {cert.start_date && cert.end_date && (
-                        <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-900 border border-blue-200">
-                          Period: {cert.start_date} – {cert.end_date}
+                        <span>
+                          <strong className="text-slate-900">Period:</strong> {cert.start_date} – {cert.end_date}
                         </span>
                       )}
-                      <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
-                        Issued: {cert.issued_at}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Signatures & Seal Box */}
-                  <div className="pt-6 pb-2 grid grid-cols-1 sm:grid-cols-3 gap-4 items-center border-t border-slate-200">
-                    <div className="text-center sm:text-left space-y-1">
-                      <p className="font-serif italic font-bold text-slate-800 text-sm">
-                        Dr. M. A. Rahman
-                      </p>
-                      <div className="w-24 h-0.5 bg-slate-300 mx-auto sm:mx-0" />
-                      <p className="text-[11px] font-bold text-slate-600">Academic Director</p>
-                      <p className="text-[10px] text-slate-400">Chartered Officer Ltd.</p>
-                    </div>
-
-                    <div className="text-center space-y-1">
-                      <div className="w-14 h-14 rounded-full border-2 border-[#C8963E] bg-amber-50 text-[#966718] flex flex-col items-center justify-center mx-auto shadow-xs">
-                        <Award className="w-5 h-5 text-[#C8963E]" />
-                        <span className="text-[7px] font-black tracking-widest uppercase">COL SEAL</span>
-                      </div>
-                      <p className="text-[10px] font-bold text-emerald-700">Digitally Verified Ledger</p>
-                    </div>
-
-                    <div className="text-center sm:text-right space-y-1">
-                      <p className="font-serif italic font-bold text-slate-800 text-sm">
-                        K. H. Mahmud, FCA
-                      </p>
-                      <div className="w-24 h-0.5 bg-slate-300 mx-auto sm:ml-auto" />
-                      <p className="text-[11px] font-bold text-slate-600">Controller of Examinations</p>
-                      <p className="text-[10px] text-slate-400">Board of Assessment</p>
-                    </div>
-                  </div>
-
-                  {/* Action Buttons: Download PDF, Preview, and Print */}
-                  <div className="pt-6 border-t border-slate-200 flex flex-wrap items-center justify-center gap-3">
-                    {/* 1. Primary Download Certificate Button */}
-                    <button
-                      type="button"
-                      onClick={() => handleDownload(cert)}
-                      disabled={downloadingId === String(cert.registration_id)}
-                      className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#C8963E] to-[#B8860B] hover:from-[#d4af37] hover:to-[#C8963E] text-slate-950 font-serif font-black text-xs sm:text-sm shadow-lg hover:shadow-xl transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
-                    >
-                      {downloadingId === String(cert.registration_id) ? (
-                        <>
-                          <RefreshCw className="w-4 h-4 animate-spin text-slate-950" />
-                          <span>{lang === 'bn' ? 'ডাউনলোড হচ্ছে...' : 'Generating Download...'}</span>
-                        </>
-                      ) : (
-                        <>
-                          <Download className="w-4 h-4 text-slate-950" />
-                          <span>
-                            {lang === 'bn'
-                              ? 'সনদপত্র ডাউনলোড করুন (Download PDF)'
-                              : 'Download Certificate (PDF)'}
-                          </span>
-                        </>
+                      {cert.issued_at && (
+                        <span>
+                          <strong className="text-slate-900">Issued:</strong> {cert.issued_at}
+                        </span>
                       )}
-                    </button>
+                    </div>
 
-                    {/* 2. Interactive Preview Modal Button */}
-                    <button
-                      type="button"
-                      onClick={() => setPreviewModalCert(cert)}
-                      className="px-5 py-3 rounded-xl bg-[#0A192F] hover:bg-[#1E3A8A] text-[#E5A93C] font-bold text-xs shadow-md transition-all flex items-center gap-2 cursor-pointer"
-                    >
-                      <Eye className="w-4 h-4" />
-                      <span>{lang === 'bn' ? 'প্রিভিউ দেখুন (Preview)' : 'Preview Certificate'}</span>
-                    </button>
+                    <div className="text-[11px] font-mono text-slate-500">
+                      Source: <span className="text-slate-700 font-semibold">{cert.download_url}</span>
+                    </div>
+                  </div>
 
-                    {/* 3. Direct Print Button */}
-                    <button
-                      type="button"
-                      onClick={() => handlePrint(cert)}
-                      className="px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition-all flex items-center gap-2 cursor-pointer border border-slate-200"
-                    >
-                      <Printer className="w-4 h-4 text-slate-600" />
-                      <span>{lang === 'bn' ? 'প্রিন্ট' : 'Print'}</span>
-                    </button>
+                  {/* ACTUAL PDF VIEWER CONTAINER (Embedded real PDF) */}
+                  <div className="p-4 sm:p-6">
+                    <div className="w-full bg-slate-900 rounded-2xl overflow-hidden border border-slate-300 shadow-inner flex flex-col">
+                      {/* Viewer Toolbar */}
+                      <div className="bg-slate-950 text-slate-300 px-4 py-2 text-xs flex items-center justify-between border-b border-slate-800">
+                        <div className="flex items-center gap-2">
+                          <FileText className="w-4 h-4 text-[#C8963E]" />
+                          <span className="font-semibold text-white">
+                            {cert.student_name} — {cert.class_name}.pdf
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3 text-[11px]">
+                          <span className="text-slate-400">Authentic PDF Document</span>
+                          <a
+                            href={directDownload}
+                            download
+                            className="text-[#E5A93C] hover:underline font-bold inline-flex items-center gap-1"
+                          >
+                            <Download className="w-3 h-3" />
+                            Direct Download
+                          </a>
+                        </div>
+                      </div>
 
-                    {/* 4. If backend provides external view_url */}
-                    {cert.view_url && (
-                      <a
-                        href={cert.view_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-4 py-3 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs transition-all flex items-center gap-1.5 cursor-pointer border border-slate-200"
-                      >
-                        <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
-                        <span>{lang === 'bn' ? 'সরাসরি লিঙ্ক' : 'Direct API Link'}</span>
-                      </a>
-                    )}
+                      {/* Embedded PDF Frame */}
+                      <div className="relative w-full h-[650px] sm:h-[750px] md:h-[850px] bg-slate-100">
+                        <object
+                          data={`${pdfUrl}#toolbar=1&navpanes=0`}
+                          type="application/pdf"
+                          className="w-full h-full"
+                        >
+                          <iframe
+                            src={`${pdfUrl}#toolbar=1&navpanes=0`}
+                            title={`Certificate PDF - ${cert.student_name}`}
+                            className="w-full h-full border-0"
+                          >
+                            {/* Fallback if browser blocks iframe PDF embedding */}
+                            <div className="flex flex-col items-center justify-center h-full p-8 text-center bg-slate-900 text-white space-y-4">
+                              <FileCheck className="w-16 h-16 text-[#C8963E]" />
+                              <div>
+                                <h3 className="text-lg font-bold text-white">Official Certificate PDF</h3>
+                                <p className="text-xs text-slate-400 max-w-md mx-auto mt-1">
+                                  Your browser does not support inline PDF previews. You can view or download the file directly below.
+                                </p>
+                              </div>
+                              <div className="flex gap-3">
+                                <a
+                                  href={directDownload}
+                                  download
+                                  className="px-6 py-2.5 rounded-xl bg-[#C8963E] text-slate-950 font-bold text-xs flex items-center gap-2 shadow-md"
+                                >
+                                  <Download className="w-4 h-4" />
+                                  Download Certificate
+                                </a>
+                                <a
+                                  href={pdfUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="px-5 py-2.5 rounded-xl bg-slate-800 text-white font-bold text-xs flex items-center gap-2"
+                                >
+                                  <ExternalLink className="w-4 h-4" />
+                                  Open in New Window
+                                </a>
+                              </div>
+                            </div>
+                          </iframe>
+                        </object>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
@@ -625,12 +563,12 @@ function CertificateVerificationContent() {
                 <CheckCircle2 className="w-6 h-6" />
               </div>
               <h3 className="text-sm font-serif font-bold text-slate-900">
-                {lang === 'bn' ? 'লাইভ ডাটাবেজ ভেরিফিকেশন' : 'Live Ledger Verification'}
+                {lang === 'bn' ? 'আসল পিডিএফ প্রিভিউ' : 'Real PDF Document Viewer'}
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
                 {lang === 'bn'
-                  ? 'সিস্টেম সরাসরি সেন্ট্রাল ডাটাবেজ থেকে শিক্ষার্থীর ফলাফল, গ্রেড ও সনদের বৈধতা যাচাই করে।'
-                  : 'The system validates student records directly against the central institute ledger.'}
+                  ? 'সিস্টেম সরাসরি সার্ভার হতে প্রাপ্ত অরিজিনাল পিডিএফ ফাইলটি স্ক্রিনে প্রদর্শন করবে।'
+                  : 'The page embeds and displays the exact authentic PDF file directly on screen.'}
               </p>
             </div>
 
@@ -639,31 +577,31 @@ function CertificateVerificationContent() {
                 <Download className="w-6 h-6 text-[#E5A93C]" />
               </div>
               <h3 className="text-sm font-serif font-bold text-slate-900">
-                {lang === 'bn' ? '১-ক্লিক ভেরিফাইড ডাউনলোড' : 'Instant Verified Download'}
+                {lang === 'bn' ? 'সরাসরি ডাউনলোড' : 'Direct 1-Click Download'}
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
                 {lang === 'bn'
-                  ? 'ভেরিফিকেশন সম্পন্ন হলে সরাসরি অফিসিয়াল হাই-রেজোলিউশন ডিজিটাল সনদপত্র ডাউনলোড ও প্রিন্ট করতে পারবেন।'
-                  : 'Instantly download and print the official authenticated digital credential with verified seals.'}
+                  ? 'API হতে প্রাপ্ত ডাউনলোড ইউআরএল (download_url) দিয়ে সরাসরি সনদপত্র ডাউনলোড করতে পারবেন।'
+                  : 'Instantly download the certificate file directly via the API download_url.'}
               </p>
             </div>
           </div>
         )}
       </main>
 
-      {/* Certificate Fullscreen Preview & Print Modal */}
+      {/* Certificate Fullscreen Modal (Embeds real PDF) */}
       {previewModalCert && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-          <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl border-4 border-[#C8963E] overflow-hidden my-auto flex flex-col">
+        <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-xs flex items-center justify-center p-2 sm:p-6 overflow-hidden">
+          <div className="relative w-full max-w-6xl h-[92vh] bg-white rounded-2xl shadow-2xl border border-slate-700 overflow-hidden flex flex-col">
             {/* Modal Header */}
-            <div className="bg-[#0A192F] text-white px-6 py-4 flex items-center justify-between border-b border-[#1E3A8A]">
+            <div className="bg-[#0A192F] text-white px-5 py-3.5 flex items-center justify-between border-b border-[#1E3A8A] shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-[#C8963E] text-slate-950 font-serif font-black flex items-center justify-center text-sm">
-                  COL
+                <div className="w-8 h-8 rounded-lg bg-[#C8963E] text-slate-950 font-bold flex items-center justify-center text-xs">
+                  PDF
                 </div>
                 <div>
                   <h3 className="text-sm font-serif font-bold text-white">
-                    {lang === 'bn' ? 'অফিসিয়াল সার্টিফিকেট প্রিভিউ' : 'Official Certificate Document'}
+                    {previewModalCert.student_name} — Certificate PDF
                   </h3>
                   <p className="text-[11px] text-slate-400 font-mono">
                     ID: #{previewModalCert.registration_id} • Serial: #{previewModalCert.serial_number}
@@ -672,24 +610,27 @@ function CertificateVerificationContent() {
               </div>
 
               <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleDownload(previewModalCert)}
-                  disabled={downloadingId === String(previewModalCert.registration_id)}
+                <a
+                  href={previewModalCert.download_url || `/api/enrollment/certificates/${previewModalCert.registration_id}/download`}
+                  download={`Certificate_${previewModalCert.student_name.replace(/[^a-zA-Z0-9]/g, '_')}_${previewModalCert.registration_id}.pdf`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#C8963E] to-[#B8860B] hover:from-[#d4af37] hover:to-[#C8963E] text-slate-950 font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-md"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>{lang === 'bn' ? 'ডাউনলোড' : 'Download PDF'}</span>
-                </button>
+                </a>
 
-                <button
-                  type="button"
-                  onClick={() => window.print()}
+                <a
+                  href={getPdfViewUrl(previewModalCert)}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs flex items-center gap-1.5 cursor-pointer border border-slate-700"
+                  title="Open in new window"
                 >
-                  <Printer className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">{lang === 'bn' ? 'প্রিন্ট' : 'Print'}</span>
-                </button>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">{lang === 'bn' ? 'নতুন উইন্ডো' : 'New Window'}</span>
+                </a>
 
                 <button
                   type="button"
@@ -701,95 +642,19 @@ function CertificateVerificationContent() {
               </div>
             </div>
 
-            {/* Modal Body: High Resolution Parchment Certificate */}
-            <div className="p-6 sm:p-10 bg-[#FDFCF8] overflow-y-auto max-h-[75vh]">
-              <div className="border-4 border-[#0A192F] p-2 rounded-xl">
-                <div className="border-2 border-[#C8963E] p-6 sm:p-10 rounded-lg text-center space-y-6 relative bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,1)_0%,rgba(253,252,248,0.9)_100%)]">
-                  {/* Top Seal & Affiliation */}
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                      Affiliated with Bangladesh Technical Education Board (BTEB) &amp; RJSC
-                    </p>
-                    <h2 className="text-2xl sm:text-3xl font-serif font-black text-[#0A192F]">
-                      Chartered Officer Limited
-                    </h2>
-                    <p className="text-xs font-bold text-[#C8963E] tracking-widest uppercase">
-                      Certificate of Achievement &amp; Excellence
-                    </p>
-                  </div>
-
-                  <p className="text-xs italic text-slate-600 font-serif">
-                    This official credential is conferred upon
-                  </p>
-
-                  <h1 className="text-3xl sm:text-4xl font-serif font-black text-[#0A192F] underline decoration-[#C8963E] underline-offset-8">
-                    {previewModalCert.student_name}
-                  </h1>
-
-                  {/* Parents Info */}
-                  {(previewModalCert.father_name || previewModalCert.mother_name) && (
-                    <div className="text-xs text-slate-600 font-medium">
-                      {previewModalCert.father_name && <span>Father: {previewModalCert.father_name}</span>}
-                      {previewModalCert.father_name && previewModalCert.mother_name && <span> | </span>}
-                      {previewModalCert.mother_name && <span>Mother: {previewModalCert.mother_name}</span>}
-                    </div>
-                  )}
-
-                  <p className="text-xs text-slate-600 max-w-lg mx-auto">
-                    in recognition of the successful completion of the prescribed curriculum, practical assessments, and professional competencies in
-                  </p>
-
-                  <h3 className="text-2xl font-serif font-bold text-[#966718]">
-                    {previewModalCert.class_name}
-                  </h3>
-
-                  {/* Metas */}
-                  <div className="flex flex-wrap items-center justify-center gap-3 text-xs font-bold text-slate-800">
-                    <span className="px-3 py-1 rounded-md bg-amber-50 border border-amber-300">
-                      Grade: {previewModalCert.grade}
-                    </span>
-                    {previewModalCert.session_title && (
-                      <span className="px-3 py-1 rounded-md bg-slate-100 border border-slate-200">
-                        Session: {previewModalCert.session_title}
-                      </span>
-                    )}
-                    {previewModalCert.start_date && previewModalCert.end_date && (
-                      <span className="px-3 py-1 rounded-md bg-blue-50 border border-blue-200">
-                        {previewModalCert.start_date} – {previewModalCert.end_date}
-                      </span>
-                    )}
-                    <span className="px-3 py-1 rounded-md bg-emerald-50 border border-emerald-200">
-                      Issued: {previewModalCert.issued_at}
-                    </span>
-                  </div>
-
-                  {/* Modal Signatures */}
-                  <div className="pt-8 grid grid-cols-3 gap-2 items-end border-t border-slate-200">
-                    <div className="text-center">
-                      <p className="font-serif italic text-xs font-bold text-slate-900">Dr. M. A. Rahman</p>
-                      <div className="w-20 h-0.5 bg-slate-300 mx-auto my-1" />
-                      <p className="text-[10px] font-bold text-slate-600">Academic Director</p>
-                    </div>
-
-                    <div className="text-center">
-                      <div className="w-12 h-12 rounded-full border-2 border-[#C8963E] bg-amber-50 text-[#C8963E] flex flex-col items-center justify-center mx-auto">
-                        <Award className="w-5 h-5" />
-                        <span className="text-[6px] font-bold">SEAL</span>
-                      </div>
-                    </div>
-
-                    <div className="text-center">
-                      <p className="font-serif italic text-xs font-bold text-slate-900">K. H. Mahmud, FCA</p>
-                      <div className="w-20 h-0.5 bg-slate-300 mx-auto my-1" />
-                      <p className="text-[10px] font-bold text-slate-600">Controller of Exams</p>
-                    </div>
-                  </div>
-
-                  <p className="text-[9px] text-slate-400 font-mono pt-4">
-                    Online Authenticated Record: #{previewModalCert.registration_id} • Serial: #{previewModalCert.serial_number}
-                  </p>
-                </div>
-              </div>
+            {/* Modal Body: Embedded Real PDF Frame */}
+            <div className="flex-1 bg-slate-950 relative w-full h-full overflow-hidden">
+              <object
+                data={`${getPdfViewUrl(previewModalCert)}#toolbar=1`}
+                type="application/pdf"
+                className="w-full h-full"
+              >
+                <iframe
+                  src={`${getPdfViewUrl(previewModalCert)}#toolbar=1`}
+                  title={`Certificate Fullscreen - ${previewModalCert.student_name}`}
+                  className="w-full h-full border-0"
+                />
+              </object>
             </div>
           </div>
         </div>

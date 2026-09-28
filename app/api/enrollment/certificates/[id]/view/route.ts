@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const regId =
-    searchParams.get('registration_id') ||
-    searchParams.get('id') ||
-    searchParams.get('serial_number') ||
-    '222';
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const regId = id || '222';
 
   const backendBase = (
     process.env.BACKEND_API_URL ||
@@ -18,7 +17,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const res = await fetch(backendUrl, {
-      signal: AbortSignal.timeout(3000),
+      signal: AbortSignal.timeout(3500),
     });
 
     if (res.ok) {
@@ -29,14 +28,17 @@ export async function GET(request: NextRequest) {
         status: 200,
         headers: {
           'Content-Type': contentType,
-          'Content-Disposition': `attachment; filename="certificate-${regId}.pdf"`,
+          // Use inline disposition so browsers display the PDF inside <iframe> and <object>
+          'Content-Disposition': `inline; filename="certificate-${regId}.pdf"`,
           'Cache-Control': 'no-cache',
+          'X-Frame-Options': 'SAMEORIGIN',
         },
       });
     }
   } catch {
-    // If Next.js server cannot reach 127.0.0.1, redirect client directly
+    // If local backend is not reachable from server, redirect to client
   }
 
+  // Redirect to direct backend download url
   return NextResponse.redirect(backendUrl);
 }
