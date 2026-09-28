@@ -10,7 +10,6 @@ import CourseDetailsModal from '@/components/CourseDetailsModal';
 import EnrollmentModal from '@/components/EnrollmentModal';
 import StudentLmsModal from '@/components/StudentLmsModal';
 import LearningMethodology from '@/components/LearningMethodology';
-import HiringPartners from '@/components/HiringPartners';
 import Testimonials from '@/components/Testimonials';
 import CareerQuizModal from '@/components/CareerQuizModal';
 import AppDownloadBanner from '@/components/AppDownloadBanner';
@@ -245,9 +244,6 @@ export default function Home() {
         lang={lang}
         onExploreCourses={scrollToCourses}
       />
-
-      {/* Hiring Partners Network */}
-      <HiringPartners lang={lang} />
 
       {/* Student Testimonials */}
       <Testimonials lang={lang} />

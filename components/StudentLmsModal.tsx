@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import {
   X,
   Video,
@@ -311,14 +312,24 @@ export default function StudentLmsModal({
                 <span>Certificate ID: CFO-2026-CERT-88412</span>
               </div>
 
-              <div className="pt-2">
-                <button
-                  onClick={() => alert(lang === 'bn' ? 'ভেরিফাইড সার্টিফিকেট ডাউনলোড হচ্ছে...' : 'Downloading PDF Certificate...')}
-                  className="px-5 py-2.5 rounded-xl bg-slate-950 text-white font-bold text-xs hover:bg-slate-800 transition-colors inline-flex items-center gap-2 cursor-pointer shadow-sm"
+              <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+                <a
+                  href="/api/enrollment/certificates/222/download"
+                  download="Certificate-222.pdf"
+                  className="px-5 py-2.5 rounded-xl bg-[#0A192F] hover:bg-[#1E3A8A] text-white font-bold text-xs transition-colors inline-flex items-center gap-2 cursor-pointer shadow-sm"
                 >
                   <Download className="w-4 h-4 text-[#FFC000]" />
-                  <span>Download Verified PDF Certificate</span>
-                </button>
+                  <span>{lang === 'bn' ? 'সার্টিফিকেট ডাউনলোড করুন (PDF)' : 'Download Verified PDF Certificate'}</span>
+                </a>
+
+                <Link
+                  href="/certificates?registration_id=222"
+                  onClick={onClose}
+                  className="px-4 py-2.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold text-xs transition-colors inline-flex items-center gap-1.5 cursor-pointer border border-amber-300"
+                >
+                  <Award className="w-4 h-4 text-amber-700" />
+                  <span>{lang === 'bn' ? 'ভেরিফিকেশন পোর্টাল' : 'Open Verification Portal'}</span>
+                </Link>
               </div>
             </div>
           )}
