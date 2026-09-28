@@ -23,7 +23,7 @@ interface FooterProps {
 }
 
 export default function Footer({ lang: propLang }: FooterProps = {}) {
-  const { systemInfo, lang: contextLang } = useCfo();
+  const { systemInfo, lang: contextLang, courses } = useCfo();
   const lang = propLang || contextLang || 'bn';
 
   return (
@@ -138,43 +138,42 @@ export default function Footer({ lang: propLang }: FooterProps = {}) {
             </div>
           </div>
 
-          {/* Col 2: Top Programs */}
+          {/* Col 2: Dynamic Live Courses */}
           <div className="lg:col-span-3 space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#E5A93C]">
-              {lang === 'bn' ? 'ফ্ল্যাগশিপ প্রোগ্রামসমূহ' : 'Flagship Executive Tracks'}
+              {lang === 'bn' ? 'চলমান কোর্সসমূহ' : 'Available Courses'}
             </h4>
-            <ul className="space-y-2 text-xs text-slate-300">
-              <li>
-                <Link href="/courses/chartered-financial-officer-program" className="hover:text-[#E5A93C] transition-colors">
-                  Chartered Financial Officer (CFO) 1-Year
-                </Link>
-              </li>
-              <li>
-                <Link href="/courses/pgd-customs-vat-tax" className="hover:text-[#E5A93C] transition-colors">
-                  PGD in Customs, VAT, TAX & Trade
-                </Link>
-              </li>
-              <li>
-                <Link href="/courses/fintech-sap-fico-powerbi" className="hover:text-[#E5A93C] transition-colors">
-                  Advanced Fintech with SAP-FICO ERP
-                </Link>
-              </li>
-              <li>
-                <Link href="/courses/fpa-corporate-valuation" className="hover:text-[#E5A93C] transition-colors">
-                  FP&A & Corporate Financial Modeling
-                </Link>
-              </li>
-              <li>
-                <Link href="/courses/pgd-supply-chain-analytics" className="hover:text-[#E5A93C] transition-colors">
-                  Logistics & Supply Chain Analytics
-                </Link>
-              </li>
-              <li>
-                <Link href="/courses/hrm-bangladesh-labor-law" className="hover:text-[#E5A93C] transition-colors">
-                  Corporate HRM & Bangladesh Labor Law
-                </Link>
-              </li>
-            </ul>
+            {courses && courses.length > 0 ? (
+              <ul className="space-y-2 text-xs text-slate-300">
+                {courses.slice(0, 6).map((c) => (
+                  <li key={c.id}>
+                    <Link
+                      href={`/courses/${c.slug || c.id}`}
+                      className="hover:text-[#E5A93C] transition-colors line-clamp-1"
+                      title={c.title}
+                    >
+                      {c.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <ul className="space-y-2 text-xs text-slate-300">
+                <li>
+                  <Link href="/courses" className="hover:text-[#E5A93C] transition-colors">
+                    {lang === 'bn' ? 'সকল কোর্স ব্রাউজ করুন' : 'Browse All Courses'}
+                  </Link>
+                </li>
+              </ul>
+            )}
+            <div className="pt-1">
+              <Link
+                href="/courses"
+                className="text-[11px] font-semibold text-[#E5A93C] hover:underline inline-flex items-center gap-1"
+              >
+                {lang === 'bn' ? 'সব কোর্স দেখুন →' : 'View All Courses →'}
+              </Link>
+            </div>
           </div>
 
           {/* Col 3: Academic & Portal Links */}

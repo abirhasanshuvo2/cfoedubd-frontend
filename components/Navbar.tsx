@@ -158,12 +158,12 @@ export default function Navbar({
               {lang === 'bn' ? (
                 <>
                   <strong className="text-[#E5A93C] font-semibold">বিটিইবি (BTEB) ও RJSC নিবন্ধিত:</strong>{' '}
-                  ফ্ল্যাগশিপ ১-বছর মেয়াদি <span className="font-bold text-white">Chartered Financial Officer (CFO)</span> ব্যাচ ১৮-তে ভর্তি চলছে!
+                  <span className="font-bold text-white">চার্টার্ড অফিসার লিমিটেড (COL)</span> এ প্রফেশনাল এক্সিকিউটিভ কোর্সে ভর্তি চলছে!
                 </>
               ) : (
                 <>
                   <strong className="text-[#E5A93C] font-semibold">Govt. Registered (BTEB & RJSC):</strong>{' '}
-                  Admissions open for Flagship 1-Year <span className="font-bold text-white">CFO Program</span> (Batch 18)!
+                  Admissions open for professional executive certification programs at <span className="font-bold text-white">COL</span>!
                 </>
               )}
             </p>

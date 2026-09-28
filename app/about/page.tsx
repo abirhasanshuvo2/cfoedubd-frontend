@@ -79,30 +79,6 @@ export default function AboutPage() {
     }
   ];
 
-  const governingCouncil = [
-    {
-      name: 'মো. শফিকুল আলম, FCA, FCMA',
-      role: 'প্রতিষ্ঠাতা ও প্রিন্সিপাল মেন্টর',
-      roleEn: 'Founder & Principal Faculty',
-      bio: '২৫ বছরেরও বেশি সময় ধরে দেশের শীর্ষস্থানীয় করপোরেট গ্রুপসমূহে প্রধান অর্থ কর্মকর্তা (CFO) ও সিনিয়র পার্টনার হিসেবে দায়িত্ব পালন করেছেন।',
-      image: '/dummy-avatar.svg'
-    },
-    {
-      name: 'মোহাম্মদ মনিরুজ্জামান, FCMA',
-      role: 'ডিরেক্টর - ট্যাক্স ও রেগুলেটরি অ্যাফেয়ার্স',
-      roleEn: 'Director - Tax & Regulatory Affairs',
-      bio: 'জাতীয় রাজস্ব বোর্ড (NBR), কাস্টমস, বন্ড অডিট ও আয়কর আইন ২০২৩ এর অন্যতম শীর্ষ বিশেষজ্ঞ পরামর্শক।',
-      image: '/dummy-avatar.svg'
-    },
-    {
-      name: 'ফারুক আহমেদ, SAP Certified Solution Architect',
-      role: 'হেড অব ফিনটেক ও এন্টারপ্রাইজ ইআরপি',
-      roleEn: 'Head of Fintech & Enterprise ERP',
-      bio: 'মাল্টিন্যাশনাল কোম্পানিগুলোতে SAP S/4HANA FICO এবং মাইক্রোসফট পাওয়ার বিআই বাস্তবায়নের আন্তর্জাতিক অভিজ্ঞতাসম্পন্ন টেকনোলজি লিডার।',
-      image: '/dummy-avatar.svg'
-    }
-  ];
-
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col font-sans">
       <Navbar />
@@ -220,43 +196,6 @@ export default function AboutPage() {
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                   {lang === 'bn' ? p.description : p.descriptionEn}
                 </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Leadership Council */}
-        <div className="space-y-8">
-          <div className="text-center max-w-3xl mx-auto space-y-3">
-            <h2 className="text-2xl sm:text-3xl font-serif font-black text-slate-900">
-              {lang === 'bn' ? 'নেতৃত্ব ও একাডেমিক কাউন্সিল' : 'Executive Leadership Council'}
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600">
-              {lang === 'bn'
-                ? 'আইসিএবি ও আইসিএমএবি ফেলো চার্টার্ড অ্যাকাউন্ট্যান্টস এবং করপোরেট সিএফওদের দিকনির্দেশনা।'
-                : 'Guided by senior fellows, corporate directors, and licensed ERP solution architects.'}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {governingCouncil.map((mentor, idx) => (
-              <div
-                key={idx}
-                className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs hover:shadow-lg transition-all text-center space-y-4"
-              >
-                <div className="w-24 h-24 mx-auto rounded-full overflow-hidden border-2 border-[#C8963E] shadow-sm">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={mentor.image}
-                    alt={mentor.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div>
-                  <h4 className="text-base font-serif font-bold text-slate-900">{mentor.name}</h4>
-                  <p className="text-xs font-semibold text-[#966718] mt-1">{mentor.role}</p>
-                </div>
-                <p className="text-xs text-slate-600 leading-relaxed">{mentor.bio}</p>
               </div>
             ))}
           </div>
