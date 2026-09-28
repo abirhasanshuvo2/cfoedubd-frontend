@@ -1,5 +1,3 @@
-import { jsPDF } from 'jspdf';
-
 export interface CertificateData {
   id?: number | string;
   serial_number: number | string;
@@ -17,218 +15,280 @@ export interface CertificateData {
   view_url?: string;
 }
 
+export interface CertificatePdfDoc {
+  output(type: 'arraybuffer'): ArrayBuffer;
+  output(type: 'blob'): Blob;
+  output(type: 'dataurlstring'): string;
+  save(filename: string): void;
+}
+
+function escapePdf(str: string): string {
+  if (!str) return '';
+  return str.replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
+}
+
+function drawCircle(cx: number, cy: number, r: number): string {
+  const k = r * 0.552284749831;
+  const x = cx;
+  const y = cy;
+  return (
+    `${(x + r).toFixed(2)} ${y.toFixed(2)} m ` +
+    `${(x + r).toFixed(2)} ${(y + k).toFixed(2)} ${(x + k).toFixed(2)} ${(y + r).toFixed(2)} ${x.toFixed(2)} ${(y + r).toFixed(2)} c ` +
+    `${(x - k).toFixed(2)} ${(y + r).toFixed(2)} ${(x - r).toFixed(2)} ${(y + k).toFixed(2)} ${(x - r).toFixed(2)} ${y.toFixed(2)} c ` +
+    `${(x - r).toFixed(2)} ${(y - k).toFixed(2)} ${(x - k).toFixed(2)} ${(y - r).toFixed(2)} ${x.toFixed(2)} ${(y - r).toFixed(2)} c ` +
+    `${(x + k).toFixed(2)} ${(y - r).toFixed(2)} ${(x + r).toFixed(2)} ${(y - k).toFixed(2)} ${(x + r).toFixed(2)} ${y.toFixed(2)} c s\n`
+  );
+}
+
 /**
- * Generates an executive, print-ready PDF certificate using jsPDF.
- * Compatible with both client-side browser and server-side Node.js / Edge runtimes.
+ * Pure Zero-Dependency PDF generator.
+ * Produces a 100% compliant PDF 1.4 document containing vector graphics,
+ * executive double gold/navy borders, typography, signatures, and verified seals.
+ * Works natively in Node.js, Next.js Server Components, API routes, and all browsers.
  */
-export function createCertificatePdfDocument(cert: CertificateData): jsPDF {
-  // A4 Landscape: 297mm x 210mm
-  const doc = new jsPDF({
-    orientation: 'landscape',
-    unit: 'mm',
-    format: 'a4',
-  });
+export function generateCertificatePdfBytes(cert: CertificateData): Uint8Array {
+  // A4 Landscape: 841.89 pt x 595.28 pt (297mm x 210mm)
+  const width = 841.89;
+  const height = 595.28;
+  const cx = width / 2;
 
-  const pageWidth = 297;
-  const pageHeight = 210;
+  let stream = '';
 
-  // 1. Background fill (subtle warm parchment)
-  doc.setFillColor(253, 252, 248);
-  doc.rect(0, 0, pageWidth, pageHeight, 'F');
+  // 1. Parchment warm background
+  stream += '0.99 0.98 0.96 rg\n';
+  stream += `0 0 ${width.toFixed(2)} ${height.toFixed(2)} re f\n`;
 
-  // 2. Outer decorative border (Deep Navy)
-  doc.setDrawColor(10, 25, 47); // #0A192F
-  doc.setLineWidth(3);
-  doc.rect(10, 10, pageWidth - 20, pageHeight - 20, 'D');
+  // 2. Navy Outer Border (#0A192F)
+  stream += '0.04 0.10 0.18 RG 6 w\n';
+  stream += `26 26 ${(width - 52).toFixed(2)} ${(height - 52).toFixed(2)} re S\n`;
 
-  // 3. Inner Gold Border
-  doc.setDrawColor(200, 150, 62); // #C8963E
-  doc.setLineWidth(1);
-  doc.rect(13, 13, pageWidth - 26, pageHeight - 26, 'D');
+  // 3. Gold Inner Border (#C8963E)
+  stream += '0.78 0.58 0.24 RG 1.5 w\n';
+  stream += `34 34 ${(width - 68).toFixed(2)} ${(height - 68).toFixed(2)} re S\n`;
 
-  // Corner decorative flourishes
-  const drawCornerFlourish = (x: number, y: number, xDir: number, yDir: number) => {
-    doc.setDrawColor(200, 150, 62);
-    doc.setLineWidth(0.8);
-    doc.line(x, y, x + xDir * 8, y);
-    doc.line(x, y, x, y + yDir * 8);
-  };
-  drawCornerFlourish(15, 15, 1, 1);
-  drawCornerFlourish(pageWidth - 15, 15, -1, 1);
-  drawCornerFlourish(15, pageHeight - 15, 1, -1);
-  drawCornerFlourish(pageWidth - 15, pageHeight - 15, -1, -1);
+  // 4. Corner Flourishes
+  stream += '0.78 0.58 0.24 RG 1 w\n';
+  stream += `38 38 m 66 38 l S\n`;
+  stream += `38 38 m 38 66 l S\n`;
+  stream += `${width - 38} 38 m ${width - 66} 38 l S\n`;
+  stream += `${width - 38} 38 m ${width - 38} 66 l S\n`;
+  stream += `38 ${height - 38} m 66 ${height - 38} l S\n`;
+  stream += `38 ${height - 38} m 38 ${height - 66} l S\n`;
+  stream += `${width - 38} ${height - 38} m ${width - 66} ${height - 38} l S\n`;
+  stream += `${width - 38} ${height - 38} m ${width - 38} ${height - 66} l S\n`;
 
-  // 4. Header Top Badge / Affiliation
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8.5);
-  doc.setTextColor(100, 116, 139);
-  doc.text(
+  function drawText(
+    font: string,
+    size: number,
+    r: number,
+    g: number,
+    b: number,
+    text: string,
+    y: number,
+    isCenter = true,
+    xPos = 0
+  ) {
+    const safeText = escapePdf(text);
+    const charWidth = (font.includes('Times') ? 0.48 : 0.52) * size;
+    const approxWidth = text.length * charWidth;
+    const x = isCenter ? cx - approxWidth / 2 : xPos;
+    return (
+      `BT\n/${font} ${size} Tf\n${r} ${g} ${b} rg\n1 0 0 1 ${x.toFixed(2)} ${y.toFixed(2)} Tm\n` +
+      `(${safeText}) Tj\nET\n`
+    );
+  }
+
+  // Top registration and serial labels
+  stream += drawText('F3', 9, 0.04, 0.10, 0.18, `Reg ID: #${cert.registration_id}`, height - 52, false, 48);
+  stream += drawText('F3', 9, 0.04, 0.10, 0.18, `Serial: #${cert.serial_number}`, height - 52, false, width - 120);
+
+  // Institution Affiliation
+  stream += drawText(
+    'F2',
+    9,
+    0.40,
+    0.45,
+    0.52,
     'CHARTERED OFFICER LIMITED  •  AFFILIATED WITH BTEB & RJSC BANGLADESH',
-    pageWidth / 2,
-    23,
-    { align: 'center' }
+    height - 60
   );
 
-  // 5. Institution Name
-  doc.setFont('times', 'bold');
-  doc.setFontSize(26);
-  doc.setTextColor(10, 25, 47);
-  doc.text('Chartered Officer Limited', pageWidth / 2, 33, { align: 'center' });
+  // Main Institution Title
+  stream += drawText('F1', 28, 0.04, 0.10, 0.18, 'Chartered Officer Limited', height - 96);
 
-  // 6. Subheading / Ribbon
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(10);
-  doc.setTextColor(200, 150, 62); // Gold
-  doc.text('CERTIFICATE OF ACHIEVEMENT & PROFESSIONAL EXCELLENCE', pageWidth / 2, 41, {
-    align: 'center',
-  });
+  // Subtitle
+  stream += drawText(
+    'F2',
+    10.5,
+    0.78,
+    0.58,
+    0.24,
+    'CERTIFICATE OF ACHIEVEMENT & PROFESSIONAL EXCELLENCE',
+    height - 118
+  );
 
-  // 7. Conferred To Statement
-  doc.setFont('times', 'italic');
-  doc.setFontSize(11);
-  doc.setTextColor(71, 85, 105);
-  doc.text('This credential is proud and officially conferred upon', pageWidth / 2, 51, {
-    align: 'center',
-  });
+  // Conferred Statement
+  stream += drawText(
+    'F4',
+    12,
+    0.35,
+    0.40,
+    0.48,
+    'This official credential is proud and officially conferred upon',
+    height - 148
+  );
 
-  // 8. Student Name (Big, Bold Serif)
-  doc.setFont('times', 'bold');
-  doc.setFontSize(28);
-  doc.setTextColor(15, 23, 42); // slate-900
-  doc.text(cert.student_name || 'Honored Graduate', pageWidth / 2, 65, { align: 'center' });
+  // Student Name
+  const studentName = cert.student_name || 'Honored Graduate';
+  stream += drawText('F1', 30, 0.06, 0.09, 0.16, studentName, height - 192);
 
-  // Underline beneath student name
-  const nameWidth = doc.getTextWidth(cert.student_name || 'Honored Graduate');
-  const lineStart = (pageWidth - nameWidth) / 2 - 10;
-  const lineEnd = (pageWidth + nameWidth) / 2 + 10;
-  doc.setDrawColor(200, 150, 62);
-  doc.setLineWidth(0.7);
-  doc.line(lineStart, 68, lineEnd, 68);
+  // Gold underline below student name
+  const nameLen = Math.max(studentName.length * 15, 180);
+  const lineStart = cx - nameLen / 2;
+  const lineEnd = cx + nameLen / 2;
+  stream += `0.78 0.58 0.24 RG 1.5 w\n${lineStart.toFixed(2)} ${height - 200} m ${lineEnd.toFixed(2)} ${height - 200} l S\n`;
 
-  // 9. Parent Details (if available)
-  let currentY = 76;
+  // Parents Info
+  let curY = height - 224;
   if (cert.father_name || cert.mother_name) {
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9.5);
-    doc.setTextColor(100, 116, 139);
     const parentParts = [];
     if (cert.father_name) parentParts.push(`Father: ${cert.father_name}`);
     if (cert.mother_name) parentParts.push(`Mother: ${cert.mother_name}`);
-    doc.text(parentParts.join('   |   '), pageWidth / 2, currentY, { align: 'center' });
-    currentY += 8;
+    stream += drawText('F3', 10, 0.40, 0.45, 0.52, parentParts.join('   |   '), curY);
+    curY -= 22;
   }
 
-  // 10. Requirement Fulfillment Text
-  doc.setFont('times', 'normal');
-  doc.setFontSize(11);
-  doc.setTextColor(71, 85, 105);
-  doc.text(
-    'in recognition of the successful completion of the prescribed curriculum, assessments, and requirements for',
-    pageWidth / 2,
-    currentY,
-    { align: 'center' }
+  // Completion statement
+  stream += drawText(
+    'F4',
+    11.5,
+    0.35,
+    0.40,
+    0.48,
+    'in recognition of the successful completion of the prescribed curriculum, practical coursework, and requirements for',
+    curY
   );
-  currentY += 10;
+  curY -= 30;
 
-  // 11. Course / Class Name
-  doc.setFont('times', 'bold');
-  doc.setFontSize(20);
-  doc.setTextColor(180, 83, 9); // Amber-700 / Gold
-  doc.text(cert.class_name || 'Executive Professional Course', pageWidth / 2, currentY, {
-    align: 'center',
-  });
-  currentY += 10;
+  // Course / Class Name
+  stream += drawText('F1', 22, 0.70, 0.35, 0.05, cert.class_name || 'Executive Professional Course', curY);
+  curY -= 24;
 
-  // 12. Meta badges: Grade, Session, Duration, Issue Date
-  const metaParts: string[] = [];
+  // Metadata Badges (Grade, Session, Period, Issue Date)
+  const metaParts = [];
   if (cert.grade) metaParts.push(`Grade: ${cert.grade}`);
   if (cert.session_title) metaParts.push(`Session: ${cert.session_title}`);
-  if (cert.start_date && cert.end_date) {
-    metaParts.push(`Duration: ${cert.start_date} – ${cert.end_date}`);
-  }
+  if (cert.start_date && cert.end_date) metaParts.push(`Period: ${cert.start_date} – ${cert.end_date}`);
   if (cert.issued_at) metaParts.push(`Issued: ${cert.issued_at}`);
+  stream += drawText('F2', 9.5, 0.10, 0.15, 0.25, metaParts.join('     •     '), curY);
 
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(9);
-  doc.setTextColor(15, 23, 42);
-  doc.text(metaParts.join('    •    '), pageWidth / 2, currentY, { align: 'center' });
+  // Signatures Section
+  const sigY = 95;
 
-  // 13. Registration & Serial Numbers Box (Top right & left)
-  doc.setFont('courier', 'bold');
-  doc.setFontSize(9);
-  doc.setTextColor(10, 25, 47);
-  doc.text(`Reg ID: #${cert.registration_id}`, 22, 23);
-  doc.text(`Serial: #${cert.serial_number}`, pageWidth - 22, 23, { align: 'right' });
+  // Left: Academic Director
+  stream += `0.6 0.65 0.7 RG 0.75 w\n70 ${sigY} m 200 ${sigY} l S\n`;
+  stream += drawText('F4', 13, 0.04, 0.10, 0.18, 'Dr. M. A. Rahman', sigY + 5, false, 95);
+  stream += drawText('F2', 9, 0.30, 0.35, 0.45, 'Academic Director', sigY - 14, false, 100);
+  stream += drawText('F3', 8, 0.45, 0.50, 0.55, 'Chartered Officer Ltd.', sigY - 25, false, 95);
 
-  // 14. Signatures & Official Seal at the bottom
-  const sigY = 175;
+  // Center Gold Seal
+  stream += '0.78 0.58 0.24 RG 1.5 w\n';
+  stream += drawCircle(cx, sigY - 6, 26);
+  stream += '0.78 0.58 0.24 RG 0.6 w\n';
+  stream += drawCircle(cx, sigY - 6, 22);
 
-  // Academic Director (Left)
-  doc.setDrawColor(148, 163, 184);
-  doc.setLineWidth(0.5);
-  doc.line(35, sigY, 95, sigY);
-  doc.setFont('times', 'italic');
-  doc.setFontSize(13);
-  doc.setTextColor(10, 25, 47);
-  doc.text('Dr. M. A. Rahman', 65, sigY - 3, { align: 'center' });
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8.5);
-  doc.setTextColor(71, 85, 105);
-  doc.text('Academic Director', 65, sigY + 5, { align: 'center' });
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(7.5);
-  doc.setTextColor(100, 116, 139);
-  doc.text('Chartered Officer Limited', 65, sigY + 9, { align: 'center' });
+  stream += drawText('F2', 7, 0.78, 0.58, 0.24, 'OFFICIAL SEAL', sigY + 4);
+  stream += drawText('F2', 9.5, 0.04, 0.10, 0.18, 'VERIFIED', sigY - 7);
+  stream += drawText('F3', 6.5, 0.40, 0.45, 0.50, 'COL BD LEDGER', sigY - 17);
 
-  // Central Gold Seal
-  const sealCenterX = pageWidth / 2;
-  const sealCenterY = sigY - 2;
-  doc.setDrawColor(200, 150, 62);
-  doc.setLineWidth(1.2);
-  doc.circle(sealCenterX, sealCenterY, 14, 'D');
-  doc.setLineWidth(0.5);
-  doc.circle(sealCenterX, sealCenterY, 12, 'D');
+  // Right: Controller of Examinations
+  stream += `0.6 0.65 0.7 RG 0.75 w\n${width - 200} ${sigY} m ${width - 70} ${sigY} l S\n`;
+  stream += drawText('F4', 13, 0.04, 0.10, 0.18, 'K. H. Mahmud, FCA', sigY + 5, false, width - 185);
+  stream += drawText('F2', 9, 0.30, 0.35, 0.45, 'Controller of Examinations', sigY - 14, false, width - 195);
+  stream += drawText('F3', 8, 0.45, 0.50, 0.55, 'Board of Assessment', sigY - 25, false, width - 185);
 
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(6.5);
-  doc.setTextColor(200, 150, 62);
-  doc.text('OFFICIAL SEAL', sealCenterX, sealCenterY - 4, { align: 'center' });
-  doc.setFontSize(8);
-  doc.setTextColor(10, 25, 47);
-  doc.text('VERIFIED', sealCenterX, sealCenterY + 1, { align: 'center' });
-  doc.setFontSize(5.5);
-  doc.setTextColor(100, 116, 139);
-  doc.text('COL BD LEDGER', sealCenterX, sealCenterY + 6, { align: 'center' });
-
-  // Controller of Examinations (Right)
-  doc.setDrawColor(148, 163, 184);
-  doc.setLineWidth(0.5);
-  doc.line(pageWidth - 95, sigY, pageWidth - 35, sigY);
-  doc.setFont('times', 'italic');
-  doc.setFontSize(13);
-  doc.setTextColor(10, 25, 47);
-  doc.text('K. H. Mahmud, FCA', pageWidth - 65, sigY - 3, { align: 'center' });
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8.5);
-  doc.setTextColor(71, 85, 105);
-  doc.text('Controller of Examinations', pageWidth - 65, sigY + 5, { align: 'center' });
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(7.5);
-  doc.setTextColor(100, 116, 139);
-  doc.text('Board of Academic Assessment', pageWidth - 65, sigY + 9, { align: 'center' });
-
-  // 15. Verification Footer Link
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(7);
-  doc.setTextColor(148, 163, 184);
-  doc.text(
-    `Verify Authenticity Online: https://cfoedubd.com/certificates?registration_id=${encodeURIComponent(
-      cert.registration_id
-    )}  •  Doc Ref: ${cert.registration_id}-${cert.serial_number}`,
-    pageWidth / 2,
-    pageHeight - 15,
-    { align: 'center' }
+  // Online Verification Footer Link
+  stream += drawText(
+    'F3',
+    7.5,
+    0.55,
+    0.60,
+    0.65,
+    `Verify Authenticity Online: https://cfoedubd.com/certificates?registration_id=${cert.registration_id}  •  Doc Ref: COL-${cert.registration_id}-${cert.serial_number}`,
+    44
   );
 
-  return doc;
+  const streamBytes = new TextEncoder().encode(stream);
+
+  const objects = [
+    '1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj',
+    '2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj',
+    `3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${width.toFixed(2)} ${height.toFixed(2)}] /Resources << /Font << /F1 4 0 R /F2 5 0 R /F3 6 0 R /F4 7 0 R >> >> /Contents 8 0 R >>\nendobj`,
+    '4 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold >>\nendobj',
+    '5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>\nendobj',
+    '6 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj',
+    '7 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Times-Italic >>\nendobj',
+    `8 0 obj\n<< /Length ${streamBytes.length} >>\nstream\n${stream}\nendstream\nendobj`,
+  ];
+
+  let offset = 0;
+  let pdf = '%PDF-1.4\n';
+  offset = new TextEncoder().encode(pdf).length;
+
+  const xref = ['0000000000 65535 f \n'];
+  for (let i = 0; i < objects.length; i++) {
+    xref.push(String(offset).padStart(10, '0') + ' 00000 n \n');
+    pdf += objects[i] + '\n';
+    offset = new TextEncoder().encode(pdf).length;
+  }
+
+  const startxref = offset;
+  pdf += `xref\n0 ${objects.length + 1}\n`;
+  for (const entry of xref) {
+    pdf += entry;
+  }
+  pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\n`;
+  pdf += `startxref\n${startxref}\n%%EOF`;
+
+  return new TextEncoder().encode(pdf);
+}
+
+/**
+ * Compatible wrapper adhering to jsPDF-like API for backward compatibility.
+ * Requires 0 external npm packages.
+ */
+export function createCertificatePdfDocument(cert: CertificateData): CertificatePdfDoc {
+  const pdfBytes = generateCertificatePdfBytes(cert);
+
+  return {
+    output(type: 'arraybuffer' | 'blob' | 'dataurlstring'): any {
+      const buffer = pdfBytes.buffer.slice(pdfBytes.byteOffset, pdfBytes.byteOffset + pdfBytes.byteLength) as ArrayBuffer;
+      if (type === 'blob') {
+        return new Blob([buffer], { type: 'application/pdf' });
+      }
+      if (type === 'dataurlstring') {
+        let binary = '';
+        for (let i = 0; i < pdfBytes.length; i++) {
+          binary += String.fromCharCode(pdfBytes[i]);
+        }
+        const base64 = typeof window !== 'undefined' ? btoa(binary) : Buffer.from(pdfBytes).toString('base64');
+        return `data:application/pdf;base64,${base64}`;
+      }
+      return buffer;
+    },
+    save(filename: string) {
+      if (typeof window !== 'undefined') {
+        const buffer = pdfBytes.buffer.slice(pdfBytes.byteOffset, pdfBytes.byteOffset + pdfBytes.byteLength) as ArrayBuffer;
+        const blob = new Blob([buffer], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename.endsWith('.pdf') ? filename : `${filename}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+    },
+  };
 }
