@@ -9,6 +9,10 @@ interface TestimonialsProps {
 }
 
 export default function Testimonials({ lang }: TestimonialsProps) {
+  if (!TESTIMONIALS || TESTIMONIALS.length === 0) {
+    return null;
+  }
+
   return (
     <section className="py-16 sm:py-20 bg-white border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -63,8 +67,11 @@ export default function Testimonials({ lang }: TestimonialsProps) {
                   <div className="w-11 h-11 rounded-full overflow-hidden border border-[#C8963E]/40 shrink-0">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={test.avatar}
+                      src={test.avatar || '/dummy-avatar.svg'}
                       alt={test.name}
+                      onError={(e) => {
+                        e.currentTarget.src = '/dummy-avatar.svg';
+                      }}
                       className="w-full h-full object-cover"
                     />
                   </div>

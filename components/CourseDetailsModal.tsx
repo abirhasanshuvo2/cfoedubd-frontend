@@ -118,8 +118,11 @@ export default function CourseDetailsModal({
                   <div className="w-13 h-13 rounded-full overflow-hidden border-2 border-white shadow-xs shrink-0">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={mentor.avatar}
+                      src={mentor.avatar || '/dummy-avatar.svg'}
                       alt={mentor.name}
+                      onError={(e) => {
+                        e.currentTarget.src = '/dummy-avatar.svg';
+                      }}
                       className="w-full h-full object-cover"
                     />
                   </div>

@@ -167,8 +167,6 @@ function CertificateVerificationContent() {
     return `/api/enrollment/certificates/${encodeURIComponent(cert.registration_id)}/view`;
   };
 
-  const sampleIds = ['222', '5', '8', 'COL-CFO-2025-9921'];
-
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col font-sans">
       <Navbar />
@@ -244,31 +242,6 @@ function CertificateVerificationContent() {
                 )}
               </button>
             </form>
-
-            {/* Quick Sample IDs */}
-            <div className="flex flex-wrap items-center justify-center gap-2 mt-4 text-xs text-slate-400">
-              <span className="font-semibold text-slate-300">
-                {lang === 'bn' ? 'টেস্ট আইডি দিয়ে দেখুন:' : 'Test with sample IDs:'}
-              </span>
-              {sampleIds.map((id) => (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => {
-                    setRegIdInput(id);
-                    router.push(`/certificates?registration_id=${encodeURIComponent(id)}`);
-                    fetchCertificate(id);
-                  }}
-                  className={`font-mono text-[11px] px-2.5 py-1 rounded-md transition-colors cursor-pointer border ${
-                    id === '222'
-                      ? 'bg-[#C8963E]/20 text-[#E5A93C] border-[#C8963E]/50 font-bold hover:bg-[#C8963E] hover:text-slate-950'
-                      : 'bg-slate-800 hover:bg-[#C8963E] hover:text-slate-950 text-slate-300 border-slate-700'
-                  }`}
-                >
-                  ID: #{id} {id === '222' ? '★ (Md Ali Hosen)' : ''}
-                </button>
-              ))}
-            </div>
           </div>
         </div>
       </section>

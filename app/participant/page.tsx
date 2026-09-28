@@ -204,9 +204,14 @@ export default function ParticipantPage() {
                   className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs hover:shadow-md hover:border-[#C8963E]/40 transition-all flex flex-col justify-between space-y-4 relative group"
                 >
                   <div className="flex items-start gap-4">
-                    {/* Initials Avatar */}
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#0A192F] to-[#1E3A8A] text-[#E5A93C] flex items-center justify-center font-bold text-base border-2 border-[#C8963E]/40 shrink-0 shadow-2xs">
-                      {initials}
+                    {/* Person Avatar */}
+                    <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-[#C8963E]/40 shrink-0 shadow-2xs bg-slate-100 flex items-center justify-center">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src="/dummy-avatar.svg"
+                        alt={student.full_name}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
 
                     <div className="min-w-0 flex-1">

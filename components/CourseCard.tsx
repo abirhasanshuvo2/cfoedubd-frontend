@@ -105,8 +105,11 @@ export default function CourseCard({
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={mentor.avatar}
+                    src={mentor.avatar || '/dummy-avatar.svg'}
                     alt={mentor.name}
+                    onError={(e) => {
+                      e.currentTarget.src = '/dummy-avatar.svg';
+                    }}
                     className="h-full w-full object-cover"
                   />
                 </div>

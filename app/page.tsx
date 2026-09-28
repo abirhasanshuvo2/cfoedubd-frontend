@@ -10,7 +10,6 @@ import CourseDetailsModal from '@/components/CourseDetailsModal';
 import EnrollmentModal from '@/components/EnrollmentModal';
 import StudentLmsModal from '@/components/StudentLmsModal';
 import LearningMethodology from '@/components/LearningMethodology';
-import Testimonials from '@/components/Testimonials';
 import CareerQuizModal from '@/components/CareerQuizModal';
 import AppDownloadBanner from '@/components/AppDownloadBanner';
 import FaqSection from '@/components/FaqSection';
@@ -244,9 +243,6 @@ export default function Home() {
         lang={lang}
         onExploreCourses={scrollToCourses}
       />
-
-      {/* Student Testimonials */}
-      <Testimonials lang={lang} />
 
       {/* Mobile App Download Banner */}
       <AppDownloadBanner lang={lang} />

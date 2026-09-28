@@ -308,8 +308,11 @@ export default function Hero({
                   <div className="w-12 h-12 rounded-full bg-slate-800 border border-[#C8963E]/40 overflow-hidden shrink-0">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={featuredCourse.mentors[0]?.avatar}
+                      src={featuredCourse.mentors[0]?.avatar || '/dummy-avatar.svg'}
                       alt={featuredCourse.mentors[0]?.name}
+                      onError={(e) => {
+                        e.currentTarget.src = '/dummy-avatar.svg';
+                      }}
                       className="w-full h-full object-cover"
                     />
                   </div>

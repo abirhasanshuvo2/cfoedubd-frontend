@@ -1,3 +1,5 @@
+export const DUMMY_PERSON_AVATAR = '/dummy-avatar.svg';
+
 export interface Mentor {
   name: string;
   role: string;
@@ -265,9 +267,7 @@ export function adaptApiCourseToCfoCourse(item: any): Course {
         role: 'লিড ফ্যাকাল্টি ও কর্পোরেট ট্রেইনার',
         company: 'Chartered Officer Limited (cfoedubd.com)',
         experience: '১০+ বছর প্রফেশনাল এক্সপেরিয়েন্স',
-        avatar: educatorName.toLowerCase().includes('abir')
-          ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=faces'
-          : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=faces',
+        avatar: DUMMY_PERSON_AVATAR,
       },
     ],
     educator: educatorName,
@@ -343,14 +343,14 @@ export const COURSES: Course[] = [
         role: 'প্রতিষ্ঠাতা ও প্রিন্সিপাল মেন্টর',
         company: 'Chartered Officer Limited & Ex-Group CFO',
         experience: '২৫+ বছর করপোরেট ও ফাইন্যান্সিয়াল লিডারশিপ',
-        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=faces',
+        avatar: DUMMY_PERSON_AVATAR,
       },
       {
         name: 'কাজী জহিরুল ইসলাম, FCA, ACCA',
         role: 'লিড ফ্যাকাল্টি - করপোরেট ফাইন্যান্স',
         company: 'পার্টনার, এক্রিডিটেড অডিট ফার্ম ও কনসালট্যান্ট',
         experience: '১৮+ বছর করপোরেট রিপোর্টিং ও ভ্যালুয়েশন',
-        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=faces',
+        avatar: DUMMY_PERSON_AVATAR,
       },
     ],
     description: 'কর্পোরেট জগতের শীর্ষ ফাইন্যান্সিয়াল লিডার বা CFO হতে প্রয়োজনীয় ফাইন্যান্সিয়াল লিডারশিপ, আইএফআরএস প্র্যাকটিক্যাল অ্যাপ্লিকেশন, এসএপি ফাইকো ইআরপি, ভ্যাট ও ট্যাক্স আইন এবং ট্রেজারি ম্যানেজমেন্টের পূর্ণাঙ্গ প্র্যাকটিক্যাল জ্ঞান অর্জন করুন। ৩টি সেমিস্টারে বিভক্ত ইন্ডাস্ট্রি-ফার্স্ট কারিকুলাম।',
@@ -442,7 +442,7 @@ export const COURSES: Course[] = [
         role: 'সাবেক এনবিআর টেক্সটাইল ভ্যাট কমিটির কনসালট্যান্ট',
         company: 'Tax & VAT Legal Advisory Group',
         experience: '২২+ বছর ট্যাক্সেশন ও কাস্টমস লিগ্যাল প্র্যাকটিস',
-        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=faces',
+        avatar: DUMMY_PERSON_AVATAR,
       },
     ],
     description: 'নতুন আয়কর আইন ২০২৩, ভ্যাট আইন ২০১২ এবং আন্তর্জাতিক কাস্টমস রুলস অনুযায়ী প্র্যাকটিক্যাল হ্যান্ডস-অন ট্রেনিং। এসআরও ইন্টারপ্রিটেশন, মুসক ৬.৩, মুসক ৯.১ সাবমিশন এবং বন্ডেড ওয়্যারহাউস অডিট সিস্টেম সরাসরি শিখুন।',
@@ -515,7 +515,7 @@ export const COURSES: Course[] = [
         role: 'সিনিয়র এসএপি আর্কিটেক্ট',
         company: 'গ্লোবাল ইআরপি সলিউশনস পার্টনার',
         experience: '১৬+ বছর এসএপি রোলআউট ও কনফিগারেশন',
-        avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=faces',
+        avatar: DUMMY_PERSON_AVATAR,
       },
     ],
     description: 'মাল্টিন্যাশনাল ও বড় কর্পোরেট গ্রুপগুলোতে ব্যবহৃত শীর্ষ ইআরপি সফটওয়্যার SAP-FICO এর জেনারেল লেজার, অ্যাকাউন্টস পেয়েবল, অ্যাকাউন্টস রিসিভেবল, ফিক্সড অ্যাসেট এবং কস্টিং কনফিগারেশন শিখুন। সাথে থাকছে পাওয়ার বিআই দিয়ে রিয়েল-টাইম ফাইন্যান্সিয়াল ড্যাশবোর্ড তৈরি।',
@@ -585,7 +585,7 @@ export const COURSES: Course[] = [
         role: 'ভাইস প্রেসিডেন্ট ও হেড অফ ট্রেজারি',
         company: 'লিডিং কমার্শিয়াল ব্যাংক পিএলসি',
         experience: '১৭+ বছর ইনভেস্টমেন্ট ব্যাংকিং ও ফাইন্যান্সিয়াল মডেলিং',
-        avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop&crop=faces',
+        avatar: DUMMY_PERSON_AVATAR,
       },
     ],
     description: 'আধুনিক করপোরেট এফপি&এ স্ট্র্যাটেজি, ৩-স্টেটমেন্ট ডাইনামিক ফাইন্যান্সিয়াল মডেলিং, ডিসকাউন্টেড ক্যাশ ফ্লো (DCF) বিজনেস ভ্যালুয়েশন, মার্জার অ্যান্ড অ্যাকুইজিশন (M&A) অ্যানালাইসিস এবং বাজেট ভ্যারিয়েন্স ট্র্যাকিং শিখুন।',
@@ -655,7 +655,7 @@ export const COURSES: Course[] = [
         role: 'সাপ্লাই চেইন ডিরেক্টর ও ইন্ডাস্ট্রি কনসালট্যান্ট',
         company: 'Ex-BAT & Leading FMCG Multinational',
         experience: '২০+ বছর এন্ড-টু-এন্ড সাপ্লাই চেইন ম্যানেজমেন্ট',
-        avatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=400&h=400&fit=crop&crop=faces',
+        avatar: DUMMY_PERSON_AVATAR,
       },
     ],
     description: 'এন্ড-টু-এন্ড সাপ্লাই চেইন প্ল্যানিং, কৌশলগত সোর্সিং ও প্রকিউরমেন্ট, ওয়্যারহাউস ও ইনভেন্টরি অপটিমাইজেশন (EOQ, Safety Stock) এবং লিন সিক্স সিগমা গ্রিন বেল্ট মেথডোলজি দিয়ে অপারেশনাল অপচয় দূর করার প্র্যাকটিক্যাল গাইড।',
@@ -725,7 +725,7 @@ export const COURSES: Course[] = [
         role: 'হেড অফ এইচআর ও করপোরেট লিগ্যাল অ্যাডভাইজার',
         company: 'মাল্টিন্যাশনাল টেলিকম ও কনসাল্টিং গ্রুপ',
         experience: '১৮+ বছর হিউম্যান রিসোর্স স্ট্র্যাটেজি ও লেবার ল',
-        avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=faces',
+        avatar: DUMMY_PERSON_AVATAR,
       },
     ],
     description: 'বাংলাদেশ শ্রম আইন ২০০৬ (২০১৮ পর্যন্ত সংশোধিত) এবং বাংলাদেশ শ্রম বিধিমালা ২০১৫ অনুযায়ী নিয়োগ, ডিসিপ্লিনারি অ্যাকশন, গ্র্যাচুইটি, প্রভিডেন্ট ফান্ড ও পে-রোল ম্যানেজমেন্টের খুঁটিনাটি। সাথে আধুনিক স্ট্র্যাটেজিক এইচআর ও কেপিআই মূল্যায়ন।',
@@ -795,7 +795,7 @@ export const COURSES: Course[] = [
         role: 'প্রিন্সিপাল ফ্যাকাল্টি',
         company: 'Chartered Officer Limited',
         experience: '২৫+ বছর কর্পোরেট রিপোর্টিং ও অডিট প্র্যাকটিস',
-        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=faces',
+        avatar: DUMMY_PERSON_AVATAR,
       },
     ],
     description: 'আন্তর্জাতিক অ্যাকাউন্টিং স্ট্যান্ডার্ড (IAS) এবং ইন্টারন্যাশনাল ফাইন্যান্সিয়াল রিপোর্টিং স্ট্যান্ডার্ডস (IFRS) এর জটিল মানদণ্ডগুলো (IFRS 9, IFRS 15, IFRS 16) বাস্তব কর্পোরেট ব্যালেন্স শিটে প্রয়োগ করার পূর্ণাঙ্গ প্রায়োগিক প্রশিক্ষণ।',
@@ -937,60 +937,7 @@ export const FAQS: FaqItem[] = [
   },
 ];
 
-export const TESTIMONIALS: Testimonial[] = [
-  {
-    id: 't-1',
-    name: 'তানভীর আহমেদ চৌধুরী',
-    course: 'Chartered Financial Officer (CFO) Program',
-    previousRole: 'সিনিয়র ফাইন্যান্স ম্যানেজার',
-    currentRole: 'চিফ ফাইন্যান্সিয়াল অফিসার (CFO)',
-    company: 'শীর্ষস্থানীয় টেক্সটাইল গ্রুপ',
-    companyLogoText: 'DSE Listed Group',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=faces',
-    comment: 'চার্টার্ড অফিসার লিমিটেড (COL)-এর এক বছরের CFO প্রোগ্রাম আমার পেশাগত দৃষ্টিভঙ্গি সম্পূর্ণরূপে পরিবর্তন করে দিয়েছে। শুধু অ্যাকাউন্টিং নয়, বোর্ডরুম গভর্নেন্স, ট্রেজারি অপারেশন ও এসএপি-ফাইকো প্র্যাকটিক্যালি শেখার কারণে আমি সফলভাবে সিএফও পদে উন্নীত হয়েছি।',
-    commentEn: 'The 1-year CFO program at Chartered Officer Limited transformed my corporate leadership approach. Practical exposure to boardroom governance and SAP-FICO helped me step into the CFO role with confidence.',
-    rating: 5,
-  },
-  {
-    id: 't-2',
-    name: 'ফারজানা আক্তার, ACA',
-    course: 'PGD in Customs, VAT, TAX & Trade Management',
-    previousRole: 'ট্যাক্স এক্সিকিউটিভ',
-    currentRole: 'হেড অফ ট্যাক্স ও রেগুলেটরি অ্যাফেয়ার্স',
-    company: 'গ্লোবাল ফার্মাসিউটিক্যালস পিএলসি',
-    companyLogoText: 'Pharma Leader',
-    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&crop=faces',
-    comment: 'নতুন আয়কর আইন ২০২৩ ও ভ্যাট আইন ২০১২ এর প্রায়োগিক সূক্ষ্মতাগুলো মনিরুজ্জামান স্যারের ক্লাসে যে পরিচ্ছন্নভাবে শিখেছি, তা বাজারে অন্য কোথাও পাওয়া অসম্ভব। মুসক ৯.১ এবং বন্ড অডিটের প্র্যাকটিস আমাদের কোম্পানির লাখ লাখ টাকা সাশ্রয় করেছে।',
-    commentEn: 'The clarity with which new Tax Act 2023 and VAT compliance were taught is unmatched. Our company saved millions through streamlined VAT 9.1 return filing and bonded warehouse audits.',
-    rating: 5,
-  },
-  {
-    id: 't-3',
-    name: 'মাহমুদুল হাসান',
-    course: 'Advanced Fintech with SAP-FICO & Power BI',
-    previousRole: 'অ্যাকাউন্টস অফিসার',
-    currentRole: 'সিনিয়র ইআরপি ফাইন্যান্সিয়াল স্পেশালিস্ট',
-    company: 'মাল্টিন্যাশনাল এফএমসিজি',
-    companyLogoText: 'Global FMCG',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=faces',
-    comment: 'থিওরি মুখস্থ না করিয়ে সরাসরি এসএপি কনফিগারেশন এবং পাওয়ার বিআই-তে রিয়েল টাইম ব্যালেন্স শিট তৈরি করার অভিজ্ঞতা সত্যিই অভূতপূর্ব। ইন্টারভিউতে লাইভ পোর্টফোলিও শোকেস করে আমি বর্তমান মাল্টিন্যাশনাল চাকরিতে যুক্ত হতে পেরেছি।',
-    commentEn: 'Hands-on SAP FICO configuration and real-time C-suite Power BI reporting gave me the competitive edge to secure my senior ERP specialist position.',
-    rating: 5,
-  },
-  {
-    id: 't-4',
-    name: 'আহমেদ সাদিক',
-    course: 'PGD in Logistics & Supply Chain Analytics',
-    previousRole: 'লজিস্টিকস সুপারভাইজার',
-    currentRole: 'অ্যাসিস্ট্যান্ট জেনারেল ম্যানেজার (সাপ্লাই চেইন)',
-    company: 'লিস্টেড ইলেকট্রনিক্স কর্পোরেশন',
-    companyLogoText: 'Electronics Conglomerate',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=faces',
-    comment: 'লিন সিক্স সিগমা মেথডোলজি এবং ইনভেন্টরি অপটিমাইজেশন টেকনিক্স আমাদের ফ্যাক্টরির ডেলিভারি সাইকেল ৩০% দ্রুততর করেছে। চার্টার্ড অফিসারের সার্টিফিকেট ইন্ডাস্ট্রি মহলে ব্যাপকভাবে প্রশংসিত।',
-    commentEn: 'Lean Six Sigma methodology and inventory optimization reduced our factory lead times by 30%. Chartered Officer credentials carry tremendous weight across corporate Bangladesh.',
-    rating: 5,
-  },
-];
+export const TESTIMONIALS: Testimonial[] = [];
 
 export interface VerifiedCertificate {
   id: string;
@@ -1133,7 +1080,7 @@ export const BLOG_POSTS: BlogPost[] = [
     author: {
       name: 'মো. শফিকুল আলম, FCA, FCMA',
       role: 'প্রধান ফ্যাকাল্টি ও এক্সিকিউটিভ ডিরেক্টর, COL',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=faces',
+      avatar: DUMMY_PERSON_AVATAR,
     },
     coverImage: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=500&fit=crop',
     tags: ['আয়কর আইন ২০২৩', 'Corporate Tax', 'CFO Leadership', 'Tax Return', 'NBR Rules'],
@@ -1164,7 +1111,7 @@ export const BLOG_POSTS: BlogPost[] = [
     author: {
       name: 'মোহাম্মদ তানভীর আহমেদ, এফসিএ',
       role: 'গ্রুপ সিএফও ও লিড ট্রেইনার',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=faces',
+      avatar: DUMMY_PERSON_AVATAR,
     },
     coverImage: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=500&fit=crop',
     tags: ['DCF Valuation', 'Financial Modeling', 'WACC', 'Excel Modeling', 'Investment Banking'],
@@ -1195,7 +1142,7 @@ export const BLOG_POSTS: BlogPost[] = [
     author: {
       name: 'ফারুক আহমেদ',
       role: 'এসএপি সলিউশন আর্কিটেক্ট ও সিনিয়র ফ্যাকাল্টি',
-      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=faces',
+      avatar: DUMMY_PERSON_AVATAR,
     },
     coverImage: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=800&h=500&fit=crop',
     tags: ['SAP FICO', 'ERP', 'Finance Automation', 'Accounting', 'PowerBI'],

@@ -185,8 +185,11 @@ export default function StudentLmsModal({
                   <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden border border-slate-300">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={currentCourse.mentors[0]?.avatar}
+                      src={currentCourse.mentors[0]?.avatar || '/dummy-avatar.svg'}
                       alt={currentCourse.mentors[0]?.name}
+                      onError={(e) => {
+                        e.currentTarget.src = '/dummy-avatar.svg';
+                      }}
                       className="w-full h-full object-cover"
                     />
                   </div>

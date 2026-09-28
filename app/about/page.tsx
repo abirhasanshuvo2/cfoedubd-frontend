@@ -85,21 +85,21 @@ export default function AboutPage() {
       role: 'প্রতিষ্ঠাতা ও প্রিন্সিপাল মেন্টর',
       roleEn: 'Founder & Principal Faculty',
       bio: '২৫ বছরেরও বেশি সময় ধরে দেশের শীর্ষস্থানীয় করপোরেট গ্রুপসমূহে প্রধান অর্থ কর্মকর্তা (CFO) ও সিনিয়র পার্টনার হিসেবে দায়িত্ব পালন করেছেন।',
-      image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=faces'
+      image: '/dummy-avatar.svg'
     },
     {
       name: 'মোহাম্মদ মনিরুজ্জামান, FCMA',
       role: 'ডিরেক্টর - ট্যাক্স ও রেগুলেটরি অ্যাফেয়ার্স',
       roleEn: 'Director - Tax & Regulatory Affairs',
       bio: 'জাতীয় রাজস্ব বোর্ড (NBR), কাস্টমস, বন্ড অডিট ও আয়কর আইন ২০২৩ এর অন্যতম শীর্ষ বিশেষজ্ঞ পরামর্শক।',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=faces'
+      image: '/dummy-avatar.svg'
     },
     {
       name: 'ফারুক আহমেদ, SAP Certified Solution Architect',
       role: 'হেড অব ফিনটেক ও এন্টারপ্রাইজ ইআরপি',
       roleEn: 'Head of Fintech & Enterprise ERP',
       bio: 'মাল্টিন্যাশনাল কোম্পানিগুলোতে SAP S/4HANA FICO এবং মাইক্রোসফট পাওয়ার বিআই বাস্তবায়নের আন্তর্জাতিক অভিজ্ঞতাসম্পন্ন টেকনোলজি লিডার।',
-      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=faces'
+      image: '/dummy-avatar.svg'
     }
   ];
 

@@ -187,8 +187,11 @@ export default function CourseDetailPage({ params }: PageProps) {
                   <div className="w-10 h-10 rounded-full overflow-hidden border border-[#C8963E] bg-slate-800 shrink-0">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={course.mentors[0]?.avatar}
+                      src={course.mentors[0]?.avatar || '/dummy-avatar.svg'}
                       alt={course.mentors[0]?.name}
+                      onError={(e) => {
+                        e.currentTarget.src = '/dummy-avatar.svg';
+                      }}
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -405,8 +408,11 @@ export default function CourseDetailPage({ params }: PageProps) {
                       <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[#C8963E] bg-slate-100 shrink-0">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
-                          src={mentor.avatar}
+                          src={mentor.avatar || '/dummy-avatar.svg'}
                           alt={mentor.name}
+                          onError={(e) => {
+                            e.currentTarget.src = '/dummy-avatar.svg';
+                          }}
                           className="w-full h-full object-cover"
                         />
                       </div>
