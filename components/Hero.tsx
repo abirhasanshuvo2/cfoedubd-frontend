@@ -303,35 +303,6 @@ export default function Hero({
                   </div>
                 </div>
 
-                {/* Lead Mentor Spotlight */}
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-950/70 border border-slate-800">
-                  <div className="w-12 h-12 rounded-full bg-slate-800 border border-[#C8963E]/40 overflow-hidden shrink-0">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={featuredCourse.mentors[0]?.avatar || '/dummy-avatar.svg'}
-                      alt={featuredCourse.mentors[0]?.name}
-                      onError={(e) => {
-                        e.currentTarget.src = '/dummy-avatar.svg';
-                      }}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs font-bold text-white truncate">
-                      {featuredCourse.mentors[0]?.name}
-                    </p>
-                    <p className="text-[11px] text-slate-400 truncate">
-                      {featuredCourse.mentors[0]?.role} • {featuredCourse.mentors[0]?.company}
-                    </p>
-                    <p className="text-[10px] text-[#E5A93C] font-medium">
-                      {featuredCourse.mentors[0]?.experience}
-                    </p>
-                  </div>
-                  <span className="px-2 py-1 rounded bg-[#C8963E]/20 text-[#E5A93C] border border-[#C8963E]/30 text-[10px] font-bold shrink-0">
-                    Lead FCA
-                  </span>
-                </div>
-
                 {/* Price & Admission Actions */}
                 <div className="pt-2 border-t border-slate-800 flex items-center justify-between gap-4">
                   <div>
