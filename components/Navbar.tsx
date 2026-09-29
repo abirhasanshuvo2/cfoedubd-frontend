@@ -392,19 +392,7 @@ export default function Navbar({
                 Media &amp; News
               </Link>
 
-              {/* 5. Participant */}
-              <Link
-                href="/participant"
-                className={`px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5 ${
-                  pathname === '/participant'
-                    ? 'text-[#E5A93C] bg-white/10 shadow-xs'
-                    : 'text-slate-200 hover:text-[#E5A93C] hover:bg-white/5'
-                }`}
-              >
-                Participant
-              </Link>
-
-              {/* 6. Facilitator */}
+              {/* 5. Facilitator */}
               <Link
                 href="/facilitator"
                 className={`px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5 ${
@@ -538,13 +526,6 @@ export default function Navbar({
               className="block px-3 py-2 rounded-lg hover:bg-slate-100 whitespace-nowrap"
             >
               Media &amp; News
-            </Link>
-            <Link
-              href="/participant"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg hover:bg-slate-100 whitespace-nowrap"
-            >
-              Participant
             </Link>
             <Link
               href="/facilitator"

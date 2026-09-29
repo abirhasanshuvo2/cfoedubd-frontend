@@ -208,11 +208,11 @@ export default function FacilitatorPage() {
                       </div>
                     </div>
 
-                    {/* Courses Handled */}
+                    {/* Courses Handled / Core Competencies */}
                     <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2">
                       <div className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
                         <BookOpen className="w-4 h-4 text-[#C8963E]" />
-                        <span>Core Disciplines & Courses:</span>
+                        <span>Core Competencies:</span>
                       </div>
                       <div className="flex flex-wrap gap-1.5">
                         {(educator.courses && educator.courses.length > 0

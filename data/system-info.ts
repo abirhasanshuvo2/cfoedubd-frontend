@@ -7,6 +7,8 @@ export interface SystemInformation {
   email: string;
   phone: string;
   mobile: string;
+  whatsapp?: string;
+  whatsapp_no?: string;
   website: string;
   facebook: string;
   instagram: string;
@@ -45,6 +47,8 @@ export const DEFAULT_SYSTEM_INFO: SystemInformation = {
   email: "cfoedubd@gmail.com",
   phone: "+880 1713378787",
   mobile: "+8801713378787",
+  whatsapp: "+8801713378787",
+  whatsapp_no: "+8801713378787",
   website: "https://cfoedubd.com",
   facebook: "https://www.facebook.com/CharteredOfficersLimited",
   instagram: "https://www.instagram.com/info.col.com.bd/",

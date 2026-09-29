@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Hind_Siliguri, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { CfoProvider } from '@/context/CfoContext';
+import WhatsAppFloatingButton from '@/components/WhatsAppFloatingButton';
 
 const hindSiliguri = Hind_Siliguri({
   subsets: ['bengali', 'latin'],
@@ -40,7 +41,10 @@ export default function RootLayout({
   return (
     <html lang="bn" className={`${hindSiliguri.variable} ${plusJakarta.variable}`}>
       <body className="font-sans antialiased bg-[#F8FAFC] text-slate-900 selection:bg-[#c8963e] selection:text-white" suppressHydrationWarning>
-        <CfoProvider>{children}</CfoProvider>
+        <CfoProvider>
+          {children}
+          <WhatsAppFloatingButton />
+        </CfoProvider>
       </body>
     </html>
   );

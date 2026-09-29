@@ -11,6 +11,7 @@ import {
   Linkedin,
   Instagram,
   Globe,
+  MessageCircle,
   ShieldCheck,
   Award,
   GraduationCap,
@@ -123,6 +124,19 @@ export default function Footer({ lang: propLang }: FooterProps = {}) {
                   <Instagram className="w-4 h-4" />
                 </a>
               )}
+              {/* WhatsApp direct chat link */}
+              {((systemInfo as any).whatsapp_no || (systemInfo as any).whatsapp || systemInfo.mobile || systemInfo.phone) && (
+                <a
+                  href={`https://wa.me/${String((systemInfo as any).whatsapp_no || (systemInfo as any).whatsapp || systemInfo.mobile || systemInfo.phone).replace(/[^\d+]/g, '').replace(/^\+/, '')}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-8 h-8 rounded-lg bg-emerald-700/80 hover:bg-[#25D366] text-white flex items-center justify-center transition-colors border border-emerald-600"
+                  aria-label="WhatsApp"
+                  title={`WhatsApp: ${(systemInfo as any).whatsapp_no || (systemInfo as any).whatsapp || systemInfo.mobile || systemInfo.phone}`}
+                >
+                  <MessageCircle className="w-4 h-4 fill-white" />
+                </a>
+              )}
               {systemInfo.website && (
                 <a
                   href={systemInfo.website}
@@ -200,11 +214,6 @@ export default function Footer({ lang: propLang }: FooterProps = {}) {
               <li>
                 <Link href="/media-news" className="hover:text-[#E5A93C] transition-colors">
                   Media & News
-                </Link>
-              </li>
-              <li>
-                <Link href="/participant" className="hover:text-[#E5A93C] transition-colors">
-                  Participant
                 </Link>
               </li>
               <li>
