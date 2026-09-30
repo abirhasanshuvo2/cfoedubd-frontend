@@ -7,6 +7,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { COURSES } from '@/data/cfo-data';
 import { useCfo } from '@/context/CfoContext';
+import { submitEnrollmentEnquiry } from '@/lib/enrollment-service';
 import {
   CheckCircle2,
   Award,
@@ -22,8 +23,8 @@ import {
   Info,
   CheckCircle,
   Send,
-  HelpCircle,
-  Globe,
+  Heart,
+  AlertCircle,
 } from 'lucide-react';
 
 function EnrollNowContent() {
@@ -56,17 +57,29 @@ function EnrollNowContent() {
   const selectedCourseId = userSelectedCourseId ?? matchedCourse?.id ?? allCourses[0]?.id ?? '';
   const currentCourse = allCourses.find((c) => c.id === selectedCourseId) || matchedCourse || allCourses[0];
 
-  // Streamlined Form State matching http://127.0.0.1:8000/api/enrollment/enroll-now
+  // Completely blank form state for the user to fill in themselves (NO mock auto-fill)
   const [formData, setFormData] = useState({
     name: '',
+    last_name: '',
     email: '',
     phone: '',
-    subject: queryCourseName || matchedCourse?.title || 'Diploma in E-Commerce and Supply Chain with Lean Six Sigma',
-    address: 'Dhaka',
+    gender: '', // '1' | '2' | '3'
+    birth_date: '',
+    fathers_name: '',
+    fathers_occupation: '',
+    fathers_phone: '',
+    fathers_email: '',
+    mothers_name: '',
+    mothers_occupation: '',
+    mothers_phone: '',
+    mothers_email: '',
+    subject: queryCourseName || matchedCourse?.title || '',
+    address: '',
+    permanent_address: '',
     remarks: '',
   });
 
-  // Keep subject in sync if user changes course dropdown and hadn't manually edited subject
+  // Track if user manually changed the subject text field
   const [hasManuallyEditedSubject, setHasManuallyEditedSubject] = useState(false);
 
   const handleCourseSelect = (courseId: string) => {
@@ -82,21 +95,24 @@ function EnrollNowContent() {
     id?: number | string;
     subject: string;
     name: string;
+    last_name: string;
     phone: string;
     email: string;
+    gender: string;
+    birth_date: string;
+    fathers_name: string;
+    mothers_name: string;
     address: string;
+    permanent_address: string;
     remarks: string;
     isLiveBackend?: boolean;
     submittedAt?: string;
     backendMessage?: string;
   } | null>(null);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
-
-  // Backend API Base URL
-  const apiEndpoint = typeof window !== 'undefined'
-    ? localStorage.getItem('cfo_custom_api_url') || process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://127.0.0.1:8000'
-    : process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://127.0.0.1:8000';
+  const [missingFieldKeys, setMissingFieldKeys] = useState<string[]>([]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -104,109 +120,93 @@ function EnrollNowContent() {
       setHasManuallyEditedSubject(true);
     }
     setFormData((prev) => ({ ...prev, [name]: value }));
+    // Clear field from missing keys highlight as user types
+    setMissingFieldKeys((prev) => prev.filter((k) => k !== name));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError('');
+    setMissingFieldKeys([]);
 
-    if (!formData.name.trim()) {
-      setFormError(lang === 'bn' ? 'অনুগ্রহ করে আপনার পুরো নাম লিখুন।' : 'Please enter your full name.');
-      return;
+    // Strict validation: every single field required by the API must be provided
+    const requiredCheck: { key: keyof typeof formData; label: string }[] = [
+      { key: 'name', label: lang === 'bn' ? 'প্রথম নাম (First Name)' : 'First Name' },
+      { key: 'last_name', label: lang === 'bn' ? 'শেষ নাম (Last Name)' : 'Last Name' },
+      { key: 'email', label: lang === 'bn' ? 'ইমেইল (Email)' : 'Email' },
+      { key: 'phone', label: lang === 'bn' ? 'মোবাইল নম্বর (Phone)' : 'Phone' },
+      { key: 'gender', label: lang === 'bn' ? 'লিঙ্গ (Gender)' : 'Gender' },
+      { key: 'birth_date', label: lang === 'bn' ? 'জন্মতারিখ (Birth Date)' : 'Birth Date' },
+      { key: 'fathers_name', label: lang === 'bn' ? 'পিতার নাম (Father\'s Name)' : "Father's Name" },
+      { key: 'fathers_occupation', label: lang === 'bn' ? 'পিতার পেশা (Father\'s Occupation)' : "Father's Occupation" },
+      { key: 'fathers_phone', label: lang === 'bn' ? 'পিতার ফোন (Father\'s Phone)' : "Father's Phone" },
+      { key: 'fathers_email', label: lang === 'bn' ? 'পিতার ইমেইল (Father\'s Email)' : "Father's Email" },
+      { key: 'mothers_name', label: lang === 'bn' ? 'মাতার নাম (Mother\'s Name)' : "Mother's Name" },
+      { key: 'mothers_occupation', label: lang === 'bn' ? 'মাতার পেশা (Mother\'s Occupation)' : "Mother's Occupation" },
+      { key: 'mothers_phone', label: lang === 'bn' ? 'মাতার ফোন (Mother\'s Phone)' : "Mother's Phone" },
+      { key: 'mothers_email', label: lang === 'bn' ? 'মাতার ইমেইল (Mother\'s Email)' : "Mother's Email" },
+      { key: 'subject', label: lang === 'bn' ? 'কোর্সের বিষয় (Subject)' : 'Subject' },
+      { key: 'address', label: lang === 'bn' ? 'বর্তমান ঠিকানা (Present Address)' : 'Present Address' },
+      { key: 'permanent_address', label: lang === 'bn' ? 'স্থায়ী ঠিকানা (Permanent Address)' : 'Permanent Address' },
+      { key: 'remarks', label: lang === 'bn' ? 'মন্তব্য (Remarks)' : 'Remarks' },
+    ];
+
+    const missingKeys: string[] = [];
+    const missingLabels: string[] = [];
+
+    for (const item of requiredCheck) {
+      const val = formData[item.key];
+      if (!val || !val.trim()) {
+        missingKeys.push(item.key);
+        missingLabels.push(item.label);
+      }
     }
-    if (!formData.email.trim()) {
-      setFormError(lang === 'bn' ? 'অনুগ্রহ করে আপনার ইমেইল ঠিকানা দিন।' : 'Please enter your email address.');
-      return;
-    }
-    if (!formData.subject.trim()) {
-      setFormError(lang === 'bn' ? 'কোর্সের বিষয় (Subject) সিলেক্ট বা লিখুন।' : 'Please enter or select course subject.');
+
+    if (missingKeys.length > 0) {
+      setMissingFieldKeys(missingKeys);
+      setFormError(
+        lang === 'bn'
+          ? `ফর্মের সকল তথ্য পূরণ করা বাধ্যতামূলক। অনুগ্রহ করে এই ফিল্ডগুলো পূরণ করুন: ${missingLabels.join(', ')}`
+          : `Every field is required to submit to the API. Please fill in: ${missingLabels.join(', ')}`
+      );
+      // Scroll to error
+      window.scrollTo({ top: 120, behavior: 'smooth' });
       return;
     }
 
     const payload = {
       name: formData.name.trim(),
+      last_name: formData.last_name.trim(),
       email: formData.email.trim(),
-      phone: formData.phone.trim() || undefined,
+      phone: formData.phone.trim(),
+      gender: formData.gender.trim(),
+      birth_date: formData.birth_date.trim(),
+      fathers_name: formData.fathers_name.trim(),
+      fathers_occupation: formData.fathers_occupation.trim(),
+      fathers_phone: formData.fathers_phone.trim(),
+      fathers_email: formData.fathers_email.trim(),
+      mothers_name: formData.mothers_name.trim(),
+      mothers_occupation: formData.mothers_occupation.trim(),
+      mothers_phone: formData.mothers_phone.trim(),
+      mothers_email: formData.mothers_email.trim(),
       subject: formData.subject.trim(),
-      address: formData.address.trim() || undefined,
-      remarks: formData.remarks.trim() || undefined,
+      address: formData.address.trim(),
+      permanent_address: formData.permanent_address.trim(),
+      remarks: formData.remarks.trim(),
     };
 
     setIsSubmitting(true);
 
     try {
-      let createdId: number | string = Math.floor(1000 + Math.random() * 9000);
-      let isLiveBackend = false;
-      let submittedAt: string | undefined = undefined;
-      let backendMessage: string | undefined = undefined;
+      const res = await submitEnrollmentEnquiry(payload);
 
-      // 1. Try posting directly to user's backend if available from browser
-      const directBase = (apiEndpoint || process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://127.0.0.1:8000').replace(/\/$/, '');
-      let apiSuccess = false;
-      try {
-        const directRes = await fetch(`${directBase}/api/enrollment/enroll-now`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-          body: JSON.stringify(payload),
-          signal: AbortSignal.timeout(4000),
-        });
-
-        const directData = await directRes.json();
-        if (directRes.ok || directRes.status === 201) {
-          if (directData.success) {
-            apiSuccess = true;
-            isLiveBackend = true;
-            backendMessage = directData.message;
-            const record = directData.data?.data?.[0] || directData.data;
-            if (record?.id) createdId = record.id;
-            if (record?.submitted_at) submittedAt = record.submitted_at;
-          }
-        } else if (directRes.status === 422) {
-          // Laravel validation error
-          const msg = directData.message || 'Validation error';
-          const errs = directData.errors ? Object.values(directData.errors).flat().join(', ') : '';
-          setFormError(`${msg}${errs ? `: ${errs}` : ''}`);
-          setIsSubmitting(false);
-          return;
-        }
-      } catch {
-        // Direct call failed (e.g. Mixed content or CORS); proceed to Next.js API proxy
-      }
-
-      // 2. If direct call did not succeed, forward via internal Next.js proxy route
-      if (!apiSuccess) {
-        const proxyRes = await fetch('/api/enrollment/enroll-now', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            'x-custom-backend-url': directBase,
-          },
-          body: JSON.stringify(payload),
-        });
-
-        const proxyData = await proxyRes.json();
-
-        if (proxyRes.status === 422) {
-          const msg = proxyData.message || 'Laravel validation error';
-          const errs = proxyData.errors ? Object.values(proxyData.errors).flat().join(', ') : '';
-          setFormError(`${msg}${errs ? `: ${errs}` : ''}`);
-          setIsSubmitting(false);
-          return;
-        }
-
-        if (proxyRes.ok || proxyRes.status === 201) {
-          if (proxyData.isLiveBackend) {
-            isLiveBackend = true;
-          }
-          backendMessage = proxyData.message;
-          const record = proxyData.data?.data?.[0] || proxyData.data;
-          if (record?.id) createdId = record.id;
-          if (record?.submitted_at) submittedAt = record.submitted_at;
-        }
+      if (!res.success && res.errors) {
+        const errorMessages = Object.entries(res.errors)
+          .map(([key, msgs]) => `${key}: ${msgs.join(', ')}`)
+          .join(' | ');
+        setFormError(res.message ? `${res.message}: ${errorMessages}` : errorMessages);
+        setIsSubmitting(false);
+        return;
       }
 
       if (currentCourse) {
@@ -214,46 +214,34 @@ function EnrollNowContent() {
       }
 
       setSubmissionResult({
-        id: createdId,
+        id: res.data?.id || Math.floor(1000 + Math.random() * 9000),
         name: payload.name,
+        last_name: payload.last_name,
         email: payload.email,
-        phone: payload.phone || '',
+        phone: payload.phone,
+        gender: payload.gender,
+        birth_date: payload.birth_date,
+        fathers_name: payload.fathers_name,
+        mothers_name: payload.mothers_name,
         subject: payload.subject,
-        address: payload.address || 'Dhaka',
-        remarks: payload.remarks || '',
-        isLiveBackend,
-        submittedAt,
-        backendMessage,
+        address: payload.address,
+        permanent_address: payload.permanent_address,
+        remarks: payload.remarks,
+        isLiveBackend: res.isLiveBackend ?? false,
+        submittedAt: res.data?.created_at || new Date().toLocaleString(),
+        backendMessage: res.message,
       });
 
       setIsSubmitting(false);
       setIsSubmitted(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    } catch {
-      // Fallback submission if unexpected network crash
-      setSubmissionResult({
-        id: Math.floor(1000 + Math.random() * 9000),
-        name: payload.name,
-        email: payload.email,
-        phone: payload.phone || '',
-        subject: payload.subject,
-        address: payload.address || 'Dhaka',
-        remarks: payload.remarks || '',
-        isLiveBackend: false,
-      });
+    } catch (err: any) {
+      setFormError(err?.message || 'Error communicating with backend API');
       setIsSubmitting(false);
-      setIsSubmitted(true);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
-  // Quick remarks recommendation pills
-  const quickRemarks = [
-    lang === 'bn' ? 'সান্ধ্যকালীন ব্যাচে আগ্রহী' : 'Interested in evening batch',
-    lang === 'bn' ? 'শুক্রবার ও শনিবার উইকেন্ড ব্যাচ' : 'Weekend executive batch (Fri & Sat)',
-    lang === 'bn' ? 'ক্যাম্পাস ও অনলাইন হাইব্রিড ক্লাস' : 'Hybrid (Campus + Online)',
-    lang === 'bn' ? 'কোর্স আউটলাইন ও সিলেবাস জানতে চাই' : 'Requesting syllabus details',
-  ];
+  const isFieldMissing = (key: string) => missingFieldKeys.includes(key);
 
   if (isSubmitted && submissionResult) {
     return (
@@ -268,12 +256,12 @@ function EnrollNowContent() {
 
             <div className="space-y-2">
               <span className="text-xs font-bold uppercase tracking-widest text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-                Official Course Enquiry Received
+                Official Enquiry Registered (API: /api/enquiries)
               </span>
               <h1 className="text-2xl sm:text-3xl font-serif font-black text-[#0A192F]">
                 {lang === 'bn'
-                  ? 'আপনার ভর্তি সংক্রান্ত আবেদন সফলভাবে গৃহীত হয়েছে!'
-                  : 'Your Course Enquiry Has Been Successfully Submitted!'}
+                  ? 'আপনার ভর্তি অনুসন্ধান ও আবেদন সফলভাবে গৃহীত হয়েছে!'
+                  : 'Your Admission Enquiry Has Been Successfully Submitted!'}
               </h1>
               <p className="text-sm text-slate-600 max-w-md mx-auto">
                 {lang === 'bn'
@@ -283,7 +271,7 @@ function EnrollNowContent() {
             </div>
 
             {/* Official Admission Voucher */}
-            <div className="bg-slate-50 rounded-2xl border border-slate-200 p-6 text-left space-y-4 max-w-lg mx-auto shadow-2xs">
+            <div className="bg-slate-50 rounded-2xl border border-slate-200 p-6 text-left space-y-4 max-w-xl mx-auto shadow-2xs">
               <div className="flex items-center justify-between pb-3 border-b border-slate-200">
                 <span className="text-xs font-semibold text-slate-500">
                   {lang === 'bn' ? 'এনকোয়ারি / ট্র্যাকিং আইডি:' : 'Enquiry Tracking ID:'}
@@ -293,54 +281,60 @@ function EnrollNowContent() {
                 </span>
               </div>
 
-              <div className="space-y-2 text-xs">
-                <div className="flex justify-between">
-                  <span className="text-slate-500">{lang === 'bn' ? 'আবেদনকারী / নাম:' : 'Applicant Name:'}</span>
-                  <span className="font-bold text-slate-900">{submissionResult.name}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">{lang === 'bn' ? 'কোর্স / বিষয় (Subject):' : 'Course Subject:'}</span>
-                  <span className="font-bold text-[#C8963E] text-right max-w-[260px] truncate">
-                    {submissionResult.subject}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div>
+                  <span className="text-slate-500 block">{lang === 'bn' ? 'নাম (Name):' : 'Full Name:'}</span>
+                  <span className="font-bold text-slate-900">
+                    {submissionResult.name} {submissionResult.last_name}
                   </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">{lang === 'bn' ? 'মোবাইল / হোয়াটসঅ্যাপ:' : 'Phone / WhatsApp:'}</span>
-                  <span className="font-mono font-semibold text-slate-800">{submissionResult.phone || 'N/A'}</span>
+                <div>
+                  <span className="text-slate-500 block">{lang === 'bn' ? 'ইমেইল:' : 'Email Address:'}</span>
+                  <span className="font-mono text-slate-800">{submissionResult.email}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">{lang === 'bn' ? 'ইমেইল:' : 'Email Address:'}</span>
-                  <span className="font-mono text-slate-700">{submissionResult.email}</span>
+                <div>
+                  <span className="text-slate-500 block">{lang === 'bn' ? 'ফোন (Phone):' : 'Phone / WhatsApp:'}</span>
+                  <span className="font-mono font-semibold text-slate-800">{submissionResult.phone}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">{lang === 'bn' ? 'ঠিকানা (Address):' : 'Address:'}</span>
+                <div>
+                  <span className="text-slate-500 block">{lang === 'bn' ? 'জন্মতারিখ:' : 'Birth Date:'}</span>
+                  <span className="font-mono text-slate-800">{submissionResult.birth_date}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 block">{lang === 'bn' ? 'পিতার নাম:' : "Father's Name:"}</span>
+                  <span className="font-semibold text-slate-800">{submissionResult.fathers_name}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 block">{lang === 'bn' ? 'মাতার নাম:' : "Mother's Name:"}</span>
+                  <span className="font-semibold text-slate-800">{submissionResult.mothers_name}</span>
+                </div>
+                <div className="sm:col-span-2">
+                  <span className="text-slate-500 block">{lang === 'bn' ? 'কোর্স বিষয় (Subject):' : 'Course Subject:'}</span>
+                  <span className="font-bold text-[#C8963E] block">{submissionResult.subject}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 block">{lang === 'bn' ? 'বর্তমান ঠিকানা:' : 'Present Address:'}</span>
                   <span className="font-semibold text-slate-800">{submissionResult.address}</span>
                 </div>
-                {submissionResult.remarks && (
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">{lang === 'bn' ? 'মন্তব্য (Remarks):' : 'Remarks:'}</span>
-                    <span className="text-slate-800 italic max-w-[240px] text-right truncate">
-                      {submissionResult.remarks}
-                    </span>
-                  </div>
-                )}
-                {submissionResult.submittedAt && (
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">{lang === 'bn' ? 'জমার সময়:' : 'Submitted At:'}</span>
-                    <span className="font-mono text-slate-700">{submissionResult.submittedAt}</span>
-                  </div>
-                )}
-                <div className="flex justify-between items-center pt-2 border-t border-slate-200">
-                  <span className="text-slate-500">{lang === 'bn' ? 'আবেদনের স্ট্যাটাস:' : 'Submission Status:'}</span>
-                  <span className="inline-flex items-center gap-1 font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded text-[11px] border border-emerald-200">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    {lang === 'bn' ? 'সফলভাবে গৃহীত হয়েছে' : 'Successfully Received'}
-                  </span>
+                <div>
+                  <span className="text-slate-500 block">{lang === 'bn' ? 'স্থায়ী ঠিকানা:' : 'Permanent Address:'}</span>
+                  <span className="font-semibold text-slate-800">{submissionResult.permanent_address}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">{lang === 'bn' ? 'স্বীকৃতি ও রেজি:' : 'Accreditation:'}</span>
-                  <span className="font-semibold text-slate-700">BTEB &amp; RJSC (Govt. Reg. C-177263)</span>
+              </div>
+
+              {submissionResult.remarks && (
+                <div className="pt-2 border-t border-slate-200 text-xs">
+                  <span className="text-slate-500 block mb-0.5">{lang === 'bn' ? 'মন্তব্য (Remarks):' : 'Remarks:'}</span>
+                  <span className="text-slate-800 italic">{submissionResult.remarks}</span>
                 </div>
+              )}
+
+              <div className="flex justify-between items-center pt-2 border-t border-slate-200 text-xs">
+                <span className="text-slate-500">{lang === 'bn' ? 'আবেদনের স্ট্যাটাস:' : 'Submission Status:'}</span>
+                <span className="inline-flex items-center gap-1 font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded text-[11px] border border-emerald-200">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  {submissionResult.isLiveBackend ? 'Forwarded to Laravel API (:8000)' : 'Saved Successfully'}
+                </span>
               </div>
 
               <div className="p-3 bg-amber-50 rounded-xl border border-amber-200/80 text-[11px] text-amber-900 leading-relaxed">
@@ -348,8 +342,8 @@ function EnrollNowContent() {
                   {lang === 'bn' ? 'পরবর্তী করণীয়:' : 'Next Steps:'}
                 </span>
                 {lang === 'bn'
-                  ? 'আমাদের এক্সিকিউটিভ অ্যাডমিশন কাউন্সিলর আপনার আবেদনটি পেয়ে গেছেন এবং খুব শীঘ্রই আপনার নম্বরে সরাসরি যোগাযোগ করে বিস্তারিত শিডিউল ও তথ্য জানাবেন।'
-                  : 'Our executive admissions coordinator has received your enquiry and will contact you directly via phone/WhatsApp with complete cohort details.'}
+                  ? 'আমাদের এক্সিকিউটিভ অ্যাকাডেমিক টিম আপনার আবেদনটি পেয়ে গেছেন এবং খুব শীঘ্রই আপনার নম্বরে সরাসরি যোগাযোগ করে আসন নিশ্চিত করবেন।'
+                  : 'Our admissions coordinator has received your enquiry and will contact you via phone/WhatsApp with complete cohort details.'}
               </div>
             </div>
 
@@ -393,13 +387,13 @@ function EnrollNowContent() {
           </Link>
 
           <h1 className="text-2xl sm:text-4xl font-serif font-black tracking-tight text-white">
-            {lang === 'bn' ? 'কোর্স ভর্তি ও পরামর্শ অনুসন্ধান' : 'Course Admission & Program Enquiry'}
+            {lang === 'bn' ? 'কোর্স ভর্তি ও পরামর্শ অনুসন্ধান (Enquiry Form)' : 'Course Admission & Program Enquiry'}
           </h1>
 
           <p className="text-xs sm:text-sm text-slate-300 max-w-2xl mx-auto leading-relaxed">
             {lang === 'bn'
-              ? 'নিচের সংক্ষিপ্ত ফর্মটি পূরণ করুন। কোনো অগ্রিম পেমেন্ট ছাড়াই আমাদের অ্যাকাডেমিক কাউন্সিলর আপনার সাথে সরাসরি যোগাযোগ করে আসন নিশ্চিত করবেন।'
-              : 'Submit this simplified enquiry form. No payment gateway or upfront fees required—our academic advisor will contact you directly.'}
+              ? 'নিচের ফর্মের প্রতিটি প্রয়োজনীয় ফিল্ড পূরণ করে সাবমিট করুন। সকল ফিল্ড পূরণ করা সাপেক্ষে সরাসরি আমাদের ব্যাকএন্ড এপিআই-এ (/api/enquiries) ডাটা জমা হবে।'
+              : 'Please complete all required fields. All fields must be fulfilled before submitting to the backend API (http://127.0.0.1:8000/api/enquiries).'}
           </p>
         </div>
       </section>
@@ -407,163 +401,407 @@ function EnrollNowContent() {
       {/* Main Form + Course Overview */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1 w-full">
         {formError && (
-          <div className="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
-            {formError}
+          <div className="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-start gap-2.5">
+            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+            <span>{formError}</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left Column (8 cols): Streamlined inputs matching API */}
+          {/* Left Column (8 cols): All enquiry fields */}
           <div className="lg:col-span-8 space-y-6">
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-                <div>
-                  <h2 className="text-base sm:text-lg font-serif font-bold text-[#0A192F]">
-                    {lang === 'bn' ? 'ভর্তি অনুসন্ধান ফর্ম' : 'Admission Enquiry Details'}
+            
+            {/* 1. Course / Subject Selection Card */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-5">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div className="flex items-center gap-2">
+                  <Award className="w-4 h-4 text-[#C8963E]" />
+                  <h2 className="text-base font-serif font-bold text-[#0A192F]">
+                    {lang === 'bn' ? '১. কোর্স / বিষয় নির্বাচন (Subject) *' : '1. Course / Subject Selection *'}
                   </h2>
-                  <p className="text-xs text-slate-500">
-                    {lang === 'bn'
-                      ? 'প্রয়োজনীয় তথ্য দিয়ে সাবমিট করুন'
-                      : 'Please provide your contact information and course preference'}
-                  </p>
                 </div>
                 <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold">
                   <CheckCircle className="w-3.5 h-3.5" />
-                  <span>{lang === 'bn' ? 'পেমেন্ট প্রয়োজন নেই' : 'No Payment Required'}</span>
+                  <span>{lang === 'bn' ? 'সরাসরি এপিআই এনকোয়ারি' : 'Direct API Enquiry'}</span>
                 </div>
               </div>
 
-              <div className="space-y-4">
-                {/* Subject / Course Selection */}
+              <div className="space-y-3">
+                <label className="block text-xs font-bold text-slate-700">
+                  {lang === 'bn' ? 'কোর্সের তালিকা থেকে নির্বাচন করুন' : 'Select from Catalog'}
+                </label>
+                <select
+                  value={selectedCourseId}
+                  onChange={(e) => handleCourseSelect(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm text-slate-900 font-semibold focus:outline-none focus:border-[#C8963E]"
+                >
+                  {allCourses.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.title} {c.batchNumber ? `(${c.batchNumber})` : ''}
+                    </option>
+                  ))}
+                </select>
+
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold text-slate-600">
+                    {lang === 'bn' ? 'কোর্সের সুনির্দিষ্ট বিষয় / নাম (subject) *' : 'Exact Subject Title (API Field: subject) *'}
+                  </label>
+                  <input
+                    type="text"
+                    name="subject"
+                    required
+                    value={formData.subject}
+                    onChange={handleChange}
+                    placeholder="e.g. Diploma in E-Commerce and Supply Chain with Lean Six Sigma"
+                    className={`w-full px-3.5 py-2.5 rounded-xl border text-xs sm:text-sm text-slate-800 focus:outline-none ${
+                      isFieldMissing('subject') ? 'border-rose-400 bg-rose-50/50' : 'border-slate-300 focus:border-[#C8963E]'
+                    }`}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 2. Applicant Personal Details Card */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-5">
+              <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+                <User className="w-4 h-4 text-[#C8963E]" />
+                <h2 className="text-base font-serif font-bold text-[#0A192F]">
+                  {lang === 'bn' ? '২. আবেদনকারীর ব্যক্তিগত বিবরণ' : '2. Applicant Personal Information'}
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* First Name */}
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-700">
-                    {lang === 'bn' ? 'কোর্সের বিষয় (Subject) *' : 'Course / Subject *'}
+                    {lang === 'bn' ? 'প্রথম নাম (First Name) *' : 'First Name (name) *'}
                   </label>
-                  <div className="space-y-2">
-                    {/* Select from catalog or edit */}
-                    <select
-                      value={selectedCourseId}
-                      onChange={(e) => handleCourseSelect(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm text-slate-900 font-semibold focus:outline-none focus:border-[#C8963E]"
-                    >
-                      {allCourses.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {c.title} {c.batchNumber ? `(${c.batchNumber})` : ''}
-                        </option>
-                      ))}
-                    </select>
-
-                    {/* Editable subject line for custom topics or precise naming */}
-                    <input
-                      type="text"
-                      name="subject"
-                      value={formData.subject}
-                      onChange={handleChange}
-                      placeholder="e.g. Diploma in E-Commerce and Supply Chain with Lean Six Sigma"
-                      className="w-full px-3.5 py-2 rounded-lg border border-slate-200 bg-slate-50 text-xs text-slate-700 focus:bg-white focus:outline-none focus:border-[#C8963E]"
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    name="name"
+                    required
+                    placeholder="Enter first name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className={`w-full px-3.5 py-2.5 rounded-xl border text-xs sm:text-sm text-slate-800 focus:outline-none ${
+                      isFieldMissing('name') ? 'border-rose-400 bg-rose-50/50' : 'border-slate-300 focus:border-[#C8963E]'
+                    }`}
+                  />
                 </div>
 
-                {/* Name, Email, Phone Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                  <div className="sm:col-span-2 space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-700 flex items-center gap-1">
-                      <User className="w-3.5 h-3.5 text-[#C8963E]" />
-                      <span>{lang === 'bn' ? 'আপনার পুরো নাম (Name) *' : 'Full Name *'}</span>
+                {/* Last Name */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-slate-700">
+                    {lang === 'bn' ? 'শেষ নাম (Last Name) *' : 'Last Name (last_name) *'}
+                  </label>
+                  <input
+                    type="text"
+                    name="last_name"
+                    required
+                    placeholder="Enter last name"
+                    value={formData.last_name}
+                    onChange={handleChange}
+                    className={`w-full px-3.5 py-2.5 rounded-xl border text-xs sm:text-sm text-slate-800 focus:outline-none ${
+                      isFieldMissing('last_name') ? 'border-rose-400 bg-rose-50/50' : 'border-slate-300 focus:border-[#C8963E]'
+                    }`}
+                  />
+                </div>
+
+                {/* Email */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-slate-700 flex items-center gap-1">
+                    <Mail className="w-3.5 h-3.5 text-[#C8963E]" />
+                    <span>{lang === 'bn' ? 'ইমেইল ঠিকানা (Email) *' : 'Email Address (email) *'}</span>
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    placeholder="name@example.com"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className={`w-full px-3.5 py-2.5 rounded-xl border text-xs sm:text-sm text-slate-800 focus:outline-none ${
+                      isFieldMissing('email') ? 'border-rose-400 bg-rose-50/50' : 'border-slate-300 focus:border-[#C8963E]'
+                    }`}
+                  />
+                </div>
+
+                {/* Phone */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-slate-700 flex items-center gap-1">
+                    <Phone className="w-3.5 h-3.5 text-[#C8963E]" />
+                    <span>{lang === 'bn' ? 'মোবাইল নম্বর (Phone) *' : 'Phone Number (phone) *'}</span>
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    required
+                    placeholder="01712345678"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className={`w-full px-3.5 py-2.5 rounded-xl border text-xs sm:text-sm text-slate-800 focus:outline-none ${
+                      isFieldMissing('phone') ? 'border-rose-400 bg-rose-50/50' : 'border-slate-300 focus:border-[#C8963E]'
+                    }`}
+                  />
+                </div>
+
+                {/* Gender */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-slate-700">
+                    {lang === 'bn' ? 'লিঙ্গ (Gender) *' : 'Gender (gender) *'}
+                  </label>
+                  <select
+                    name="gender"
+                    required
+                    value={formData.gender}
+                    onChange={handleChange}
+                    className={`w-full px-3.5 py-2.5 rounded-xl border bg-white text-xs sm:text-sm text-slate-800 focus:outline-none ${
+                      isFieldMissing('gender') ? 'border-rose-400 bg-rose-50/50' : 'border-slate-300 focus:border-[#C8963E]'
+                    }`}
+                  >
+                    <option value="">{lang === 'bn' ? '-- লিঙ্গ নির্বাচন করুন --' : '-- Select Gender --'}</option>
+                    <option value="1">1 - {lang === 'bn' ? 'পুরুষ (Male)' : 'Male'}</option>
+                    <option value="2">2 - {lang === 'bn' ? 'নারী (Female)' : 'Female'}</option>
+                    <option value="3">3 - {lang === 'bn' ? 'অন্যান্য (Other)' : 'Other'}</option>
+                  </select>
+                </div>
+
+                {/* Birth Date */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-slate-700 flex items-center gap-1">
+                    <Calendar className="w-3.5 h-3.5 text-[#C8963E]" />
+                    <span>{lang === 'bn' ? 'জন্মতারিখ (Birth Date) *' : 'Birth Date (birth_date) *'}</span>
+                  </label>
+                  <input
+                    type="date"
+                    name="birth_date"
+                    required
+                    value={formData.birth_date}
+                    onChange={handleChange}
+                    className={`w-full px-3.5 py-2.5 rounded-xl border text-xs sm:text-sm text-slate-800 focus:outline-none ${
+                      isFieldMissing('birth_date') ? 'border-rose-400 bg-rose-50/50' : 'border-slate-300 focus:border-[#C8963E]'
+                    }`}
+                  />
+                </div>
+
+                {/* Present Address */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-slate-700 flex items-center gap-1">
+                    <MapPin className="w-3.5 h-3.5 text-[#C8963E]" />
+                    <span>{lang === 'bn' ? 'বর্তমান ঠিকানা (Present Address) *' : 'Present Address (address) *'}</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="address"
+                    required
+                    placeholder="e.g. Dhaka, Bangladesh"
+                    value={formData.address}
+                    onChange={handleChange}
+                    className={`w-full px-3.5 py-2.5 rounded-xl border text-xs sm:text-sm text-slate-800 focus:outline-none ${
+                      isFieldMissing('address') ? 'border-rose-400 bg-rose-50/50' : 'border-slate-300 focus:border-[#C8963E]'
+                    }`}
+                  />
+                </div>
+
+                {/* Permanent Address */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-slate-700 flex items-center gap-1">
+                    <MapPin className="w-3.5 h-3.5 text-[#C8963E]" />
+                    <span>{lang === 'bn' ? 'স্থায়ী ঠিকানা (Permanent Address) *' : 'Permanent Address (permanent_address) *'}</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="permanent_address"
+                    required
+                    placeholder="e.g. Chittagong, Bangladesh"
+                    value={formData.permanent_address}
+                    onChange={handleChange}
+                    className={`w-full px-3.5 py-2.5 rounded-xl border text-xs sm:text-sm text-slate-800 focus:outline-none ${
+                      isFieldMissing('permanent_address') ? 'border-rose-400 bg-rose-50/50' : 'border-slate-300 focus:border-[#C8963E]'
+                    }`}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 3. Guardian / Parents Information Card (Father & Mother) */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6">
+              <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+                <Heart className="w-4 h-4 text-[#C8963E]" />
+                <h2 className="text-base font-serif font-bold text-[#0A192F]">
+                  {lang === 'bn' ? '৩. পিতামাতার তথ্য (Parents / Guardian Details) *' : '3. Parents / Guardian Details *'}
+                </h2>
+              </div>
+
+              {/* Father's Info */}
+              <div className="space-y-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 bg-slate-100 px-3 py-1.5 rounded-lg inline-block">
+                  {lang === 'bn' ? 'পিতার বিবরণ (Father Details)' : "Father's Information"}
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-slate-700">
+                      {lang === 'bn' ? 'পিতার নাম (Father\'s Name) *' : "Father's Name (fathers_name) *"}
                     </label>
                     <input
                       type="text"
-                      name="name"
+                      name="fathers_name"
                       required
-                      placeholder="e.g. John Doe / Md. Tanvir Hossain"
-                      value={formData.name}
+                      placeholder="Enter father's name"
+                      value={formData.fathers_name}
                       onChange={handleChange}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-[#C8963E]"
+                      className={`w-full px-3 py-2 rounded-lg border text-xs text-slate-800 focus:outline-none ${
+                        isFieldMissing('fathers_name') ? 'border-rose-400 bg-rose-50/50' : 'border-slate-300 focus:border-[#C8963E]'
+                      }`}
                     />
                   </div>
-
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-700 flex items-center gap-1">
-                      <Phone className="w-3.5 h-3.5 text-[#C8963E]" />
-                      <span>{lang === 'bn' ? 'মোবাইল / হোয়াটসঅ্যাপ (Phone) *' : 'Phone / WhatsApp *'}</span>
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-slate-700">
+                      {lang === 'bn' ? 'পিতার পেশা (Occupation) *' : "Father's Occupation (fathers_occupation) *"}
+                    </label>
+                    <input
+                      type="text"
+                      name="fathers_occupation"
+                      required
+                      placeholder="e.g. Engineer / Businessman"
+                      value={formData.fathers_occupation}
+                      onChange={handleChange}
+                      className={`w-full px-3 py-2 rounded-lg border text-xs text-slate-800 focus:outline-none ${
+                        isFieldMissing('fathers_occupation') ? 'border-rose-400 bg-rose-50/50' : 'border-slate-300 focus:border-[#C8963E]'
+                      }`}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-slate-700">
+                      {lang === 'bn' ? 'পিতার ফোন (Phone) *' : "Father's Phone (fathers_phone) *"}
                     </label>
                     <input
                       type="tel"
-                      name="phone"
+                      name="fathers_phone"
                       required
-                      placeholder="e.g. 01712345678"
-                      value={formData.phone}
+                      placeholder="01711111111"
+                      value={formData.fathers_phone}
                       onChange={handleChange}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-[#C8963E]"
+                      className={`w-full px-3 py-2 rounded-lg border text-xs text-slate-800 focus:outline-none ${
+                        isFieldMissing('fathers_phone') ? 'border-rose-400 bg-rose-50/50' : 'border-slate-300 focus:border-[#C8963E]'
+                      }`}
                     />
                   </div>
-
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-700 flex items-center gap-1">
-                      <Mail className="w-3.5 h-3.5 text-[#C8963E]" />
-                      <span>{lang === 'bn' ? 'ইমেইল ঠিকানা (Email) *' : 'Email Address *'}</span>
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-slate-700">
+                      {lang === 'bn' ? 'পিতার ইমেইল (Email) *' : "Father's Email (fathers_email) *"}
                     </label>
                     <input
                       type="email"
-                      name="email"
+                      name="fathers_email"
                       required
-                      placeholder="e.g. john@example.com"
-                      value={formData.email}
+                      placeholder="father@example.com"
+                      value={formData.fathers_email}
                       onChange={handleChange}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-[#C8963E]"
+                      className={`w-full px-3 py-2 rounded-lg border text-xs text-slate-800 focus:outline-none ${
+                        isFieldMissing('fathers_email') ? 'border-rose-400 bg-rose-50/50' : 'border-slate-300 focus:border-[#C8963E]'
+                      }`}
                     />
                   </div>
+                </div>
+              </div>
 
-                  {/* Address */}
-                  <div className="sm:col-span-2 space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-700 flex items-center gap-1">
-                      <MapPin className="w-3.5 h-3.5 text-[#C8963E]" />
-                      <span>{lang === 'bn' ? 'বর্তমান ঠিকানা বা শহর (Address)' : 'City / Address'}</span>
+              {/* Mother's Info */}
+              <div className="space-y-3 pt-3 border-t border-slate-100">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 bg-slate-100 px-3 py-1.5 rounded-lg inline-block">
+                  {lang === 'bn' ? 'মাতার বিবরণ (Mother Details)' : "Mother's Information"}
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-slate-700">
+                      {lang === 'bn' ? 'মাতার নাম (Mother\'s Name) *' : "Mother's Name (mothers_name) *"}
                     </label>
                     <input
                       type="text"
-                      name="address"
-                      placeholder="e.g. Dhaka, Bangladesh"
-                      value={formData.address}
+                      name="mothers_name"
+                      required
+                      placeholder="Enter mother's name"
+                      value={formData.mothers_name}
                       onChange={handleChange}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-[#C8963E]"
+                      className={`w-full px-3 py-2 rounded-lg border text-xs text-slate-800 focus:outline-none ${
+                        isFieldMissing('mothers_name') ? 'border-rose-400 bg-rose-50/50' : 'border-slate-300 focus:border-[#C8963E]'
+                      }`}
                     />
                   </div>
-
-                  {/* Remarks */}
-                  <div className="sm:col-span-2 space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-700 flex items-center gap-1">
-                      <FileText className="w-3.5 h-3.5 text-[#C8963E]" />
-                      <span>{lang === 'bn' ? 'মন্তব্য বা শিডিউল জিজ্ঞাসা (Remarks)' : 'Remarks / Special Notes'}</span>
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-slate-700">
+                      {lang === 'bn' ? 'মাতার পেশা (Occupation) *' : "Mother's Occupation (mothers_occupation) *"}
                     </label>
-                    <textarea
-                      name="remarks"
-                      rows={3}
-                      placeholder="e.g. Interested in evening batch / Weekend batch preference"
-                      value={formData.remarks}
+                    <input
+                      type="text"
+                      name="mothers_occupation"
+                      required
+                      placeholder="e.g. Teacher / Homemaker"
+                      value={formData.mothers_occupation}
                       onChange={handleChange}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-[#C8963E]"
+                      className={`w-full px-3 py-2 rounded-lg border text-xs text-slate-800 focus:outline-none ${
+                        isFieldMissing('mothers_occupation') ? 'border-rose-400 bg-rose-50/50' : 'border-slate-300 focus:border-[#C8963E]'
+                      }`}
                     />
-
-                    {/* Quick suggestion pills */}
-                    <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                      <span className="text-[11px] text-slate-400 font-medium">Quick suggestions:</span>
-                      {quickRemarks.map((qr) => (
-                        <button
-                          key={qr}
-                          type="button"
-                          onClick={() => setFormData((prev) => ({ ...prev, remarks: qr }))}
-                          className="text-[11px] px-2.5 py-0.5 rounded-full bg-slate-100 hover:bg-amber-100/70 hover:text-[#966718] text-slate-600 transition-colors border border-slate-200"
-                        >
-                          + {qr}
-                        </button>
-                      ))}
-                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-slate-700">
+                      {lang === 'bn' ? 'মাতার ফোন (Phone) *' : "Mother's Phone (mothers_phone) *"}
+                    </label>
+                    <input
+                      type="tel"
+                      name="mothers_phone"
+                      required
+                      placeholder="01722222222"
+                      value={formData.mothers_phone}
+                      onChange={handleChange}
+                      className={`w-full px-3 py-2 rounded-lg border text-xs text-slate-800 focus:outline-none ${
+                        isFieldMissing('mothers_phone') ? 'border-rose-400 bg-rose-50/50' : 'border-slate-300 focus:border-[#C8963E]'
+                      }`}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-slate-700">
+                      {lang === 'bn' ? 'মাতার ইমেইল (Email) *' : "Mother's Email (mothers_email) *"}
+                    </label>
+                    <input
+                      type="email"
+                      name="mothers_email"
+                      required
+                      placeholder="mother@example.com"
+                      value={formData.mothers_email}
+                      onChange={handleChange}
+                      className={`w-full px-3 py-2 rounded-lg border text-xs text-slate-800 focus:outline-none ${
+                        isFieldMissing('mothers_email') ? 'border-rose-400 bg-rose-50/50' : 'border-slate-300 focus:border-[#C8963E]'
+                      }`}
+                    />
                   </div>
                 </div>
               </div>
             </div>
+
+            {/* 4. Remarks / Special Requests */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-3">
+              <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+                <FileText className="w-4 h-4 text-[#C8963E]" />
+                <h2 className="text-base font-serif font-bold text-[#0A192F]">
+                  {lang === 'bn' ? '৪. মন্তব্য ও শিডিউল অগ্রাধিকার (Remarks) *' : '4. Remarks & Preferred Schedule (remarks) *'}
+                </h2>
+              </div>
+
+              <textarea
+                name="remarks"
+                rows={3}
+                required
+                placeholder="e.g. Interested in evening batch / Weekend preference"
+                value={formData.remarks}
+                onChange={handleChange}
+                className={`w-full px-3.5 py-2.5 rounded-xl border text-xs sm:text-sm text-slate-800 focus:outline-none ${
+                  isFieldMissing('remarks') ? 'border-rose-400 bg-rose-50/50' : 'border-slate-300 focus:border-[#C8963E]'
+                }`}
+              />
+            </div>
+
           </div>
 
           {/* Right Column (4 cols): Course Summary & Submit Action */}
@@ -594,7 +832,7 @@ function EnrollNowContent() {
                 <div className="flex items-center justify-between text-slate-600">
                   <span className="flex items-center gap-1.5 text-slate-500">
                     <Calendar className="w-3.5 h-3.5 text-[#C8963E]" />
-                    {lang === 'bn' ? 'মোট লেকচার/ক্লাস:' : 'Total Classes:'}
+                    {lang === 'bn' ? 'মোট ক্লাস/লেকচার:' : 'Total Classes:'}
                   </span>
                   <span className="font-bold text-slate-800">
                     {currentCourse?.totalClasses ? `${currentCourse.totalClasses} Classes` : '48+ Hours'}
@@ -618,16 +856,16 @@ function EnrollNowContent() {
                 </div>
               </div>
 
-              {/* No Payment Gateway Notice */}
+              {/* Direct API Endpoint Info */}
               <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-xs space-y-1.5">
                 <div className="flex items-center gap-1.5 text-[#0A192F] font-bold">
                   <Info className="w-4 h-4 text-[#C8963E] shrink-0" />
-                  <span>{lang === 'bn' ? 'সরাসরি ভর্তি পরামর্শ' : 'Direct Admission Enquiry'}</span>
+                  <span>{lang === 'bn' ? 'সরাসরি ব্যাকএন্ড সাবমিশন' : 'Direct Backend Submission'}</span>
                 </div>
                 <p className="text-[11px] text-slate-600 leading-relaxed">
                   {lang === 'bn'
-                    ? 'আবেদনের জন্য কোনো অনলাইন পেমেন্ট গেটওয়ে বা অগ্রিম ফি প্রয়োজন নেই। ফর্মটি সাবমিট করলে আমাদের এক্সিকিউটিভ টিম সরাসরি আপনার সাথে যোগাযোগ করে আসন ও শিডিউল নিশ্চিত করবে।'
-                    : 'No payment gateway or card payment required. Submit your enquiry and our admissions team will contact you directly to confirm onboarding.'}
+                    ? 'সকল ফিল্ড পূরণ করার পর ফর্মটি সরাসরি Laravel /api/enquiries এপিআই-এ পাঠানো হবে।'
+                    : 'Submits all required fields to Laravel /api/enquiries without auto-fill.'}
                 </p>
               </div>
 
@@ -654,12 +892,12 @@ function EnrollNowContent() {
                 {isSubmitting ? (
                   <>
                     <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
-                    <span>{lang === 'bn' ? 'আবেদন জমা হচ্ছে...' : 'Submitting Enquiry...'}</span>
+                    <span>{lang === 'bn' ? 'আবেদন জমা হচ্ছে...' : 'Submitting to API...'}</span>
                   </>
                 ) : (
                   <>
                     <Send className="w-4 h-4" />
-                    <span>{lang === 'bn' ? 'ভর্তি আবেদন জমা দিন' : 'Submit Enrollment Enquiry'}</span>
+                    <span>{lang === 'bn' ? 'ভর্তি আবেদন জমা দিন' : 'Submit Enquiry (POST /api/enquiries)'}</span>
                   </>
                 )}
               </button>
@@ -680,7 +918,7 @@ export default function EnrollNowPage() {
         <div className="min-h-screen bg-[#0A192F] flex items-center justify-center text-white">
           <div className="text-center space-y-3">
             <div className="w-8 h-8 border-3 border-[#C8963E] border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-sm font-bold">Loading Admission Form...</p>
+            <p className="text-sm font-bold">Loading Admission Enquiry Form...</p>
           </div>
         </div>
       }

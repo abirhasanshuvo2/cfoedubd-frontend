@@ -25,7 +25,7 @@ export default function CategoryPills({
   lang,
 }: CategoryPillsProps) {
   const getIcon = (iconName: string, isSelected: boolean) => {
-    const className = `w-4 h-4 ${isSelected ? 'text-slate-950' : 'text-slate-500'}`;
+    const className = `w-3.5 h-3.5 ${isSelected ? 'text-slate-950' : 'text-slate-600'}`;
     switch (iconName) {
       case 'Award':
         return <Award className={className} />;
@@ -47,8 +47,8 @@ export default function CategoryPills({
   };
 
   return (
-    <div className="w-full overflow-x-auto pb-2 scrollbar-none">
-      <div className="flex items-center gap-2 min-w-max">
+    <nav className="w-full overflow-x-auto pb-1 scrollbar-none" aria-label="Course Categories Filter">
+      <div className="flex items-center gap-1.5 min-w-max p-1.5 bg-slate-200/70 rounded-2xl border border-slate-200">
         {CATEGORIES.map((category) => {
           const isSelected = selectedCategory === category.id;
           return (
@@ -57,8 +57,8 @@ export default function CategoryPills({
               onClick={() => onSelectCategory(category.id)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
                 isSelected
-                  ? 'bg-gradient-to-r from-[#C8963E] to-[#B8860B] text-slate-950 shadow-md font-bold ring-2 ring-amber-300/60'
-                  : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80 hover:border-slate-300'
+                  ? 'bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#A97B28] text-slate-950 font-bold shadow-md'
+                  : 'bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-950 shadow-2xs border border-slate-200/60'
               }`}
             >
               {getIcon(category.icon, isSelected)}
@@ -67,6 +67,6 @@ export default function CategoryPills({
           );
         })}
       </div>
-    </div>
+    </nav>
   );
 }

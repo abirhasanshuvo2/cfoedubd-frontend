@@ -58,6 +58,11 @@ export function CfoProvider({ children }: { children: React.ReactNode }) {
         if (savedLang === 'bn' || savedLang === 'en') {
           setLangState(savedLang);
         }
+        // Remove any dark mode classes or storage keys
+        localStorage.removeItem('cfo_theme');
+        if (typeof document !== 'undefined') {
+          document.documentElement.classList.remove('dark');
+        }
         // Explicitly clear any mock logged in user session per user requirement
         localStorage.removeItem('cfo_user');
         localStorage.removeItem('ostad_user');
@@ -68,6 +73,15 @@ export function CfoProvider({ children }: { children: React.ReactNode }) {
     }, 0);
     return () => clearTimeout(timer);
   }, []);
+
+  const setLang = (newLang: 'bn' | 'en') => {
+    setLangState(newLang);
+    try {
+      localStorage.setItem('cfo_lang', newLang);
+    } catch {
+      // ignore
+    }
+  };
 
   const extractCoursesArray = (json: any): any[] => {
     if (!json) return [];
@@ -96,7 +110,6 @@ export function CfoProvider({ children }: { children: React.ReactNode }) {
         if (rawList.length > 0) {
           setApiCourses(rawList);
           const adapted = rawList.map(adaptApiCourseToCfoCourse);
-          // Strictly show only dynamic courses from the API
           setCourses(adapted);
           setIsLiveApiConnected(true);
           setCoursesLoading(false);
@@ -116,7 +129,6 @@ export function CfoProvider({ children }: { children: React.ReactNode }) {
         if (rawList.length > 0) {
           setApiCourses(rawList);
           const adapted = rawList.map(adaptApiCourseToCfoCourse);
-          // Strictly show only dynamic courses from the API
           setCourses(adapted);
           if (json.isLive) {
             setIsLiveApiConnected(true);
@@ -131,7 +143,6 @@ export function CfoProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const fetchSystemInfo = useCallback(async () => {
-    // 1. Try local client-side direct fetch if running on client browser where 127.0.0.1:8000 is open
     const directUrl = (process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://127.0.0.1:8000').replace(/\/$/, '');
     try {
       const controller = new AbortController();
@@ -143,22 +154,21 @@ export function CfoProvider({ children }: { children: React.ReactNode }) {
       clearTimeout(timer);
       if (res.ok) {
         const json = await res.json();
-        if (json && json.data) {
+        if (json?.data) {
           setSystemInfo(json.data);
           setIsLiveApiConnected(true);
           return;
         }
       }
     } catch {
-      // Direct localhost might fail if CORS or not on same device, try internal proxy next
+      // Fallback to internal Next.js proxy
     }
 
-    // 2. Fallback to Next.js server proxy /api/system-information
     try {
       const res = await fetch('/api/system-information');
       if (res.ok) {
         const json = await res.json();
-        if (json && json.data) {
+        if (json?.data) {
           setSystemInfo(json.data);
           if (json.isLive) {
             setIsLiveApiConnected(true);
@@ -166,78 +176,37 @@ export function CfoProvider({ children }: { children: React.ReactNode }) {
         }
       }
     } catch {
-      // If network fails, keep DEFAULT_SYSTEM_INFO
+      // keep default system info
     }
   }, []);
 
   useEffect(() => {
-    let active = true;
-    const executeFetch = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 10));
-      if (!active) return;
-      await Promise.allSettled([fetchSystemInfo(), fetchCourses()]);
-    };
-    void executeFetch();
-    return () => {
-      active = false;
-    };
+    const timer = setTimeout(() => {
+      fetchSystemInfo();
+      fetchCourses();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [fetchSystemInfo, fetchCourses]);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
-    setTimeout(() => {
-      setToastMessage((current) => (current === msg ? null : current));
-    }, 3500);
-  };
-
-  const setLang = (newLang: 'bn' | 'en') => {
-    setLangState(newLang);
-    if (typeof window !== 'undefined') {
-      try {
-        localStorage.setItem('cfo_lang', newLang);
-      } catch {
-        // ignore
-      }
-    }
+    setTimeout(() => setToastMessage(null), 3500);
   };
 
   const enrollInCourse = (course: Course) => {
     setEnrolledCourses((prev) => {
       if (prev.some((c) => c.id === course.id)) return prev;
-      const updated = [course, ...prev];
-      if (typeof window !== 'undefined') {
-        try {
-          localStorage.setItem('cfo_enrolled', JSON.stringify(updated.map((c) => c.id)));
-        } catch {
-          // ignore
-        }
-      }
-      return updated;
+      return [...prev, course];
     });
-    showToast(
-      lang === 'bn'
-        ? `"${course.title}" কোর্সে সফলভাবে রেজিস্ট্রেশন সম্পন্ন হয়েছে!`
-        : `Successfully registered in ${course.titleEn}!`
-    );
   };
 
-  const loginUser = (name: string, phone: string, email = '') => {
-    const newUser = { name, phone, email: email || `${phone}@cfoedubd.com` };
+  const loginUser = (name: string, phone: string, email?: string) => {
+    const newUser = { name, phone, email: email || '' };
     setUser(newUser);
-    if (typeof window !== 'undefined') {
-      try {
-        localStorage.setItem('cfo_user', JSON.stringify(newUser));
-      } catch {
-        // ignore
-      }
-    }
-    showToast(
-      lang === 'bn' ? `স্বাগতম, ${name}! লগইন সফল হয়েছে।` : `Welcome, ${name}! Login successful.`
-    );
   };
 
   const loginAsDemo = () => {
-    // Disabled per user request - no mock user or student panel
+    // Disabled
   };
 
   const logoutUser = () => {
@@ -296,7 +265,5 @@ export function useCfo() {
   return context;
 }
 
-// Backward compatibility aliases
 export const OstadProvider = CfoProvider;
 export const useOstad = useCfo;
-

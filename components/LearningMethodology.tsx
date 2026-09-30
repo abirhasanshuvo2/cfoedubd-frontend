@@ -8,7 +8,6 @@ import {
   Cpu,
   ShieldCheck,
   CheckCircle2,
-  Sparkles,
   ArrowRight,
   GraduationCap
 } from 'lucide-react';
@@ -31,7 +30,6 @@ export default function LearningMethodology({
       descriptionEn:
         'Analyze actual financial disclosures, M&A transactions, and board pitch decks from DSE-listed firms and multinationals.',
       icon: BookOpen,
-      color: 'bg-amber-100 text-[#966718]',
       tag: 'Boardroom Decisions'
     },
     {
@@ -43,7 +41,6 @@ export default function LearningMethodology({
       descriptionEn:
         'Hands-on live configuration inside real SAP S/4HANA ERP environments and direct filing on NBR IVAS online tax portals.',
       icon: Cpu,
-      color: 'bg-blue-100 text-blue-800',
       tag: 'Enterprise ERP Lab'
     },
     {
@@ -55,106 +52,117 @@ export default function LearningMethodology({
       descriptionEn:
         'Guided by practicing Fellow Chartered Accountants (FCA) and Cost & Management Accountants (FCMA) with 20+ years executive leadership.',
       icon: Award,
-      color: 'bg-emerald-100 text-emerald-800',
       tag: 'Senior Leadership'
     },
     {
       step: '০৪',
-      title: 'বিটিইবি রেজিস্টার্ড ও বার্ষিক কনভোকেশন',
+      title: 'বিটিইবি রেজিস্টার্ড ও বার্ষিক সমাবর্তন',
       titleEn: 'BTEB Recognized & Convocation',
       description:
         'বাংলাদেশ কারিগরি শিক্ষা বোর্ড (BTEB) নিবন্ধিত প্রফেশনাল ডিপ্লোমা এবং বার্ষিক বর্ণাঢ্য সমাবর্তনে (Convocation) সম্মানজনক সনদ প্রদান।',
       descriptionEn:
         'Government-recognized professional credentials with official transcripts and annual grand convocation ceremony.',
       icon: GraduationCap,
-      color: 'bg-purple-100 text-purple-800',
       tag: 'Govt. Accredited'
     }
   ];
 
   return (
-    <section id="methodology" className="py-16 sm:py-20 bg-white border-b border-slate-200">
+    <section id="methodology" className="py-20 sm:py-24 bg-white border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-14">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#0A192F] text-[#E5A93C] border border-[#C8963E]/40 text-xs font-bold mb-3">
-            <Sparkles className="w-3.5 h-3.5 text-[#C8963E]" />
-            <span>{lang === 'bn' ? 'একাডেমিক উৎকর্ষ ও লার্নিং মেথডোলজি' : 'Executive Pedagogical Framework'}</span>
-          </div>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-black text-slate-900 tracking-tight">
+        {/* Section Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <p className="text-xs font-bold uppercase tracking-widest text-[#966718] mb-2">
+            {lang === 'bn' ? 'আমাদের শিক্ষণ পদ্ধতি ও মানদণ্ড' : 'Executive Pedagogy & Standards'}
+          </p>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-black text-[#0A192F] tracking-tight">
             {lang === 'bn'
-              ? 'কেন চার্টার্ড অফিসার লিমিটেডের প্রোগ্রামগুলো দেশে অদ্বিতীয়?'
-              : 'Why Chartered Officer Limited Sets the Benchmark in Finance'}
+              ? 'কেন চার্টার্ড অফিসার লিমিটেড দেশের এক নম্বর প্রফেশনাল প্রতিষ্ঠান?'
+              : 'Why Chartered Officer Limited Stands Apart as the Premier Choice'}
           </h2>
           <p className="text-xs sm:text-sm text-slate-600 mt-2.5 leading-relaxed">
             {lang === 'bn'
-              ? 'বাস্তব করপোরেট পরিবেশের উপযোগী সিদ্ধান্ত গ্রহণ ক্ষমতা, এন্টারপ্রাইজ ইআরপি দক্ষতা এবং রেগুলেটরি কমপ্লায়েন্সে পেশাদারদের প্রস্তুত করার সমন্বিত ফ্রেমওয়ার্ক।'
-              : 'Engineered specifically for corporate finance managers, controllers, accountants, and aspiring Chief Financial Officers.'}
+              ? 'তত্ত্ব আর বাস্তব প্রয়োগের নিখুঁত মেলবন্ধন। পেশাদার এক্সিকিউটিভদের কর্মক্ষেত্রের শীর্ষ পদে পদোন্নতির জন্য সুপরিকল্পিত কারিকুলাম।'
+              : 'Theory meets high-stakes corporate execution. Meticulously designed cohorts for career escalation into C-suite offices.'}
           </p>
         </div>
 
-        {/* 4 Pillars Grid */}
+        {/* Pillars Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {pillars.map((p, idx) => {
-            const Icon = p.icon;
+          {pillars.map((pillar, idx) => {
+            const Icon = pillar.icon;
             return (
               <div
                 key={idx}
-                className="relative rounded-2xl bg-slate-50 hover:bg-white border border-slate-200/90 hover:border-[#C8963E] p-6 flex flex-col justify-between transition-all duration-300 shadow-2xs hover:shadow-xl group"
+                className="executive-card rounded-2xl p-6 flex flex-col justify-between group hover:border-[#C8963E]/60"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-2xl font-serif font-black text-slate-300 group-hover:text-[#C8963E] transition-colors">
-                      {p.step}
+                  <div className="flex items-center justify-between mb-5">
+                    <span className="font-mono text-2xl font-black text-slate-300 group-hover:text-[#C8963E] transition-colors">
+                      {pillar.step}
                     </span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white border border-slate-200 text-slate-700">
-                      {p.tag}
-                    </span>
+                    <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-[#0A192F] group-hover:bg-[#0A192F] group-hover:text-[#E5A93C] transition-all">
+                      <Icon className="w-5 h-5" />
+                    </div>
                   </div>
 
-                  <div className={`w-12 h-12 rounded-xl ${p.color} flex items-center justify-center mb-4 shadow-2xs`}>
-                    <Icon className="w-6 h-6" />
-                  </div>
+                  <span className="text-[11px] font-semibold text-[#966718] block mb-1">
+                    {pillar.tag}
+                  </span>
 
-                  <h3 className="text-base sm:text-lg font-serif font-bold text-slate-900 mb-2">
-                    {lang === 'bn' ? p.title : p.titleEn}
+                  <h3 className="text-base font-serif font-bold text-slate-900 leading-snug group-hover:text-[#C8963E] transition-colors">
+                    {lang === 'bn' ? pillar.title : pillar.titleEn}
                   </h3>
 
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                    {lang === 'bn' ? p.description : p.descriptionEn}
+                  <p className="text-xs text-slate-600 leading-relaxed mt-2.5">
+                    {lang === 'bn' ? pillar.description : pillar.descriptionEn}
                   </p>
                 </div>
 
-                <div className="pt-4 mt-6 border-t border-slate-200/60 flex items-center gap-1.5 text-xs font-bold text-[#966718]">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>{lang === 'bn' ? 'সার্টিফাইড এক্সিলেন্স' : 'Certified Excellence'}</span>
+                <div className="pt-4 mt-4 border-t border-slate-100 flex items-center gap-1 text-[11px] font-bold text-slate-500 group-hover:text-slate-900 transition-colors">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>{lang === 'bn' ? 'শতভাগ বাস্তবমুখী' : '100% Outcome-Driven'}</span>
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* Bottom Executive CTA Card */}
-        <div className="mt-12 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-[#0A192F] via-[#0D254C] to-[#0A192F] text-white flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl border border-[#1E3A8A]">
-          <div className="space-y-1 text-center sm:text-left">
-            <h3 className="text-lg sm:text-xl font-serif font-black text-white">
-              {lang === 'bn' ? 'আপনার করপোরেট ক্যারিয়ারকে পরবর্তী ধাপে উন্নীত করুন' : 'Take the Leap into Corporate Boardrooms'}
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-300">
+        {/* Corporate Trust Strip */}
+        <div className="mt-14 p-6 sm:p-8 rounded-2xl bg-[#0A192F] text-white flex flex-col md:flex-row items-center justify-between gap-6 border border-slate-800 shadow-xl">
+          <div className="space-y-1 text-center md:text-left">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#E5A93C]">
+              {lang === 'bn' ? 'অ্যাকাডেমিক ও পেশাগত সনদ স্বীকৃতি' : 'Academic & Accreditation Authority'}
+            </span>
+            <h4 className="text-lg sm:text-xl font-serif font-black text-white">
               {lang === 'bn'
-                ? 'সিএফও ও পিজিডি ব্যাচসমূহে সীমিত আসনে সরাসরি আবেদন করুন।'
-                : 'Limited seats available in upcoming batches. Register your application online.'}
+                ? 'বাংলাদেশ কারিগরি শিক্ষা বোর্ড (BTEB) ও RJSC অনুমোদিত'
+                : 'Recognized by BTEB & RJSC (Govt. Reg. s-13064/2019)'}
+            </h4>
+            <p className="text-xs text-slate-300 max-w-xl">
+              {lang === 'bn'
+                ? 'আমাদের প্রতিটি প্রোগ্রামের সনদ দেশ-বিদেশের শীর্ষ বহুজাতিক প্রতিষ্ঠান ও করপোরেট গ্রুপে পদোন্নতির জন্য সরাসরি গ্রহণযোগ্য।'
+                : 'Our diplomas and certificates are accepted by leading conglomerates, multinational banks, and corporate employers.'}
             </p>
           </div>
 
-          <Link
-            href="/enroll-now?course=Chartered%20Financial%20Officer%20(CFO)"
-            className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#C8963E] to-[#B8860B] hover:from-[#d4af37] hover:to-[#C8963E] text-slate-950 font-serif font-black text-xs sm:text-sm flex items-center gap-2 shrink-0 shadow-md transition-all cursor-pointer"
-          >
-            <span>{lang === 'bn' ? 'CFO প্রোগ্রাম ও ভর্তি ফর্ম' : 'Apply for CFO Program'}</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+          <div className="flex items-center gap-3 shrink-0">
+            <Link
+              href="/certificates"
+              className="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs sm:text-sm transition-all"
+            >
+              {lang === 'bn' ? 'সনদ যাচাই করুন' : 'Verify Certificate'}
+            </Link>
+            <Link
+              href="/enroll-now"
+              className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#A97B28] hover:brightness-110 text-slate-950 font-serif font-black text-xs sm:text-sm shadow-md transition-all flex items-center gap-1.5"
+            >
+              <span>{lang === 'bn' ? 'ভর্তি আবেদন' : 'Apply for Admission'}</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
+
       </div>
     </section>
   );
