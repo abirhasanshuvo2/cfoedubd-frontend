@@ -157,13 +157,13 @@ export default function Navbar({
             <p className="truncate font-medium text-slate-300" suppressHydrationWarning>
               {lang === 'bn' ? (
                 <>
-                  <strong className="text-[#E5A93C] font-semibold">বিটিইবি (BTEB) ও RJSC নিবন্ধিত:</strong>{' '}
-                  <span className="font-bold text-white">চার্টার্ড অফিসার লিমিটেড (COL)</span> এ প্রফেশনাল এক্সিকিউটিভ কোর্সে ভর্তি চলছে!
+                  <strong className="text-[#E5A93C] font-semibold">ভর্তি বিজ্ঞপ্তি:</strong>{' '}
+                  <span className="font-bold text-white">চার্টার্ড অফিসার লিমিটেড (COL)</span> এ নতুন এক্সিকিউটিভ ব্যাচে ভর্তি চলছে!
                 </>
               ) : (
                 <>
-                  <strong className="text-[#E5A93C] font-semibold">Govt. Registered (BTEB & RJSC):</strong>{' '}
-                  Admissions open for professional executive certification programs at <span className="font-bold text-white">COL</span>!
+                  <strong className="text-[#E5A93C] font-semibold">Admissions Open:</strong>{' '}
+                  Enrollment ongoing for professional executive batches at <span className="font-bold text-white">COL</span>!
                 </>
               )}
             </p>

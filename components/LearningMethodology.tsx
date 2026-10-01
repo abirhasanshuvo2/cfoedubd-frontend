@@ -56,14 +56,14 @@ export default function LearningMethodology({
     },
     {
       step: '০৪',
-      title: 'বিটিইবি রেজিস্টার্ড ও বার্ষিক সমাবর্তন',
-      titleEn: 'BTEB Recognized & Convocation',
+      title: 'প্রফেশনাল এক্সিকিউটিভ সার্টিফিকেট',
+      titleEn: 'Professional Executive Credentials',
       description:
-        'বাংলাদেশ কারিগরি শিক্ষা বোর্ড (BTEB) নিবন্ধিত প্রফেশনাল ডিপ্লোমা এবং বার্ষিক বর্ণাঢ্য সমাবর্তনে (Convocation) সম্মানজনক সনদ প্রদান।',
+        'কোর্স সফলভাবে সম্পন্ন করার পর প্রফেশনাল এক্সিকিউটিভ সনদ প্রদান এবং অনলাইন ট্রান্সক্রিপ্ট ভেরিফিকেশন সুবিধা।',
       descriptionEn:
-        'Government-recognized professional credentials with official transcripts and annual grand convocation ceremony.',
+        'Award-winning professional executive certificates with online transcript verification and corporate recognition.',
       icon: GraduationCap,
-      tag: 'Govt. Accredited'
+      tag: 'Executive Certificate'
     }
   ];
 
@@ -132,17 +132,17 @@ export default function LearningMethodology({
         <div className="mt-14 p-6 sm:p-8 rounded-2xl bg-[#0A192F] text-white flex flex-col md:flex-row items-center justify-between gap-6 border border-slate-800 shadow-xl">
           <div className="space-y-1 text-center md:text-left">
             <span className="text-xs font-bold uppercase tracking-wider text-[#E5A93C]">
-              {lang === 'bn' ? 'অ্যাকাডেমিক ও পেশাগত সনদ স্বীকৃতি' : 'Academic & Accreditation Authority'}
+              {lang === 'bn' ? 'অ্যাকাডেমিক ও পেশাগত সনদ স্বীকৃতি' : 'Academic & Executive Credentials'}
             </span>
             <h4 className="text-lg sm:text-xl font-serif font-black text-white">
               {lang === 'bn'
-                ? 'বাংলাদেশ কারিগরি শিক্ষা বোর্ড (BTEB) ও RJSC অনুমোদিত'
-                : 'Recognized by BTEB & RJSC (Govt. Reg. s-13064/2019)'}
+                ? 'ইন্ডাস্ট্রি-স্বীকৃত প্রফেশনাল এক্সিকিউটিভ প্রোগ্রাম'
+                : 'Industry-Recognized Professional Executive Programs'}
             </h4>
             <p className="text-xs text-slate-300 max-w-xl">
               {lang === 'bn'
                 ? 'আমাদের প্রতিটি প্রোগ্রামের সনদ দেশ-বিদেশের শীর্ষ বহুজাতিক প্রতিষ্ঠান ও করপোরেট গ্রুপে পদোন্নতির জন্য সরাসরি গ্রহণযোগ্য।'
-                : 'Our diplomas and certificates are accepted by leading conglomerates, multinational banks, and corporate employers.'}
+                : 'Our certificates are valued by leading conglomerates, financial institutions, and corporate employers across Bangladesh.'}
             </p>
           </div>
 

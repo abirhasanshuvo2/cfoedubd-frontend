@@ -125,7 +125,7 @@ export default function CourseDetailPage({ params }: PageProps) {
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-[#E5A93C] border border-amber-500/40">
                   <Award className="w-3.5 h-3.5 text-[#C8963E]" />
-                  BTEB ACCREDITED
+                  COL EXECUTIVE PROGRAM
                 </span>
 
                 <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#1E3A8A]/60 text-white border border-[#1E3A8A]">
@@ -230,7 +230,7 @@ export default function CourseDetailPage({ params }: PageProps) {
                   </div>
                   <div className="flex justify-between py-1.5">
                     <span className="text-slate-400">স্বীকৃতি:</span>
-                    <span className="font-semibold text-emerald-400">BTEB & RJSC Registered</span>
+                    <span className="font-semibold text-emerald-400">COL Executive Certificate</span>
                   </div>
                 </div>
               </div>
@@ -287,7 +287,7 @@ export default function CourseDetailPage({ params }: PageProps) {
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                 }`}
               >
-                {lang === 'bn' ? 'বিটিইবি সনদ ও সমাবর্তন' : 'BTEB Credential'}
+                {lang === 'bn' ? 'সনদ ও স্বীকৃতি' : 'Certificate'}
               </button>
 
               <button
@@ -469,13 +469,13 @@ export default function CourseDetailPage({ params }: PageProps) {
 
                 <div>
                   <span className="text-xs font-serif font-bold text-[#966718] uppercase tracking-widest block">
-                    BTEB Registered & Verifiable Credential
+                    Professional Verifiable Executive Credential
                   </span>
                   <h3 className="text-xl font-serif font-black text-slate-900 mt-1">
                     {lang === 'bn' ? course.title : course.titleEn}
                   </h3>
                   <p className="text-xs text-slate-600 max-w-md mx-auto mt-2 leading-relaxed">
-                    বাংলাদেশ কারিগরি শিক্ষা বোর্ড (BTEB) নিবন্ধিত এবং প্রতি বছর বিআইসিসি বা সেনাকুঞ্জে অনুষ্ঠিত সমাবর্তনে গাউন পরিয়ে আনুষ্ঠানিক সার্টিফিকেট প্রদান করা হয়।
+                    কোর্সটি সফলভাবে সম্পন্ন করার পর চার্টার্ড অফিসার লিমিটেড (COL) কর্তৃক আনুষ্ঠানিকভাবে পেশাদার এক্সিকিউটিভ সার্টিফিকেট প্রদান করা হয়।
                   </p>
                 </div>
 
@@ -489,9 +489,9 @@ export default function CourseDetailPage({ params }: PageProps) {
             {activeTab === 'faq' && (
               <section className="space-y-3">
                 {[
-                  { q: 'ক্লাসে উপস্থিত না থাকলে কি রেকর্ডিং সুবিধা আছে?', a: 'হ্যাঁ, প্রতিটি সেশনের ফুল এইচডি রেকর্ডিং ও ক্লাস নোট আপনার এলএমএস পোর্টালে সারাজীবনের জন্য সংরক্ষিত থাকবে।' },
+                  { q: 'ক্লাসে উপস্থিত না থাকলে কি রেকর্ডিং সুবিধা আছে?', a: 'হ্যাঁ, প্রতিটি সেশনের ফুল এইচডি রেকর্ডিং ও ক্লাস নোট আপনার এলএমএস পোর্টালে সংরক্ষিত থাকবে।' },
                   { q: 'কোর্স ফি কি কিস্তিতে পরিশোধের সুযোগ আছে?', a: 'হ্যাঁ, সিএফও ১ বছর প্রোগ্রামে ৩টি সহজ সেমিস্টার কিস্তিতে ফি পরিশোধের পূর্ণ সুযোগ রয়েছে।' },
-                  { q: 'সার্টিফিকেট কি বিটিইবি দ্বারা অনুমোদিত?', a: 'হ্যাঁ, চার্টার্ড অফিসার লিমিটেড বাংলাদেশ কারিগরি শিক্ষা বোর্ড (BTEB) নিবন্ধিত প্রতিষ্ঠান এবং আমাদের সনদ জাতীয় ও আন্তর্জাতিকভাবে সমাদৃত।' },
+                  { q: 'কোর্স শেষে কী ধরনের সার্টিফিকেট পাওয়া যাবে?', a: 'সফলভাবে প্রতিটি মডিউল ও প্রজেক্ট সম্পন্ন করার পর চার্টার্ড অফিসার লিমিটেড (COL) কর্তৃক প্রফেশনাল এক্সিকিউটিভ সার্টিফিকেট প্রদান করা হয়।' },
                 ].map((item, idx) => (
                   <div key={idx} className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-1.5">
                     <h4 className="text-sm font-serif font-bold text-slate-900">{item.q}</h4>

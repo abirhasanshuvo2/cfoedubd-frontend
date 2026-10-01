@@ -121,7 +121,7 @@ function CoursesContent() {
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1E3A8A]/50 text-[#E5A93C] border border-[#C8963E]/40 text-xs font-bold mb-4">
               <Award className="w-3.5 h-3.5 text-[#C8963E]" />
-              <span>{lang === 'bn' ? 'বিটিইবি নিবন্ধিত প্রফেশনাল ডিপ্লোমা ও কারিকুলাম' : 'BTEB Affiliated Executive Diplomas'}</span>
+              <span>{lang === 'bn' ? 'প্রফেশনাল এক্সিকিউটিভ প্রোগ্রাম ও ক্যারিয়ার ট্র্যাক' : 'Professional Executive Programs & Tracks'}</span>
             </div>
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black text-white tracking-tight leading-tight">
@@ -152,7 +152,7 @@ function CoursesContent() {
               </div>
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                <span>{lang === 'bn' ? '১০০% বিটিইবি ও আরজেএসসি সরকারি অনুমোদন' : 'BTEB & RJSC Accreditations'}</span>
+                <span>{lang === 'bn' ? '৯৫% লার্নার সন্তুষ্টি ও এক্সিকিউটিভ নেটওয়ার্ক' : '95% Learner Satisfaction'}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Building2 className="w-4 h-4 text-[#E5A93C]" />

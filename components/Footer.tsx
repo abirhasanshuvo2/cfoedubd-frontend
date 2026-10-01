@@ -50,8 +50,8 @@ export default function Footer({ lang: propLang }: FooterProps = {}) {
 
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-sm">
               {systemInfo.description || (lang === 'bn'
-                ? 'চার্টার্ড অফিসার লিমিটেড (COL) বাংলাদেশ কারিগরি শিক্ষা বোর্ড (BTEB) অনুমোদিত ও নিবন্ধিত করপোরেট ফিন্যান্স, ট্যাক্স ও সি-স্যুট এক্সিকিউটিভ লিডারশিপ প্রতিষ্ঠান।'
-                : "Chartered Officer Limited is Bangladesh's premier executive finance institute affiliated with BTEB, shaping C-suite financial leaders and tax strategists.")}
+                ? 'চার্টার্ড অফিসার লিমিটেড (COL) ও সিএফও এডুকেশন বাংলাদেশ করপোরেট ফিন্যান্স, ট্যাক্সেশন, ভ্যাট ও ফাইন্যান্সিয়াল লিডারশিপের শীর্ষ পেশাদার প্রতিষ্ঠান।'
+                : "Chartered Officer Limited (COL) & CFO Education Bangladesh is the premier professional institute for corporate finance, taxation, VAT, and financial leadership.")}
             </p>
 
             <div className="space-y-2 pt-2 text-xs text-slate-300">
@@ -237,12 +237,12 @@ export default function Footer({ lang: propLang }: FooterProps = {}) {
           {/* Col 4: Trust, Accreditations & Payments */}
           <div className="lg:col-span-3 space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#E5A93C]">
-              {lang === 'bn' ? 'স্বীকৃতি ও পেমেন্ট গেটওয়ে' : 'Accreditation & Payment'}
+              {lang === 'bn' ? 'স্বীকৃতি ও পেমেন্ট গেটওয়ে' : 'Recognition & Payment'}
             </h4>
             <p className="text-xs text-slate-400 leading-relaxed">
               {lang === 'bn'
-                ? 'বাংলাদেশ কারিগরি শিক্ষা বোর্ড (BTEB) কোডভুক্ত ও আরজেএসসি নিবন্ধিত প্রতিষ্ঠান।'
-                : 'Recognized under Ministry of Education (BTEB) and registered with RJSC, Govt. of Bangladesh.'}
+                ? 'অনলাইন পেমেন্ট গেটওয়ের মাধ্যমে সহজে ও নিরাপদে কোর্স ফি পরিশোধ সুবিধা।'
+                : 'Secure online payment processing via bKash, Nagad, Visa, and Mastercard.'}
             </p>
 
             {/* Payment Badges */}
@@ -267,9 +267,9 @@ export default function Footer({ lang: propLang }: FooterProps = {}) {
               </div>
             </div>
 
-            <div className="pt-2 flex items-center gap-1.5 text-[11px] text-emerald-400">
+            <div className="pt-2 flex items-center gap-1.5 text-[11px] text-[#E5A93C]">
               <ShieldCheck className="w-3.5 h-3.5" />
-              <span>BTEB & RJSC Accredited Executive Institution</span>
+              <span>Professional Skill Development Institute</span>
             </div>
           </div>
         </div>

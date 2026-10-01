@@ -87,8 +87,8 @@ export default function LoginPage() {
             </h2>
             <p className="text-xs text-slate-300">
               {lang === 'bn'
-                ? 'সিএফও লাইভ সেশন, বিটিইবি রেজিস্ট্রেশন ও স্টুডেন্ট পোর্টাল অ্যাক্সেস করুন'
-                : 'Access your executive sessions, learning portal, and BTEB credentials'}
+                ? 'সিএফও লাইভ সেশন, লার্নিং ম্যাটেরিয়াল ও স্টুডেন্ট পোর্টাল অ্যাক্সেস করুন'
+                : 'Access your executive sessions, learning portal, and student resources'}
             </p>
           </div>
 

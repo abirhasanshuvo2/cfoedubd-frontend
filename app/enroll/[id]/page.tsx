@@ -226,8 +226,8 @@ export default function EnrollmentCheckoutPage({ params }: PageProps) {
                 </h2>
                 <p className="text-xs text-slate-500">
                   {lang === 'bn'
-                    ? 'আপনার সনদপত্র ও বিটিইবি রেজিস্ট্রেশনে এই নাম ও তথ্য ব্যবহৃত হবে।'
-                    : 'This information will be used for your BTEB registration and convocation certificate.'}
+                    ? 'আপনার কোর্স সনদপত্রে এই নাম ও তথ্য আনুষ্ঠানিকভাবে ব্যবহৃত হবে।'
+                    : 'This information will be officially used for your course completion certificate.'}
                 </p>
               </div>
 
@@ -392,7 +392,7 @@ export default function EnrollmentCheckoutPage({ params }: PageProps) {
                 </div>
                 <div className="flex justify-between text-slate-600">
                   <span>স্বীকৃতি:</span>
-                  <span className="font-bold text-emerald-600">BTEB Registered Certificate</span>
+                  <span className="font-bold text-emerald-600">COL Executive Certificate</span>
                 </div>
               </div>
 

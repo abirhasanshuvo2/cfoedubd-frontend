@@ -307,7 +307,7 @@ export default function StudentLmsModal({
                   Chartered Financial Officer (CFO) Executive Leadership
                 </h4>
                 <p className="text-xs text-slate-600 max-w-md mx-auto mt-1">
-                  Awarded to <strong className="text-slate-900">Abir Hasan</strong> upon fulfilling all boardroom simulation cases, financial modelling submissions, and BTEB-aligned assessment.
+                  Awarded to <strong className="text-slate-900">Abir Hasan</strong> upon fulfilling all boardroom simulation cases, financial modelling submissions, and final executive assessment.
                 </p>
               </div>
 

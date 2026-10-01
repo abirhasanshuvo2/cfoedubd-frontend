@@ -12,6 +12,7 @@ import StudentLmsModal from '@/components/StudentLmsModal';
 import LearningMethodology from '@/components/LearningMethodology';
 import CareerQuizModal from '@/components/CareerQuizModal';
 import AppDownloadBanner from '@/components/AppDownloadBanner';
+import OfficialWebsiteStats from '@/components/OfficialWebsiteStats';
 import FaqSection from '@/components/FaqSection';
 import Footer from '@/components/Footer';
 import AuthModal from '@/components/AuthModal';
@@ -106,6 +107,15 @@ export default function Home() {
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const featuredCourse = useMemo(() => {
+    // Prefer the flagship CFO or finance course if present, otherwise the first course
+    if (!courses || courses.length === 0) return COURSES[0];
+    const flagship = courses.find(
+      (c) => c.category === 'cfo-flagship' || c.slug.includes('cfo') || c.title.toLowerCase().includes('cfo')
+    );
+    return flagship || courses[0];
+  }, [courses]);
+
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
       {/* Toast Notification Banner */}
@@ -132,7 +142,7 @@ export default function Home() {
           if (el) el.scrollIntoView({ behavior: 'smooth' });
         }}
         onOpenCareerQuiz={() => setIsQuizOpen(true)}
-        featuredCourse={courses[0] || COURSES[0]}
+        featuredCourse={featuredCourse}
         onSelectCourse={(course) => setSelectedCourse(course)}
         onEnrollCourse={(course) => setEnrollingCourse(course)}
       />
@@ -237,6 +247,9 @@ export default function Home() {
           </Link>
         </div>
       </section>
+
+      {/* Official cfoedubd.com Statistics & Guarantees */}
+      <OfficialWebsiteStats lang={lang} />
 
       {/* Learning Methodology (Why Ostad) */}
       <LearningMethodology

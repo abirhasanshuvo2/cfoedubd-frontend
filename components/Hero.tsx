@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import {
   Award,
@@ -14,7 +14,8 @@ import {
   FileText,
   Download,
   Building2,
-  GraduationCap
+  GraduationCap,
+  Calendar
 } from 'lucide-react';
 import { Course } from '@/data/cfo-data';
 import { useCfo } from '@/context/CfoContext';
@@ -37,27 +38,6 @@ export default function Hero({
 }: HeroProps) {
   const { systemInfo } = useCfo();
 
-  // Live countdown timer for upcoming flagship batch
-  const [timeLeft, setTimeLeft] = useState({
-    days: 14,
-    hours: 8,
-    minutes: 42,
-    seconds: 15,
-  });
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
-        if (prev.minutes > 0) return { ...prev, minutes: 59, seconds: 59 };
-        if (prev.hours > 0) return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 };
-        if (prev.days > 0) return { ...prev, days: prev.days - 1, hours: 23, minutes: 59, seconds: 59 };
-        return prev;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
   return (
     <section className="relative overflow-hidden bg-[#0A192F] text-white pt-12 pb-16 lg:pt-20 lg:pb-24 border-b border-slate-800">
       {/* Subtle architectural ambient lights */}
@@ -77,11 +57,11 @@ export default function Hero({
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-[#E5A93C]"></span>
               </span>
               <span className="text-[#E5A93C] font-bold tracking-wider uppercase text-[11px]">
-                {systemInfo.motto || (lang === 'bn' ? 'বাংলাদেশ সরকার নিবন্ধিত একাডেমি' : 'Govt. Registered Executive Academy')}
+                {systemInfo.motto || (lang === 'bn' ? 'সিএফও এডুকেশন বাংলাদেশ' : 'CFO Education Bangladesh')}
               </span>
               <span aria-hidden="true" className="text-slate-600">·</span>
               <span className="text-slate-400">
-                {lang === 'bn' ? 'BTEB ও RJSC (Reg. s-13064/2019)' : 'BTEB & RJSC (Reg. s-13064/2019)'}
+                {lang === 'bn' ? 'প্রফেশনাল স্কিল ডেভেলপমেন্ট একাডেমি' : 'Professional Skill Development Academy'}
               </span>
               <ShieldCheck className="w-4 h-4 text-[#C8963E]" />
             </div>
@@ -172,42 +152,42 @@ export default function Hero({
               </Link>
             </div>
 
-            {/* Institutional Live Ticker Stats */}
+            {/* Institutional Live Ticker Stats from cfoedubd.com */}
             <div className="pt-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div>
                 <p className="text-2xl sm:text-3xl font-serif font-black text-white">
-                  {systemInfo.graduates ? `${systemInfo.graduates}+` : '২৫,০০০+'}
+                  {systemInfo.graduates ? `${systemInfo.graduates}+` : '৩,১০০+'}
                 </p>
                 <p className="text-xs text-slate-400 font-medium mt-0.5">
-                  {lang === 'bn' ? 'গ্র্যাজুয়েট প্রফেশনাল' : 'Graduated Leaders'}
+                  {lang === 'bn' ? 'নিবন্ধিত শিক্ষার্থী' : 'Enrolled Learners'}
                 </p>
               </div>
               <div>
                 <p className="text-2xl sm:text-3xl font-serif font-black text-[#E5A93C]">
-                  {systemInfo.classes ? `${systemInfo.classes}+` : '১৮তম'}
+                  {systemInfo.classes ? `${systemInfo.classes}+` : '২,০৯০+'}
                 </p>
                 <p className="text-xs text-slate-400 font-medium mt-0.5">
-                  {lang === 'bn' ? 'চলমান ব্যাচ ও কোর্স' : 'Live Batches & Classes'}
+                  {lang === 'bn' ? 'সমাপ্ত সেশন' : 'Finished Sessions'}
                 </p>
               </div>
               <div>
                 <p className="text-2xl sm:text-3xl font-serif font-black text-white">
-                  {systemInfo.students ? `${systemInfo.students}+` : '২৫+'}
+                  {systemInfo.students ? `${systemInfo.students}+` : '৫০+'}
                 </p>
                 <p className="text-xs text-slate-400 font-medium mt-0.5">
-                  {lang === 'bn' ? 'অ্যাক্টিভ শিক্ষার্থী / ফ্যাকাল্টি' : 'Active Students / Mentors'}
+                  {lang === 'bn' ? 'অনলাইন প্রশিক্ষক' : 'Online Instructors'}
                 </p>
               </div>
               <div>
-                <p className="text-2xl sm:text-3xl font-serif font-black text-emerald-400">১৫০+</p>
+                <p className="text-2xl sm:text-3xl font-serif font-black text-emerald-400">৯৫%</p>
                 <p className="text-xs text-slate-400 font-medium mt-0.5">
-                  {lang === 'bn' ? 'করপোরেট পার্টনার্স' : 'Corporate Partners'}
+                  {lang === 'bn' ? 'শিক্ষার্থী সন্তুষ্টির হার' : 'Satisfaction Rate'}
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Right Column: Featured Flagship Program Display */}
+          {/* Right Column: Featured Program Display */}
           <div className="lg:col-span-5">
             <div className="relative rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-700/80 shadow-2xl overflow-hidden">
               
@@ -216,7 +196,9 @@ export default function Hero({
                 <div className="flex items-center gap-2">
                   <Award className="w-4 h-4 text-[#C8963E]" />
                   <span className="text-xs font-bold uppercase tracking-wider text-[#E5A93C]">
-                    {lang === 'bn' ? 'ফ্ল্যাগশিপ চার্টার্ড প্রোগ্রাম' : 'Flagship Chartered Program'}
+                    {featuredCourse.category === 'cfo-flagship'
+                      ? (lang === 'bn' ? 'ফ্ল্যাগশিপ চার্টার্ড প্রোগ্রাম' : 'Flagship Chartered Program')
+                      : (featuredCourse.badge || (lang === 'bn' ? 'বিশেষায়িত এক্সিকিউটিভ কোর্স' : 'Executive Course'))}
                   </span>
                 </div>
                 <span className="text-xs bg-[#1E3A8A]/50 text-slate-200 border border-[#C8963E]/40 px-2.5 py-0.5 rounded-full font-mono">
@@ -240,73 +222,115 @@ export default function Hero({
                   </p>
                 </div>
 
-                {/* 3 Semesters Visual Curriculum Track */}
-                <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
-                    {lang === 'bn' ? '১ বছর মেয়াদি ৩টি সেমিস্টার কারিকুলাম:' : '3-Semester Curriculum Structure:'}
-                  </span>
-                  <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                    <div className="p-2 rounded-lg bg-slate-900 border border-slate-800">
-                      <span className="text-[10px] text-[#C8963E] font-bold block">সেমিস্টার ১</span>
-                      <span className="text-[11px] text-slate-300 font-semibold truncate block mt-0.5">IFRS ও গভর্ন্যান্স</span>
-                    </div>
-                    <div className="p-2 rounded-lg bg-slate-900 border border-slate-800">
-                      <span className="text-[10px] text-[#C8963E] font-bold block">সেমিস্টার ২</span>
-                      <span className="text-[11px] text-slate-300 font-semibold truncate block mt-0.5">SAP-FICO ও ভ্যাট</span>
-                    </div>
-                    <div className="p-2 rounded-lg bg-slate-900 border border-slate-800">
-                      <span className="text-[10px] text-[#C8963E] font-bold block">সেমিস্টার ৩</span>
-                      <span className="text-[11px] text-slate-300 font-semibold truncate block mt-0.5">ট্রেজারি ও অডিট</span>
+                {/* Multi-Semester Track OR Course Key Modules (Dynamic) */}
+                {featuredCourse.category === 'cfo-flagship' ? (
+                  <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+                      {lang === 'bn' ? '১ বছর মেয়াদি ৩টি সেমিস্টার কারিকুলাম:' : '3-Semester Curriculum Structure:'}
+                    </span>
+                    <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                      <div className="p-2 rounded-lg bg-slate-900 border border-slate-800">
+                        <span className="text-[10px] text-[#C8963E] font-bold block">সেমিস্টার ১</span>
+                        <span className="text-[11px] text-slate-300 font-semibold truncate block mt-0.5">IFRS ও গভর্ন্যান্স</span>
+                      </div>
+                      <div className="p-2 rounded-lg bg-slate-900 border border-slate-800">
+                        <span className="text-[10px] text-[#C8963E] font-bold block">সেমিস্টার ২</span>
+                        <span className="text-[11px] text-slate-300 font-semibold truncate block mt-0.5">SAP-FICO ও ভ্যাট</span>
+                      </div>
+                      <div className="p-2 rounded-lg bg-slate-900 border border-slate-800">
+                        <span className="text-[10px] text-[#C8963E] font-bold block">সেমিস্টার ৩</span>
+                        <span className="text-[11px] text-slate-300 font-semibold truncate block mt-0.5">ট্রেজারি ও অডিট</span>
+                      </div>
                     </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+                      {lang === 'bn' ? 'কোর্সের প্রধান বৈশিষ্ট্য ও কাঠামো:' : 'Course Highlights & Delivery:'}
+                    </span>
+                    <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                      <div className="p-2 rounded-lg bg-slate-900 border border-slate-800">
+                        <span className="text-[10px] text-[#C8963E] font-bold block">
+                          {lang === 'bn' ? 'ক্লাস শিডিউল' : 'Schedule'}
+                        </span>
+                        <span className="text-[11px] text-slate-300 font-semibold truncate block mt-0.5">
+                          {featuredCourse.schedule || 'অনলাইন লাইভ'}
+                        </span>
+                      </div>
+                      <div className="p-2 rounded-lg bg-slate-900 border border-slate-800">
+                        <span className="text-[10px] text-[#C8963E] font-bold block">
+                          {lang === 'bn' ? 'মোট ক্লাস' : 'Sessions'}
+                        </span>
+                        <span className="text-[11px] text-slate-300 font-semibold truncate block mt-0.5">
+                          {featuredCourse.totalClasses} {lang === 'bn' ? 'টি সেশন' : 'Classes'}
+                        </span>
+                      </div>
+                      <div className="p-2 rounded-lg bg-slate-900 border border-slate-800">
+                        <span className="text-[10px] text-[#C8963E] font-bold block">
+                          {lang === 'bn' ? 'ইন্সট্রাক্টর' : 'Faculty'}
+                        </span>
+                        <span className="text-[11px] text-slate-300 font-semibold truncate block mt-0.5">
+                          {featuredCourse.educator || featuredCourse.mentors[0]?.name || 'বিশেষজ্ঞ প্যানেল'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
-                {/* Batch Countdown */}
+                {/* Batch Information & Schedule */}
                 <div className="p-3.5 rounded-xl bg-slate-950/90 border border-slate-800 space-y-2">
                   <div className="flex items-center justify-between text-xs text-slate-300">
                     <span className="flex items-center gap-1.5 font-medium">
-                      <Clock className="w-3.5 h-3.5 text-[#C8963E]" />
-                      {lang === 'bn' ? 'ক্লাস শুরু হতে বাকি:' : 'Orientation in:'}
+                      <Calendar className="w-3.5 h-3.5 text-[#C8963E]" />
+                      {lang === 'bn' ? 'ওরিয়েন্টেশন / ক্লাস শুরু:' : 'Course Orientation:'}
                     </span>
-                    <span className="font-bold text-rose-400">
-                      {lang === 'bn' ? `মাত্র ${featuredCourse.seatsLeft}টি সিট খালি!` : `Only ${featuredCourse.seatsLeft} seats left!`}
+                    <span className="font-bold text-[#E5A93C]">
+                      {featuredCourse.startDate || (lang === 'bn' ? 'চলতি সেশন' : 'Open')}
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-4 gap-2 text-center">
-                    <div className="bg-slate-900 rounded-lg p-2 border border-slate-800">
-                      <p className="text-base font-black text-white font-mono">{timeLeft.days}</p>
-                      <p className="text-[10px] text-slate-400">{lang === 'bn' ? 'দিন' : 'Days'}</p>
-                    </div>
-                    <div className="bg-slate-900 rounded-lg p-2 border border-slate-800">
-                      <p className="text-base font-black text-white font-mono">{timeLeft.hours}</p>
-                      <p className="text-[10px] text-slate-400">{lang === 'bn' ? 'ঘণ্টা' : 'Hours'}</p>
-                    </div>
-                    <div className="bg-slate-900 rounded-lg p-2 border border-slate-800">
-                      <p className="text-base font-black text-white font-mono">{timeLeft.minutes}</p>
-                      <p className="text-[10px] text-slate-400">{lang === 'bn' ? 'মিনিট' : 'Mins'}</p>
-                    </div>
-                    <div className="bg-slate-900 rounded-lg p-2 border border-slate-800">
-                      <p className="text-base font-black text-white font-mono">{timeLeft.seconds}</p>
-                      <p className="text-[10px] text-slate-400">{lang === 'bn' ? 'সেকেন্ড' : 'Secs'}</p>
-                    </div>
+                  <div className="flex items-center justify-between text-xs text-slate-300 pt-1 border-t border-slate-800/80">
+                    <span className="flex items-center gap-1.5 font-medium">
+                      <Clock className="w-3.5 h-3.5 text-[#C8963E]" />
+                      {lang === 'bn' ? 'ক্লাসের সময়সূচি:' : 'Class Timings:'}
+                    </span>
+                    <span className="font-medium text-slate-300">
+                      {featuredCourse.schedule}
+                    </span>
                   </div>
                 </div>
 
                 {/* Pricing & Admission CTA */}
                 <div className="pt-2 border-t border-slate-800 flex items-center justify-between gap-4">
                   <div>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-2xl font-serif font-black text-[#E5A93C]">
-                        ৳{featuredCourse.price.toLocaleString()}
-                      </span>
-                      <span className="text-xs text-slate-500 line-through">
-                        ৳{featuredCourse.originalPrice.toLocaleString()}
-                      </span>
-                    </div>
-                    <span className="text-[11px] text-emerald-400 font-semibold block">
-                      {lang === 'bn' ? '৩টি সেমিস্টারে কিস্তি সুবিধা প্রাপ্য' : '3-Semester Installments Available'}
-                    </span>
+                    {featuredCourse.price === 0 ? (
+                      <div>
+                        <span className="text-2xl font-serif font-black text-emerald-400">
+                          {lang === 'bn' ? 'সম্পূর্ণ ফ্রি' : 'Free Enrollment'}
+                        </span>
+                        <span className="text-[11px] text-slate-400 font-semibold block mt-0.5">
+                          {lang === 'bn' ? '১০০% স্কলারশিপ / ফ্রি রেজিস্ট্রেশন' : '100% Free Access'}
+                        </span>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-2xl font-serif font-black text-[#E5A93C]">
+                            ৳{featuredCourse.price.toLocaleString()}
+                          </span>
+                          {featuredCourse.originalPrice > featuredCourse.price && (
+                            <span className="text-xs text-slate-500 line-through">
+                              ৳{featuredCourse.originalPrice.toLocaleString()}
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-[11px] text-emerald-400 font-semibold block">
+                          {featuredCourse.category === 'cfo-flagship'
+                            ? (lang === 'bn' ? '৩টি সেমিস্টারে কিস্তি সুবিধা প্রাপ্য' : '3-Semester Installments Available')
+                            : (lang === 'bn' ? 'অনলাইন পেমেন্ট ও বিকাশ সাপোর্ট' : 'Online Payment & bKash Supported')}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-2">
@@ -320,7 +344,9 @@ export default function Hero({
                       href={`/enroll-now?course=${encodeURIComponent(featuredCourse.titleEn || featuredCourse.title)}`}
                       className="px-4 py-2.5 rounded-lg bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#A97B28] hover:brightness-110 text-slate-950 text-xs font-serif font-black shadow-md transition-all cursor-pointer text-center"
                     >
-                      {lang === 'bn' ? 'অনলাইন ভর্তি' : 'Apply Now'}
+                      {featuredCourse.price === 0
+                        ? (lang === 'bn' ? 'ফ্রি ভর্তি' : 'Join Free')
+                        : (lang === 'bn' ? 'অনলাইন ভর্তি' : 'Apply Now')}
                     </Link>
                   </div>
                 </div>

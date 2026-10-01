@@ -169,7 +169,7 @@ export default function CourseCard({
               </span>
             </div>
             <span className="text-[10px] text-slate-500 block mt-0.5">
-              BTEB & RJSC Accredited Certification
+              Professional Executive Certification
             </span>
           </div>
 

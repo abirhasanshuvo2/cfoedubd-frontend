@@ -72,9 +72,9 @@ export default function HiringPartners({ lang }: HiringPartnersProps) {
           </div>
 
           <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
-            <p className="text-2xl sm:text-3xl font-serif font-black text-emerald-600">১০০%</p>
+            <p className="text-2xl sm:text-3xl font-serif font-black text-emerald-600">৯৫%</p>
             <p className="text-xs font-semibold text-slate-600 mt-1">
-              {lang === 'bn' ? 'বিটিইবি ও আরজেএসসি গভর্নমেন্ট স্বীকৃতি' : 'BTEB & RJSC Regulatory Compliance'}
+              {lang === 'bn' ? 'শিক্ষার্থীদের ইতিবাচক সন্তুষ্টি' : 'Learners Satisfaction Rate'}
             </p>
           </div>
         </div>

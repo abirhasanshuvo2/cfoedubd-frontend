@@ -20,16 +20,16 @@ const plusJakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: 'Chartered Officer Limited | CFO Bangladesh - cfoedubd.com',
-  description: "Chartered Officer Limited (COL) & The CFO Foundation of Bangladesh. Premier professional skill development institute for Chartered Financial Officer (CFO), Customs, VAT & TAX, Fintech, and Supply Chain programs.",
+  description: "Chartered Officer Limited (COL) & CFO Education Bangladesh. Premier professional skill development institute for Chartered Financial Officer (CFO), Customs, VAT & TAX, Fintech, and Supply Chain programs.",
   openGraph: {
     title: 'Chartered Officer Limited | CFO Bangladesh',
-    description: "Empowering Financial Leaders & Corporate Executives in Bangladesh. BTEB registered professional diplomas and certifications.",
+    description: "Empowering Financial Leaders & Corporate Executives in Bangladesh through practical skill development and executive learning.",
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Chartered Officer Limited | CFO Bangladesh',
-    description: "Empowering Financial Leaders & Corporate Executives in Bangladesh. BTEB registered professional diplomas and certifications.",
+    description: "Empowering Financial Leaders & Corporate Executives in Bangladesh through practical skill development and executive learning.",
   },
 };
 

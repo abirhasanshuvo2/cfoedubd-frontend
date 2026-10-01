@@ -27,25 +27,35 @@ export default function AboutPage() {
 
   const metrics = [
     { 
-      number: systemInfo.graduates ? `${systemInfo.graduates}+` : '৮৪০+', 
-      numberEn: systemInfo.graduates ? `${systemInfo.graduates}+` : '840+', 
-      label: 'সার্টিফাইড CFO ও PGD প্রফেশনাল', 
-      labelEn: 'Certified CFO Graduates' 
+      number: '২,০৯০+', 
+      numberEn: '2,090+', 
+      label: 'সমাপ্ত লাইভ ও ইন্টারঅ্যাক্টিভ সেশন', 
+      labelEn: 'Finished Sessions' 
     },
     { 
-      number: systemInfo.students ? `${systemInfo.students}+` : '২৫+', 
-      numberEn: systemInfo.students ? `${systemInfo.students}+` : '25+', 
-      label: 'বছর সিনিয়র মেন্টরদের গড় অভিজ্ঞতা', 
-      labelEn: 'Years Faculty Experience' 
+      number: '৩,১০০+', 
+      numberEn: '3,100+', 
+      label: 'নিবন্ধিত লার্নার ও এক্সিকিউটিভ', 
+      labelEn: 'Enrolled Learners' 
     },
     { 
-      number: systemInfo.classes ? `${systemInfo.classes}+` : '১৫০+', 
-      numberEn: systemInfo.classes ? `${systemInfo.classes}+` : '150+', 
-      label: 'কর্পোরেট ব্যাচ ও রিক্রুটমেন্ট নেটওয়ার্ক', 
-      labelEn: 'Corporate Batches & Network' 
+      number: '৫০+', 
+      numberEn: '50+', 
+      label: 'অনলাইন প্রফেশনাল ইন্সট্রাক্টর', 
+      labelEn: 'Online Instructors' 
     },
-    { number: '১০০%', numberEn: '100%', label: 'বিটিইবি ও আরজেএসসি সরকারি স্বীকৃতি', labelEn: 'BTEB & RJSC Accreditations' },
-    { number: '৪.৯২/৫', numberEn: '4.92/5', label: 'গড় শিক্ষার্থী ও কর্পোরেট সন্তুষ্টি', labelEn: 'Executive Satisfaction' }
+    { 
+      number: '৯৫%', 
+      numberEn: '95%', 
+      label: 'শিক্ষার্থী ইতিবাচক সন্তুষ্টির হার', 
+      labelEn: 'Satisfaction Rate' 
+    },
+    { 
+      number: '২৪/৭', 
+      numberEn: '24/7', 
+      label: 'অনলাইন লার্নিং ও রিসোর্স সাপোর্ট', 
+      labelEn: 'Resource Support' 
+    }
   ];
 
   const executivePillars = [
@@ -72,10 +82,10 @@ export default function AboutPage() {
     },
     {
       icon: <GraduationCap className="w-6 h-6 text-purple-500" />,
-      title: 'বিটিইবি রেজিস্টার্ড ও বার্ষিক সমাবর্তন (Convocation)',
-      titleEn: 'Government Registered & Annual Convocation',
-      description: 'বাংলাদেশ কারিগরি শিক্ষা বোর্ড (BTEB) নিবন্ধিত সম্মানজনক প্রফেশনাল ডিপ্লোমা এবং বর্ণাঢ্য বার্ষিক কনভোকেশনে গাউন ও সার্টিফিকেট প্রদান।',
-      descriptionEn: 'Official government credentials recognized by public and private employers with verified certificates and grand annual convocation.'
+      title: 'প্রফেশনাল এক্সিকিউটিভ সনদ ও নেটওয়ার্ক',
+      titleEn: 'Professional Executive Credentials & Network',
+      description: 'কোর্স সফলভাবে সম্পন্ন করার পর চার্টার্ড অফিসার লিমিটেড (COL) কর্তৃক সম্মানজনক প্রফেশনাল এক্সিকিউটিভ সার্টিফিকেট প্রদান এবং আজীবন অ্যালামনাই নেটওয়ার্ক সুবিধা।',
+      descriptionEn: 'Recognized professional credentials from Chartered Officer Limited (COL) with verified online certificates and lifelong alumni executive network.'
     }
   ];
 
@@ -109,8 +119,8 @@ export default function AboutPage() {
 
           <p className="text-sm sm:text-base md:text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed">
             {systemInfo.description || (lang === 'bn'
-              ? 'চার্টার্ড অফিসার লিমিটেড (COL) বাংলাদেশ কারিগরি শিক্ষা বোর্ড (BTEB) নিবন্ধিত এবং যৌথ মূলধন কোম্পানি ও ফার্মসমূহের পরিদপ্তর (RJSC Reg. No. s-13064/2019) অনুমোদিত একটি বিশেষায়িত পেশাদার শিক্ষা প্রতিষ্ঠান। আমরা দেশের হিসাবরক্ষণ কর্মকর্তা ও ফাইন্যান্স প্রফেশনালদের আধুনিক সিএফও ও স্ট্র্যাটেজিক লিডার হিসেবে গড়ে তুলতে প্রতিশ্রুতিবদ্ধ।'
-              : 'Chartered Officer Limited (COL) is Bangladesh’s leading executive finance academy, registered under RJSC (Reg. No. s-13064/2019, Govt. of Bangladesh) and affiliated with BTEB, shaping tomorrow’s CFOs and corporate leaders.')}
+              ? 'চার্টার্ড অফিসার লিমিটেড (COL) ও সিএফও এডুকেশন বাংলাদেশ দেশের ফাইন্যান্সিয়াল লিডারশিপ, ট্যাক্সেশন, ভ্যাট এবং প্রফেশনাল এক্সিকিউটিভ স্কিল ডেভেলপমেন্টের শীর্ষ প্ল্যাটফর্ম। দেশের হিসাবরক্ষণ কর্মকর্তা ও ফাইন্যান্স প্রফেশনালদের আধুনিক সিএফও ও স্ট্র্যাটেজিক লিডার হিসেবে গড়ে তুলতে আমরা প্রতিশ্রুতিবদ্ধ।'
+              : 'Chartered Officer Limited (COL) & CFO Education Bangladesh is the premier professional academy shaping corporate leaders, financial strategists, and executive professionals across Bangladesh.')}
           </p>
         </div>
       </section>
@@ -235,35 +245,35 @@ export default function AboutPage() {
             <div className="bg-slate-900/90 rounded-2xl border border-[#C8963E]/40 p-6 space-y-4">
               <h4 className="text-base font-serif font-bold text-[#E5A93C] flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-[#C8963E]" />
-                {lang === 'bn' ? 'সরকারি নিবন্ধন ও বৈধানিক স্বীকৃতি' : 'Government Affiliations & Accreditations'}
+                {lang === 'bn' ? 'আমাদের শিক্ষাদান অঙ্গীকার ও স্বীকৃতি' : 'Our Educational Commitment'}
               </h4>
               <ul className="space-y-2.5 text-xs text-slate-300">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span>বাংলাদেশ কারিগরি শিক্ষা বোর্ড (BTEB) অনুমোদিত ও নিবন্ধিত প্রতিষ্ঠান।</span>
+                  <span>অভিজ্ঞ ও উচ্চতর ডিগ্রিধারী প্রফেশনাল ইন্সট্রাক্টরদের সরাসরি মেন্টরশিপ।</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span>যৌথ মূলধন কোম্পানি ও ফার্মসমূহের পরিদপ্তর (RJSC), বাণিজ্য মন্ত্রণালয় কর্তৃক বিধিবদ্ধ প্রতিষ্ঠান।</span>
+                  <span>জটিল বিষয়গুলোর সহজ ও প্রায়োগিক উপস্থাপনা (Quality Clarification)।</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span>অনলাইন ২৪/৭ সার্টিফিকেট ভেরিফিকেশন ও ট্রান্সক্রিপ্ট রেকর্ড ডাটাবেস।</span>
+                  <span>২৪/৭ অনলাইন রিসোর্স, স্টাডি মেটেরিয়াল ও ইন্টারঅ্যাক্টিভ লাইভ সেশন।</span>
                 </li>
               </ul>
 
               <div className="pt-2 flex items-center gap-3">
                 <Link
-                  href="/admission"
+                  href="/courses"
                   className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#C8963E] to-[#B8860B] hover:from-[#d4af37] hover:to-[#C8963E] text-slate-950 font-serif font-black text-xs shadow-md transition-all"
                 >
-                  {lang === 'bn' ? 'ভর্তি প্রক্রিয়া দেখুন' : 'Admission Process'}
+                  {lang === 'bn' ? 'সকল কোর্স দেখুন' : 'Explore Courses'}
                 </Link>
                 <Link
-                  href="/verify-certificate"
+                  href="/contact"
                   className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-serif font-bold text-xs border border-slate-700 transition-all"
                 >
-                  {lang === 'bn' ? 'সনদ যাচাই করুন' : 'Verify Certificate'}
+                  {lang === 'bn' ? 'যোগাযোগ করুন' : 'Contact Us'}
                 </Link>
               </div>
             </div>

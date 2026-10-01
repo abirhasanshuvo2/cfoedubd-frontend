@@ -852,7 +852,7 @@ function EnrollNowContent() {
                     <Award className="w-3.5 h-3.5 text-[#C8963E]" />
                     {lang === 'bn' ? 'সনদ স্বীকৃতি:' : 'Accreditation:'}
                   </span>
-                  <span className="font-bold text-emerald-700">BTEB &amp; RJSC Approved</span>
+                  <span className="font-bold text-emerald-700">COL Executive Certified</span>
                 </div>
               </div>
 
