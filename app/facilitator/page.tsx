@@ -47,7 +47,7 @@ interface EducatorApiResponse {
 }
 
 export default function FacilitatorPage() {
-  const { lang } = useCfo();
+  const { lang, theme } = useCfo();
   const [educators, setEducators] = useState<EducatorItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [isLiveApi, setIsLiveApi] = useState<boolean>(false);
@@ -102,23 +102,26 @@ export default function FacilitatorPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col font-sans">
+    <div
+      data-theme={theme}
+      className={`min-h-screen flex flex-col font-sans transition-colors ${theme === 'dark' ? 'dark bg-slate-950 text-slate-100' : 'bg-[#F8FAFC] text-slate-900'}`}
+    >
       <Navbar />
 
       {/* Hero Section */}
-      <section className="bg-[#0A192F] text-white py-16 px-4 border-b border-[#1E3A8A] relative overflow-hidden">
+      <section className="bg-gradient-to-b from-amber-50/90 via-slate-50 to-white dark:bg-[#0A192F] text-slate-900 dark:text-white py-14 sm:py-16 px-4 border-b border-slate-200 dark:border-[#1E3A8A] relative overflow-hidden transition-colors">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_70%_at_50%_-10%,rgba(200,150,62,0.18),transparent)]" />
         <div className="max-w-7xl mx-auto relative z-10 text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1E3A8A]/50 border border-[#C8963E]/40 text-xs font-bold text-[#E5A93C]">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 dark:bg-[#1E3A8A]/50 border border-amber-300 dark:border-[#C8963E]/40 text-xs font-bold text-amber-900 dark:text-[#E5A93C] shadow-2xs">
             <GraduationCap className="w-4 h-4 text-[#C8963E]" />
             <span>Official Educator & Facilitator Faculty</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black tracking-tight text-white">
-            Our Respected <span className="text-[#E5A93C]">Facilitators</span>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black tracking-tight text-slate-900 dark:text-white">
+            Our Respected <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#966718] dark:from-[#FFDF79] dark:via-[#E5A93C] dark:to-[#C8963E]">Facilitators</span>
           </h1>
 
-          <p className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
             Distinguished Faculty, Chartered Professionals &amp; Industry Leaders at Chartered Officer Limited.
           </p>
 
@@ -131,7 +134,7 @@ export default function FacilitatorPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search facilitators by name, username, course, or title..."
-                className="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-900/90 border border-[#C8963E]/40 text-white text-xs sm:text-sm placeholder:text-slate-400 focus:outline-none focus:border-[#C8963E]"
+                className="w-full pl-10 pr-4 py-3 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-300 dark:border-[#C8963E]/40 text-slate-900 dark:text-white text-xs sm:text-sm placeholder:text-slate-400 focus:outline-none focus:border-[#C8963E] shadow-2xs"
               />
             </div>
           </div>
@@ -256,22 +259,22 @@ export default function FacilitatorPage() {
         )}
 
         {/* Join Faculty Callout */}
-        <section className="mt-16 bg-white border border-slate-200 rounded-3xl p-8 sm:p-10 text-center space-y-4 shadow-xs">
-          <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-[#C8963E] mx-auto">
+        <section className="mt-16 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 sm:p-10 text-center space-y-4 shadow-xs">
+          <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 flex items-center justify-center text-[#C8963E] mx-auto">
             <GraduationCap className="w-6 h-6" />
           </div>
-          <h2 className="text-xl sm:text-2xl font-serif font-black text-[#0A192F]">
+          <h2 className="text-xl sm:text-2xl font-serif font-black text-slate-900 dark:text-white">
             Interested in Joining the CFO Faculty Board?
           </h2>
-          <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-xl mx-auto leading-relaxed">
             We actively invite practicing FCAs, FCMAs, tax advocates, and senior technical educators passionate about mentoring the next generation of business leaders.
           </p>
           <div className="pt-2">
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0A192F] hover:bg-[#1E3A8A] text-[#E5A93C] font-bold text-xs shadow-md transition-all"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#B8860B] hover:from-[#d4af37] hover:to-[#C8963E] text-slate-950 font-serif font-black text-xs shadow-md transition-all cursor-pointer"
             >
-              <Mail className="w-4 h-4" />
+              <Mail className="w-4 h-4 text-slate-950" />
               <span>Submit Faculty Expression of Interest</span>
             </Link>
           </div>

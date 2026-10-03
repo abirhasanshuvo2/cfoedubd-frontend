@@ -39,8 +39,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="bn" className={`${hindSiliguri.variable} ${plusJakarta.variable}`}>
-      <body className="font-sans antialiased bg-[#F8FAFC] text-slate-900 selection:bg-[#c8963e] selection:text-white" suppressHydrationWarning>
+    <html lang="bn" suppressHydrationWarning className={`${hindSiliguri.variable} ${plusJakarta.variable}`}>
+      <body className="font-sans antialiased bg-[#F8FAFC] dark:bg-slate-950 text-slate-900 dark:text-slate-100 selection:bg-[#c8963e] selection:text-white transition-colors duration-200" suppressHydrationWarning>
         <CfoProvider>
           {children}
           <WhatsAppFloatingButton />

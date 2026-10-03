@@ -29,7 +29,7 @@ import {
 
 function EnrollNowContent() {
   const searchParams = useSearchParams();
-  const { lang, enrollInCourse, courses: contextCourses, systemInfo } = useCfo();
+  const { lang, enrollInCourse, courses: contextCourses, systemInfo, theme } = useCfo();
 
   const allCourses = contextCourses && contextCourses.length > 0 ? contextCourses : COURSES;
 
@@ -350,13 +350,13 @@ function EnrollNowContent() {
             <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link
                 href="/courses"
-                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#0A192F] hover:bg-[#1E3A8A] text-[#E5A93C] font-bold text-xs shadow-md transition-all text-center"
+                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#B8860B] hover:from-[#d4af37] text-slate-950 font-serif font-black text-xs shadow-md transition-all text-center cursor-pointer"
               >
                 {lang === 'bn' ? 'অন্যান্য কোর্স দেখুন' : 'Explore Other Courses'}
               </Link>
               <Link
                 href="/certificates"
-                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs transition-all text-center flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs shadow-xs transition-all text-center flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Award className="w-4 h-4 text-[#C8963E]" />
                 <span>{lang === 'bn' ? 'সার্টিফিকেট যাচাই পেজ' : 'Certificate Verification'}</span>
@@ -371,26 +371,37 @@ function EnrollNowContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col font-sans">
+    <div
+      data-theme={theme}
+      className={`min-h-screen flex flex-col font-sans transition-colors ${theme === 'dark' ? 'dark bg-slate-950 text-slate-100' : 'bg-[#F8FAFC] text-slate-900'}`}
+    >
       <Navbar />
 
       {/* Header Banner */}
-      <section className="bg-[#0A192F] text-white py-10 sm:py-12 px-4 border-b border-[#1E3A8A] relative overflow-hidden">
+      <section className="bg-gradient-to-b from-amber-50/90 via-slate-50 to-white dark:bg-[#0A192F] text-slate-900 dark:text-white py-10 sm:py-12 px-4 border-b border-slate-200 dark:border-[#1E3A8A] relative overflow-hidden transition-colors">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_70%_at_50%_-10%,rgba(200,150,62,0.18),transparent)]" />
         <div className="max-w-7xl mx-auto relative z-10 text-center space-y-3">
           <Link
             href="/courses"
-            className="inline-flex items-center gap-1.5 text-xs text-[#E5A93C] hover:underline mb-1"
+            className="inline-flex items-center gap-1.5 text-xs text-amber-800 dark:text-[#E5A93C] hover:underline mb-1 font-semibold"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>{lang === 'bn' ? 'সব কোর্সে ফিরে যান' : 'Back to Courses Catalog'}</span>
           </Link>
 
-          <h1 className="text-2xl sm:text-4xl font-serif font-black tracking-tight text-white">
-            {lang === 'bn' ? 'কোর্স ভর্তি ও পরামর্শ অনুসন্ধান (Enquiry Form)' : 'Course Admission & Program Enquiry'}
+          <h1 className="text-2xl sm:text-4xl font-serif font-black tracking-tight text-slate-900 dark:text-white">
+            {lang === 'bn' ? (
+              <>
+                কোর্স ভর্তি ও পরামর্শ অনুসন্ধান <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#966718] dark:from-[#FFDF79] dark:via-[#E5A93C] dark:to-[#C8963E]">(Enquiry Form)</span>
+              </>
+            ) : (
+              <>
+                Course Admission &amp; <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#966718] dark:from-[#FFDF79] dark:via-[#E5A93C] dark:to-[#C8963E]">Program Enquiry</span>
+              </>
+            )}
           </h1>
 
-          <p className="text-xs sm:text-sm text-slate-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
             {lang === 'bn'
               ? 'নিচের ফর্মের প্রতিটি প্রয়োজনীয় ফিল্ড পূরণ করে সাবমিট করুন। সকল ফিল্ড পূরণ করা সাপেক্ষে সরাসরি আমাদের ব্যাকএন্ড এপিআই-এ (/api/enquiries) ডাটা জমা হবে।'
               : 'Please complete all required fields. All fields must be fulfilled before submitting to the backend API (http://127.0.0.1:8000/api/enquiries).'}

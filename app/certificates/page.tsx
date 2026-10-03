@@ -51,7 +51,7 @@ export interface CertificateItem {
 function CertificateVerificationContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { lang, systemInfo } = useCfo();
+  const { lang, systemInfo, theme } = useCfo();
 
   const initialRegId = searchParams.get('registration_id') || '';
   const [regIdInput, setRegIdInput] = useState<string>(initialRegId);
@@ -168,15 +168,18 @@ function CertificateVerificationContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col font-sans">
+    <div
+      data-theme={theme}
+      className={`min-h-screen flex flex-col font-sans transition-colors ${theme === 'dark' ? 'dark bg-slate-950 text-slate-100' : 'bg-[#F8FAFC] text-slate-900'}`}
+    >
       <Navbar />
 
       {/* Verification Hero */}
-      <section className="relative bg-[#0A192F] text-white pt-12 pb-16 px-4 overflow-hidden border-b border-[#1E3A8A]">
+      <section className="relative bg-gradient-to-b from-amber-50/90 via-slate-50 to-white dark:bg-[#0A192F] text-slate-900 dark:text-white pt-12 pb-16 px-4 overflow-hidden border-b border-slate-200 dark:border-[#1E3A8A] transition-colors">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(200,150,62,0.22),rgba(10,25,47,0))]" />
 
         <div className="max-w-4xl mx-auto relative z-10 text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1E3A8A]/60 border border-[#C8963E]/50 text-xs font-bold text-[#E5A93C] shadow-sm">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 dark:bg-[#1E3A8A]/60 border border-amber-300 dark:border-[#C8963E]/50 text-xs font-bold text-amber-900 dark:text-[#E5A93C] shadow-2xs">
             <ShieldCheck className="w-4 h-4 text-[#C8963E]" />
             <span>
               {lang === 'bn'
@@ -185,19 +188,19 @@ function CertificateVerificationContent() {
             </span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black text-white tracking-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black text-slate-900 dark:text-white tracking-tight">
             {lang === 'bn' ? (
               <>
-                চার্টার্ড অফিসার <span className="text-[#E5A93C]">সনদপত্র যাচাই ও ডাউনলোড</span>
+                চার্টার্ড অফিসার <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#966718] dark:from-[#FFDF79] dark:via-[#E5A93C] dark:to-[#C8963E]">সনদপত্র যাচাই ও ডাউনলোড</span>
               </>
             ) : (
               <>
-                Verify &amp; View <span className="text-[#E5A93C]">Official Certificate PDF</span>
+                Verify &amp; View <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#966718] dark:from-[#FFDF79] dark:via-[#E5A93C] dark:to-[#C8963E]">Official Certificate PDF</span>
               </>
             )}
           </h1>
 
-          <p className="text-xs sm:text-sm text-slate-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
             {lang === 'bn'
               ? 'নিয়োগকারী কর্তৃপক্ষ ও শিক্ষার্থীরা চার্টার্ড অফিসার লিমিটেড কর্তৃক ইস্যুকৃত মূল পিডিএফ সনদপত্র দেখতে ও ডাউনলোড করতে রেজিস্ট্রেশন আইডি দিন।'
               : 'Enter your Registration ID to view the actual authenticated certificate PDF directly on this page and download the original file.'}
@@ -207,7 +210,7 @@ function CertificateVerificationContent() {
           <div className="max-w-xl mx-auto pt-3">
             <form
               onSubmit={handleSearchSubmit}
-              className="flex flex-col sm:flex-row gap-2 bg-slate-900/90 p-2 rounded-2xl border border-[#C8963E]/60 shadow-2xl backdrop-blur-xs"
+              className="flex flex-col sm:flex-row gap-2 bg-white dark:bg-slate-900/90 p-2 rounded-2xl border border-slate-300 dark:border-[#C8963E]/60 shadow-md backdrop-blur-xs"
             >
               <div className="relative flex-1">
                 <Search className="w-4 h-4 text-[#C8963E] absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -220,7 +223,7 @@ function CertificateVerificationContent() {
                       ? 'রেজিস্ট্রেশন আইডি দিন (যেমন: 222, 5, 8)'
                       : 'Enter Registration ID (e.g. 222, 5, 8)'
                   }
-                  className="w-full pl-10 pr-4 py-3 bg-transparent text-white font-mono text-sm placeholder:text-slate-500 placeholder:font-sans focus:outline-none"
+                  className="w-full pl-10 pr-4 py-3 bg-transparent text-slate-900 dark:text-white font-mono text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500 placeholder:font-sans focus:outline-none"
                 />
               </div>
 
@@ -545,14 +548,14 @@ function CertificateVerificationContent() {
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-2 text-center">
-              <div className="w-12 h-12 rounded-xl bg-[#0A192F] text-[#E5A93C] flex items-center justify-center mx-auto border border-[#C8963E]/40">
-                <Download className="w-6 h-6 text-[#E5A93C]" />
+            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-2 text-center">
+              <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-[#C8963E] flex items-center justify-center mx-auto border border-amber-200 dark:border-amber-800">
+                <Download className="w-6 h-6 text-[#C8963E]" />
               </div>
-              <h3 className="text-sm font-serif font-bold text-slate-900">
+              <h3 className="text-sm font-serif font-bold text-slate-900 dark:text-white">
                 {lang === 'bn' ? 'সরাসরি ডাউনলোড' : 'Direct 1-Click Download'}
               </h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                 {lang === 'bn'
                   ? 'API হতে প্রাপ্ত ডাউনলোড ইউআরএল (download_url) দিয়ে সরাসরি সনদপত্র ডাউনলোড করতে পারবেন।'
                   : 'Instantly download the certificate file directly via the API download_url.'}

@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 
 export default function MediaNewsPage() {
-  const { lang } = useCfo();
+  const { lang, theme } = useCfo();
 
   // News state driven strictly by Laravel API http://127.0.0.1:8000/api/settings/news
   const [articles, setArticles] = useState<ApiNewsItem[]>(INITIAL_API_NEWS);
@@ -83,21 +83,24 @@ export default function MediaNewsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col font-sans">
+    <div
+      data-theme={theme}
+      className={`min-h-screen flex flex-col font-sans transition-colors ${theme === 'dark' ? 'dark bg-slate-950 text-slate-100' : 'bg-[#F8FAFC] text-slate-900'}`}
+    >
       <Navbar />
 
       {/* Hero Header */}
-      <section className="bg-[#0A192F] text-white py-14 sm:py-16 px-4 border-b border-[#1E3A8A] relative overflow-hidden">
+      <section className="bg-gradient-to-b from-amber-50/90 via-slate-50 to-white dark:bg-[#0A192F] text-slate-900 dark:text-white py-14 sm:py-16 px-4 border-b border-slate-200 dark:border-[#1E3A8A] relative overflow-hidden transition-colors">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_70%_at_50%_-10%,rgba(200,150,62,0.18),transparent)]" />
         <div className="max-w-7xl mx-auto relative z-10 text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1E3A8A]/50 border border-[#C8963E]/40 text-xs font-bold text-[#E5A93C]">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 dark:bg-[#1E3A8A]/50 border border-amber-300 dark:border-[#C8963E]/40 text-xs font-bold text-amber-900 dark:text-[#E5A93C] shadow-2xs">
             <Newspaper className="w-4 h-4 text-[#C8963E]" />
             <span>Official Media Center &amp; Press Room</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black tracking-tight text-white">
-            Media &amp; <span className="text-[#E5A93C]">News</span>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black tracking-tight text-slate-900 dark:text-white">
+            Media &amp; <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#966718] dark:from-[#FFDF79] dark:via-[#E5A93C] dark:to-[#C8963E]">News</span>
           </h1>
-          <p className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
             Latest press releases, events, and official announcements.
           </p>
 
@@ -110,7 +113,7 @@ export default function MediaNewsPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search articles, press releases..."
-                className="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-900/90 border border-[#C8963E]/40 text-white text-xs sm:text-sm placeholder:text-slate-400 focus:outline-none focus:border-[#C8963E]"
+                className="w-full pl-10 pr-4 py-3 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-300 dark:border-[#C8963E]/40 text-slate-900 dark:text-white text-xs sm:text-sm placeholder:text-slate-400 focus:outline-none focus:border-[#C8963E] shadow-2xs"
               />
             </div>
           </div>
@@ -127,8 +130,8 @@ export default function MediaNewsPage() {
               onClick={() => setSelectedCategory(cat)}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 selectedCategory.toLowerCase() === cat.toLowerCase()
-                  ? 'bg-[#0A192F] text-[#E5A93C] shadow-md border border-[#C8963E]'
-                  : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+                  ? 'bg-amber-500 hover:bg-amber-600 text-slate-950 dark:bg-[#C8963E] dark:text-slate-950 shadow-md font-black'
+                  : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
               }`}
             >
               {cat}
@@ -182,7 +185,7 @@ export default function MediaNewsPage() {
                         category={article.category}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
-                      <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-[#0A192F]/90 text-[#E5A93C] text-[11px] font-bold tracking-wide uppercase border border-[#C8963E]/40 backdrop-blur-xs">
+                      <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-white/90 dark:bg-[#0A192F]/90 text-amber-800 dark:text-[#E5A93C] text-[11px] font-bold tracking-wide uppercase border border-amber-300 dark:border-[#C8963E]/40 backdrop-blur-xs shadow-xs">
                         {article.category || 'News'}
                       </div>
 
@@ -277,8 +280,8 @@ export default function MediaNewsPage() {
                 disabled={isLoading}
                 className={`w-8 h-8 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                   currentPage === pg
-                    ? 'bg-[#0A192F] text-[#E5A93C] border border-[#C8963E]'
-                    : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+                    ? 'bg-amber-500 text-slate-950 border border-amber-600 dark:bg-[#C8963E] dark:border-[#C8963E] shadow-xs'
+                    : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                 }`}
               >
                 {pg}

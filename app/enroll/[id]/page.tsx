@@ -139,17 +139,17 @@ export default function EnrollmentCheckoutPage({ params }: PageProps) {
       <Navbar />
 
       {/* Breadcrumb / Top Bar */}
-      <div className="bg-[#0A192F] border-b border-[#1E3A8A] text-xs py-2.5 px-4 sm:px-8 text-slate-400">
+      <div className="bg-slate-100 dark:bg-[#0A192F] border-b border-slate-200 dark:border-[#1E3A8A] text-xs py-2.5 px-4 sm:px-8 text-slate-600 dark:text-slate-400 transition-colors">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <Link
             href={`/courses/${course.id}`}
-            className="flex items-center gap-1 text-slate-300 hover:text-white transition-colors"
+            className="flex items-center gap-1 text-slate-700 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>{lang === 'bn' ? 'প্রোগ্রাম বিবরণে ফিরে যান' : 'Back to program details'}</span>
           </Link>
-          <div className="flex items-center gap-2 text-[#E5A93C]">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+          <div className="flex items-center gap-2 text-amber-800 dark:text-[#E5A93C] font-medium">
+            <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>বিটিইবি নিবন্ধিত ও ২৫৬-বিট এনক্রিপ্টেড পেমেন্ট পোর্টাল</span>
           </div>
         </div>
@@ -411,7 +411,7 @@ export default function EnrollmentCheckoutPage({ params }: PageProps) {
                   />
                   <button
                     type="submit"
-                    className="px-4 py-2 rounded-xl bg-[#0A192F] text-[#E5A93C] font-serif font-bold text-xs cursor-pointer hover:bg-[#1E3A8A]"
+                    className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 dark:bg-[#C8963E] dark:hover:bg-[#d4af37] font-serif font-bold text-xs cursor-pointer shadow-2xs transition-colors"
                   >
                     প্রয়োগ করুন
                   </button>

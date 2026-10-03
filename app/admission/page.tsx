@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 
 export default function AdmissionPage() {
-  const { lang } = useCfo();
+  const { lang, theme } = useCfo();
 
   // Form State
   const [formData, setFormData] = useState({
@@ -94,32 +94,35 @@ export default function AdmissionPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col font-sans">
+    <div
+      data-theme={theme}
+      className={`min-h-screen flex flex-col font-sans transition-colors ${theme === 'dark' ? 'dark bg-slate-950 text-slate-100' : 'bg-[#F8FAFC] text-slate-900'}`}
+    >
       <Navbar />
 
       {/* Hero Header */}
-      <section className="relative bg-[#0A192F] text-white pt-16 pb-20 overflow-hidden border-b border-[#1E3A8A]">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(200,150,62,0.18),rgba(10,25,47,0))]" />
+      <section className="relative bg-gradient-to-b from-amber-50/90 via-slate-50 to-white dark:bg-[#0A192F] text-slate-900 dark:text-white pt-16 pb-20 overflow-hidden border-b border-slate-200 dark:border-[#1E3A8A] transition-colors">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(200,150,62,0.18),transparent)]" />
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1E3A8A]/50 border border-[#C8963E]/40 text-xs font-bold text-[#E5A93C]">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 dark:bg-[#1E3A8A]/50 border border-amber-300 dark:border-[#C8963E]/40 text-xs font-bold text-amber-900 dark:text-[#E5A93C] shadow-2xs">
             <GraduationCap className="w-4 h-4 text-[#C8963E]" />
             <span>{lang === 'bn' ? 'অনলাইন ভর্তি তথ্য ও আবেদন পোর্টাল' : 'Admission & Application Portal'}</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black text-white tracking-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black text-slate-900 dark:text-white tracking-tight">
             {lang === 'bn' ? (
               <>
-                চার্টার্ড অফিসার প্রোগ্রামে <span className="text-[#E5A93C]">ভর্তি প্রক্রিয়া ও আবেদন</span>
+                চার্টার্ড অফিসার প্রোগ্রামে <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#966718] dark:from-[#FFDF79] dark:via-[#E5A93C] dark:to-[#C8963E]">ভর্তি প্রক্রিয়া ও আবেদন</span>
               </>
             ) : (
               <>
-                Apply for Executive Programs at <span className="text-[#E5A93C]">Chartered Officer</span>
+                Apply for Executive Programs at <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#966718] dark:from-[#FFDF79] dark:via-[#E5A93C] dark:to-[#C8963E]">Chartered Officer</span>
               </>
             )}
           </h1>
 
-          <p className="text-xs sm:text-sm text-slate-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
             {lang === 'bn'
               ? 'সিএফও ও পিজিডি প্রোগ্রামের আসন্ন ব্যাচে সীমিত আসনে অনলাইনে সরাসরি আবেদন করুন। কিস্তি সুবিধা ও স্কলারশিপের সুযোগ রয়েছে।'
               : 'Direct online admission for upcoming CFO cohorts and professional postgraduate diplomas with flexible semester installment plans.'}
@@ -316,8 +319,8 @@ export default function AdmissionPage() {
                         onClick={() => setFormData({ ...formData, deliveryMode: 'hybrid' })}
                         className={`py-2 px-3 text-xs rounded-xl border text-center font-bold cursor-pointer transition-all ${
                           formData.deliveryMode === 'hybrid'
-                            ? 'bg-[#0A192F] text-[#E5A93C] border-[#0A192F]'
-                            : 'bg-white text-slate-700 border-slate-300'
+                            ? 'bg-amber-500 text-slate-950 border-amber-600 dark:bg-[#C8963E] dark:border-[#C8963E] shadow-2xs'
+                            : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
                         }`}
                       >
                         হাইব্রিড / ক্যাম্পাস
@@ -327,8 +330,8 @@ export default function AdmissionPage() {
                         onClick={() => setFormData({ ...formData, deliveryMode: 'online' })}
                         className={`py-2 px-3 text-xs rounded-xl border text-center font-bold cursor-pointer transition-all ${
                           formData.deliveryMode === 'online'
-                            ? 'bg-[#0A192F] text-[#E5A93C] border-[#0A192F]'
-                            : 'bg-white text-slate-700 border-slate-300'
+                            ? 'bg-amber-500 text-slate-950 border-amber-600 dark:bg-[#C8963E] dark:border-[#C8963E] shadow-2xs'
+                            : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
                         }`}
                       >
                         ১০০% লাইভ অনলাইন
@@ -389,45 +392,45 @@ export default function AdmissionPage() {
           {/* Right Column: Fee Structure & Requirements */}
           <div className="lg:col-span-5 space-y-6">
             {/* Installment Plan Card */}
-            <div className="bg-[#0A192F] text-white rounded-3xl p-6 sm:p-8 border border-[#1E3A8A] space-y-4 shadow-xl">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#E5A93C] flex items-center gap-1.5">
+            <div className="bg-white dark:bg-[#0A192F] text-slate-900 dark:text-white rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-[#1E3A8A] space-y-4 shadow-sm transition-colors">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-amber-800 dark:text-[#E5A93C] flex items-center gap-1.5">
                 <CreditCard className="w-4 h-4 text-[#C8963E]" />
                 FEE STRUCTURE & INSTALLMENT
               </span>
 
-              <h4 className="text-xl font-serif font-bold text-white">
+              <h4 className="text-xl font-serif font-bold text-slate-900 dark:text-white">
                 {lang === 'bn' ? 'CFO ১ বছর প্রোগ্রামের কিস্তি সুবিধা' : 'CFO Program Installment Schedule'}
               </h4>
 
               <div className="space-y-3 pt-2 text-xs">
-                <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-700 flex items-center justify-between">
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
                   <div>
-                    <p className="font-bold text-white">১ম সেমিস্টার (ভর্তির সময়)</p>
-                    <p className="text-[11px] text-slate-400">অ্যাডমিশন, ম্যাটেরিয়াল ও ১ম টার্ম ফি</p>
+                    <p className="font-bold text-slate-900 dark:text-white">১ম সেমিস্টার (ভর্তির সময়)</p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">অ্যাডমিশন, ম্যাটেরিয়াল ও ১ম টার্ম ফি</p>
                   </div>
-                  <span className="font-serif font-black text-[#E5A93C] text-sm">৳১৫,০০০</span>
+                  <span className="font-serif font-black text-[#966718] dark:text-[#E5A93C] text-sm">৳১৫,০০০</span>
                 </div>
 
-                <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-700 flex items-center justify-between">
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
                   <div>
-                    <p className="font-bold text-white">২য় সেমিস্টার (৪র্থ মাসে)</p>
-                    <p className="text-[11px] text-slate-400">মিড-টার্ম ইভ্যালুয়েশন ও এসএপি ল্যাব</p>
+                    <p className="font-bold text-slate-900 dark:text-white">২য় সেমিস্টার (৪র্থ মাসে)</p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">মিড-টার্ম ইভ্যালুয়েশন ও এসএপি ল্যাব</p>
                   </div>
-                  <span className="font-serif font-black text-[#E5A93C] text-sm">৳১৫,০০০</span>
+                  <span className="font-serif font-black text-[#966718] dark:text-[#E5A93C] text-sm">৳১৫,০০০</span>
                 </div>
 
-                <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-700 flex items-center justify-between">
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
                   <div>
-                    <p className="font-bold text-white">৩য় সেমিস্টার (৮ম মাসে)</p>
-                    <p className="text-[11px] text-slate-400">ক্যাপস্টোন ডিফেন্স ও বিটিইবি সনদ ফি</p>
+                    <p className="font-bold text-slate-900 dark:text-white">৩য় সেমিস্টার (৮ম মাসে)</p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">ক্যাপস্টোন ডিফেন্স ও বিটিইবি সনদ ফি</p>
                   </div>
-                  <span className="font-serif font-black text-[#E5A93C] text-sm">৳১৫,০০০</span>
+                  <span className="font-serif font-black text-[#966718] dark:text-[#E5A93C] text-sm">৳১৫,০০০</span>
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs">
-                <span className="text-slate-300">সর্বমোট কোর্স ফি:</span>
-                <span className="text-base font-serif font-black text-[#E5A93C]">৳৪৫,০০০</span>
+              <div className="pt-2 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
+                <span className="text-slate-600 dark:text-slate-300">সর্বমোট কোর্স ফি:</span>
+                <span className="text-base font-serif font-black text-[#966718] dark:text-[#E5A93C]">৳৪৫,০০০</span>
               </div>
             </div>
 

@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 
 export default function ContactPage() {
-  const { lang, systemInfo } = useCfo();
+  const { lang, systemInfo, theme } = useCfo();
 
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -61,32 +61,35 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col font-sans">
+    <div
+      data-theme={theme}
+      className={`min-h-screen flex flex-col font-sans transition-colors ${theme === 'dark' ? 'dark bg-slate-950 text-slate-100' : 'bg-[#F8FAFC] text-slate-900'}`}
+    >
       <Navbar />
 
       {/* Hero Header */}
-      <section className="relative bg-[#0A192F] text-white pt-16 pb-20 overflow-hidden border-b border-[#1E3A8A]">
+      <section className="relative bg-gradient-to-b from-amber-50/90 via-slate-50 to-white dark:bg-[#0A192F] text-slate-900 dark:text-white pt-16 pb-20 overflow-hidden border-b border-slate-200 dark:border-[#1E3A8A] transition-colors">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(200,150,62,0.18),rgba(10,25,47,0))]" />
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1E3A8A]/50 border border-[#C8963E]/40 text-xs font-bold text-[#E5A93C]">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 dark:bg-[#1E3A8A]/50 border border-amber-300 dark:border-[#C8963E]/40 text-xs font-bold text-amber-900 dark:text-[#E5A93C] shadow-2xs">
             <MapPin className="w-4 h-4 text-[#C8963E]" />
             <span>{lang === 'bn' ? 'সরাসরি যোগাযোগ ও ক্যাম্পাস ভিজিট' : 'Contact & Campus Visit'}</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black text-white tracking-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black text-slate-900 dark:text-white tracking-tight">
             {lang === 'bn' ? (
               <>
-                আমাদের সাথে <span className="text-[#E5A93C]">যোগাযোগ করুন</span>
+                আমাদের সাথে <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#966718] dark:from-[#FFDF79] dark:via-[#E5A93C] dark:to-[#C8963E]">যোগাযোগ করুন</span>
               </>
             ) : (
               <>
-                Get in Touch with <span className="text-[#E5A93C]">Chartered Officer</span>
+                Get in Touch with <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#966718] dark:from-[#FFDF79] dark:via-[#E5A93C] dark:to-[#C8963E]">Chartered Officer</span>
               </>
             )}
           </h1>
 
-          <p className="text-xs sm:text-sm text-slate-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
             {lang === 'bn'
               ? 'কোর্স কারিকুলাম, ভর্তি তথ্য বা করপোরেট ট্রেনিং কনসালটেশনের জন্য সরাসরি মতিঝিল সিটি সেন্টার ক্যাম্পাসে আসুন অথবা কল করুন।'
               : 'Visit our City Centre campus in Motijheel Commercial Area or reach out via hotline for executive consultation.'}
@@ -98,47 +101,47 @@ export default function ContactPage() {
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full space-y-12">
         {/* Contact Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-3">
-            <div className="w-12 h-12 rounded-xl bg-amber-50 text-[#C8963E] border border-amber-200 flex items-center justify-center">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-2xs space-y-3">
+            <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-[#C8963E] border border-amber-200 dark:border-amber-800 flex items-center justify-center">
               <MapPin className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-serif font-bold text-slate-900">
+            <h3 className="text-base font-serif font-bold text-slate-900 dark:text-white">
               {lang === 'bn' ? 'প্রধান ক্যাম্পাস ও রেজিস্টার্ড অফিস' : 'Central Campus & Headquarters'}
             </h3>
-            <p className="text-xs text-slate-600 leading-relaxed font-medium">
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
               {systemInfo.address || 'সিটি সেন্টার (লেভেল-২৫), মতিঝিল বা/এ, ঢাকা-১০০০, বাংলাদেশ।'}
             </p>
-            <span className="text-[11px] font-semibold text-[#966718] block pt-1">
+            <span className="text-[11px] font-semibold text-[#966718] dark:text-amber-300 block pt-1">
               বাংলাদেশ ব্যাংক ও শাপলা চত্বরের সংলগ্ন • Level-25 (Lift-26)
             </span>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-3">
-            <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 border border-blue-200 flex items-center justify-center">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-2xs space-y-3">
+            <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 flex items-center justify-center">
               <Phone className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-serif font-bold text-slate-900">
+            <h3 className="text-base font-serif font-bold text-slate-900 dark:text-white">
               {lang === 'bn' ? 'হটলাইন ও হোয়াটসঅ্যাপ' : 'Direct Helpline & WhatsApp'}
             </h3>
-            <div className="space-y-1 text-xs text-slate-700">
-              <p className="font-mono font-bold text-slate-900">{systemInfo.phone || '+880 1713378787'}</p>
+            <div className="space-y-1 text-xs text-slate-700 dark:text-slate-300">
+              <p className="font-mono font-bold text-slate-900 dark:text-white">{systemInfo.phone || '+880 1713378787'}</p>
               {systemInfo.mobile && systemInfo.mobile !== systemInfo.phone && (
-                <p className="font-mono font-bold text-slate-900">{systemInfo.mobile}</p>
+                <p className="font-mono font-bold text-slate-900 dark:text-white">{systemInfo.mobile}</p>
               )}
-              <p className="text-[11px] text-slate-500 font-mono">{systemInfo.email || 'cfoedubd@gmail.com'}</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">{systemInfo.email || 'cfoedubd@gmail.com'}</p>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-3">
-            <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-2xs space-y-3">
+            <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center">
               <Clock className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-serif font-bold text-slate-900">
+            <h3 className="text-base font-serif font-bold text-slate-900 dark:text-white">
               {lang === 'bn' ? 'অফিস ও কাউন্সেলিং সময়' : 'Office & Counseling Hours'}
             </h3>
-            <div className="text-xs text-slate-600 space-y-1">
-              <p><span className="font-semibold text-slate-800">শনিবার – বৃহস্পতিবার:</span> সকাল ৯:০০ – রাত ৮:০০</p>
-              <p><span className="font-semibold text-slate-800">শুক্রবার:</span> দুপুর ২:৩০ – রাত ৮:৩০ (এক্সিকিউটিভ ক্লাস)</p>
+            <div className="text-xs text-slate-600 dark:text-slate-300 space-y-1">
+              <p><span className="font-semibold text-slate-800 dark:text-slate-200">শনিবার – বৃহস্পতিবার:</span> সকাল ৯:০০ – রাত ৮:০০</p>
+              <p><span className="font-semibold text-slate-800 dark:text-slate-200">শুক্রবার:</span> দুপুর ২:৩০ – রাত ৮:৩০ (এক্সিকিউটিভ ক্লাস)</p>
             </div>
           </div>
         </div>
@@ -260,30 +263,30 @@ export default function ContactPage() {
 
           {/* Location Map & Details */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="bg-[#0A192F] text-white rounded-3xl p-6 sm:p-8 border border-[#1E3A8A] space-y-4 shadow-xl">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#E5A93C] flex items-center gap-1.5">
+            <div className="bg-white dark:bg-[#0A192F] text-slate-900 dark:text-white rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-[#1E3A8A] space-y-4 shadow-sm transition-colors">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#966718] dark:text-[#E5A93C] flex items-center gap-1.5">
                 <Building2 className="w-4 h-4 text-[#C8963E]" />
                 MOTIJHEEL CITY CENTRE
               </span>
 
-              <h4 className="text-xl font-serif font-bold text-white">
+              <h4 className="text-xl font-serif font-bold text-slate-900 dark:text-white">
                 সিটি সেন্টার ক্যাম্পাস
               </h4>
 
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                 সিটি সেন্টার ঢাকার মতিঝিলে অবস্থিত দেশের সর্বোচ্চ আইকনিক বাণিজ্যিক ভবন। লেভেল ২৫-এ অবস্থিত আমাদের ক্যাম্পাসে রয়েছে এক্সিকিউটিভ ক্লাসরুম, এসএপি কম্পিউটার ল্যাব ও স্টাডি লাউঞ্জ।
               </p>
 
               {/* Visual Map Representation */}
-              <div className="rounded-2xl overflow-hidden border border-slate-700 bg-slate-900 p-4 space-y-3">
+              <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-4 space-y-3">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-[#E5A93C]">Google Map Location</span>
-                  <span className="text-slate-400 font-mono">23.7289° N, 90.4174° E</span>
+                  <span className="font-semibold text-amber-700 dark:text-[#E5A93C]">Google Map Location</span>
+                  <span className="text-slate-500 dark:text-slate-400 font-mono">23.7289° N, 90.4174° E</span>
                 </div>
-                <div className="h-40 rounded-xl bg-slate-800 border border-slate-700 flex flex-col items-center justify-center text-center p-4 space-y-2">
+                <div className="h-40 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center text-center p-4 space-y-2">
                   <MapPin className="w-8 h-8 text-[#C8963E] animate-bounce" />
-                  <p className="font-serif font-bold text-xs text-white">City Centre, Level 25</p>
-                  <p className="text-[10px] text-slate-400">Motijheel Commercial Area, Dhaka-1000</p>
+                  <p className="font-serif font-bold text-xs text-slate-900 dark:text-white">City Centre, Level 25</p>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400">Motijheel Commercial Area, Dhaka-1000</p>
                   <a
                     href="https://maps.google.com/?q=City+Centre+Motijheel+Dhaka"
                     target="_blank"

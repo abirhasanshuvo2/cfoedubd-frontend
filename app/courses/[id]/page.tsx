@@ -35,7 +35,7 @@ interface PageProps {
 
 export default function CourseDetailPage({ params }: PageProps) {
   const { id } = use(params);
-  const { lang, courses } = useCfo();
+  const { lang, courses, theme } = useCfo();
 
   const allCourses = courses && courses.length > 0 ? courses : COURSES;
   const decodedId = decodeURIComponent(id);
@@ -56,9 +56,10 @@ export default function CourseDetailPage({ params }: PageProps) {
   const [expandedWeek, setExpandedWeek] = useState<number | null>(1);
   const [copiedLink, setCopiedLink] = useState(false);
 
-  const discountPercent = Math.round(
-    ((course.originalPrice - course.price) / course.originalPrice) * 100
-  );
+  const hasDiscount = course.originalPrice > course.price && course.originalPrice > 0;
+  const discountPercent = hasDiscount
+    ? Math.round(((course.originalPrice - course.price) / course.originalPrice) * 100)
+    : 0;
 
   const seatsPercent = Math.min(
     100,
@@ -74,38 +75,41 @@ export default function CourseDetailPage({ params }: PageProps) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
+    <div
+      data-theme={theme}
+      className={`min-h-screen flex flex-col transition-colors ${theme === 'dark' ? 'dark bg-slate-950 text-slate-100' : 'bg-[#F8FAFC] text-slate-900'}`}
+    >
       <Navbar />
 
       {/* Breadcrumb Row */}
-      <div className="bg-[#0A192F] border-b border-[#1E3A8A] text-xs py-2.5 px-4 sm:px-8 text-slate-400">
+      <div className="bg-slate-100 dark:bg-[#0A192F] border-b border-slate-200 dark:border-[#1E3A8A] text-xs py-2.5 px-4 sm:px-8 text-slate-600 dark:text-slate-400 transition-colors">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2 truncate">
-            <Link href="/" className="hover:text-white transition-colors">
+            <Link href="/" className="hover:text-slate-900 dark:hover:text-white transition-colors">
               {lang === 'bn' ? 'হোম' : 'Home'}
             </Link>
             <span>/</span>
-            <Link href="/courses" className="hover:text-white transition-colors">
+            <Link href="/courses" className="hover:text-slate-900 dark:hover:text-white transition-colors">
               {lang === 'bn' ? 'প্রোগ্রামসমূহ' : 'Courses'}
             </Link>
             <span>/</span>
-            <span className="text-slate-200 truncate font-semibold">
+            <span className="text-slate-900 dark:text-slate-200 truncate font-semibold">
               {lang === 'bn' ? course.title : course.titleEn}
             </span>
           </div>
 
           <button
             onClick={handleShare}
-            className="flex items-center gap-1.5 text-xs text-slate-300 hover:text-white transition-colors cursor-pointer shrink-0"
+            className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer shrink-0"
           >
             {copiedLink ? (
               <>
-                <Check className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-emerald-400 font-bold">লিংক কপি হয়েছে</span>
+                <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span className="text-emerald-700 dark:text-emerald-400 font-bold">লিংক কপি হয়েছে</span>
               </>
             ) : (
               <>
-                <Share2 className="w-3.5 h-3.5 text-[#E5A93C]" />
+                <Share2 className="w-3.5 h-3.5 text-[#C8963E]" />
                 <span>{lang === 'bn' ? 'শেয়ার করুন' : 'Share'}</span>
               </>
             )}
@@ -114,8 +118,8 @@ export default function CourseDetailPage({ params }: PageProps) {
       </div>
 
       {/* Hero Header Section */}
-      <header className="bg-[#0A192F] text-white py-10 sm:py-14 border-b border-[#1E3A8A] relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(200,150,62,0.18),rgba(10,25,47,0))]" />
+      <header className="bg-gradient-to-b from-amber-50/90 via-slate-50 to-white dark:bg-[#0A192F] text-slate-900 dark:text-white py-10 sm:py-14 border-b border-slate-200 dark:border-[#1E3A8A] relative overflow-hidden transition-colors">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(200,150,62,0.18),transparent)]" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -123,68 +127,68 @@ export default function CourseDetailPage({ params }: PageProps) {
             <div className="lg:col-span-8 space-y-4">
               {/* Badges */}
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-[#E5A93C] border border-amber-500/40">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-500/20 text-amber-900 dark:text-[#E5A93C] border border-amber-300 dark:border-amber-500/40 shadow-2xs">
                   <Award className="w-3.5 h-3.5 text-[#C8963E]" />
                   COL EXECUTIVE PROGRAM
                 </span>
 
-                <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#1E3A8A]/60 text-white border border-[#1E3A8A]">
+                <span className="px-3 py-1 rounded-full text-xs font-bold bg-white dark:bg-[#1E3A8A]/60 text-slate-800 dark:text-white border border-slate-300 dark:border-[#1E3A8A] shadow-2xs">
                   {course.batchNumber}
                 </span>
 
-                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-slate-800 text-slate-300">
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-transparent">
                   {course.categoryLabel}
                 </span>
 
                 {course.isPopular && (
-                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                    <Flame className="w-3 h-3 text-emerald-400" />
+                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/30">
+                    <Flame className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                     {lang === 'bn' ? 'শীর্ষ করপোরেট পছন্দ' : 'Top Enrolled'}
                   </span>
                 )}
               </div>
 
               {/* Title */}
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-black text-white tracking-tight leading-tight">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-black text-slate-900 dark:text-white tracking-tight leading-tight">
                 {lang === 'bn' ? course.title : course.titleEn}
               </h1>
 
               {/* Short Description */}
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-3xl">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl">
                 {lang === 'bn' ? course.description : course.descriptionEn}
               </p>
 
               {/* Ratings and Stats */}
-              <div className="flex flex-wrap items-center gap-5 pt-2 text-xs text-slate-300">
-                <div className="flex items-center gap-1.5 bg-slate-900 px-3 py-1 rounded-lg border border-slate-800">
-                  <Star className="w-4 h-4 fill-[#E5A93C] text-[#E5A93C]" />
-                  <span className="font-bold text-white text-sm">{course.rating.toFixed(1)}</span>
-                  <span className="text-slate-400">({course.enrolledCount * 2} রিভিউ)</span>
+              <div className="flex flex-wrap items-center gap-5 pt-2 text-xs text-slate-600 dark:text-slate-300">
+                <div className="flex items-center gap-1.5 bg-white dark:bg-slate-900 px-3 py-1 rounded-lg border border-slate-200 dark:border-slate-800 shadow-2xs">
+                  <Star className="w-4 h-4 fill-[#C8963E] text-[#C8963E]" />
+                  <span className="font-bold text-slate-900 dark:text-white text-sm">{course.rating.toFixed(1)}</span>
+                  <span className="text-slate-500 dark:text-slate-400">({course.enrolledCount * 2} রিভিউ)</span>
                 </div>
 
                 <div className="flex items-center gap-1.5">
-                  <Users className="w-4 h-4 text-[#E5A93C]" />
+                  <Users className="w-4 h-4 text-[#C8963E]" />
                   <span>{course.enrolledCount} {lang === 'bn' ? 'শিক্ষার্থী ও প্রফেশনাল' : 'Executives Enrolled'}</span>
                 </div>
 
                 <div className="flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 text-[#E5A93C]" />
+                  <Clock className="w-4 h-4 text-[#C8963E]" />
                   <span>{lang === 'bn' ? course.duration : course.durationEn}</span>
                 </div>
 
                 <div className="flex items-center gap-1.5">
-                  <Calendar className="w-4 h-4 text-[#E5A93C]" />
+                  <Calendar className="w-4 h-4 text-[#C8963E]" />
                   <span>{course.totalClasses} {lang === 'bn' ? 'টি ইন্টারঅ্যাক্টিভ সেশন' : 'Executive Sessions'}</span>
                 </div>
               </div>
 
               {/* Mentors Row */}
-              <div className="pt-4 border-t border-[#1E3A8A] flex items-center gap-3">
-                <span className="text-xs text-slate-400 font-semibold">
+              <div className="pt-4 border-t border-slate-200 dark:border-[#1E3A8A] flex items-center gap-3">
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
                   {lang === 'bn' ? 'কোর্স লিড ফ্যাকাল্টি:' : 'Lead Faculty:'}
                 </span>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full overflow-hidden border border-[#C8963E] bg-slate-800 shrink-0">
+                  <div className="w-10 h-10 rounded-full overflow-hidden border border-[#C8963E] bg-slate-100 dark:bg-slate-800 shrink-0">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={course.mentors[0]?.avatar || '/dummy-avatar.svg'}
@@ -196,10 +200,10 @@ export default function CourseDetailPage({ params }: PageProps) {
                     />
                   </div>
                   <div>
-                    <p className="text-xs font-serif font-bold text-white">{course.mentors[0]?.name}</p>
-                    <p className="text-[11px] text-slate-300">
+                    <p className="text-xs font-serif font-bold text-slate-900 dark:text-white">{course.mentors[0]?.name}</p>
+                    <p className="text-[11px] text-slate-600 dark:text-slate-300">
                       {course.mentors[0]?.role} •{' '}
-                      <strong className="text-[#E5A93C] font-semibold">{course.mentors[0]?.company}</strong>
+                      <strong className="text-[#966718] dark:text-[#E5A93C] font-semibold">{course.mentors[0]?.company}</strong>
                     </p>
                   </div>
                 </div>
@@ -208,29 +212,29 @@ export default function CourseDetailPage({ params }: PageProps) {
 
             {/* Right Column Header summary preview */}
             <div className="hidden lg:block lg:col-span-4">
-              <div className="p-6 rounded-2xl bg-slate-900/90 border border-[#1E3A8A] text-slate-300 space-y-4 shadow-xl">
+              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-[#1E3A8A] text-slate-700 dark:text-slate-300 space-y-4 shadow-sm transition-colors">
                 <div className="space-y-1">
-                  <span className="text-[11px] font-bold text-[#E5A93C] uppercase tracking-wider">
+                  <span className="text-[11px] font-bold text-amber-800 dark:text-[#E5A93C] uppercase tracking-wider">
                     Executive Cohort Schedule
                   </span>
-                  <p className="text-base font-serif font-bold text-white">{course.batchNumber}</p>
+                  <p className="text-base font-serif font-bold text-slate-900 dark:text-white">{course.batchNumber}</p>
                 </div>
-                <div className="space-y-2 text-xs divide-y divide-slate-800">
+                <div className="space-y-2 text-xs divide-y divide-slate-100 dark:divide-slate-800">
                   <div className="flex justify-between py-1.5">
-                    <span className="text-slate-400">ব্যাচ শুরু:</span>
-                    <span className="font-semibold text-white">{course.startDate}</span>
+                    <span className="text-slate-500 dark:text-slate-400">ব্যাচ শুরু:</span>
+                    <span className="font-semibold text-slate-900 dark:text-white">{course.startDate}</span>
                   </div>
                   <div className="flex justify-between py-1.5">
-                    <span className="text-slate-400">ক্লাসের সময়:</span>
-                    <span className="font-semibold text-white">{course.schedule}</span>
+                    <span className="text-slate-500 dark:text-slate-400">ক্লাসের সময়:</span>
+                    <span className="font-semibold text-slate-900 dark:text-white">{course.schedule}</span>
                   </div>
                   <div className="flex justify-between py-1.5">
-                    <span className="text-slate-400">ক্যাম্পাস মাধ্যম:</span>
-                    <span className="font-semibold text-[#E5A93C]">সিটি সেন্টার মতিঝিল / লাইভ</span>
+                    <span className="text-slate-500 dark:text-slate-400">ক্যাম্পাস মাধ্যম:</span>
+                    <span className="font-semibold text-amber-800 dark:text-[#E5A93C]">সিটি সেন্টার মতিঝিল / লাইভ</span>
                   </div>
                   <div className="flex justify-between py-1.5">
-                    <span className="text-slate-400">স্বীকৃতি:</span>
-                    <span className="font-semibold text-emerald-400">COL Executive Certificate</span>
+                    <span className="text-slate-500 dark:text-slate-400">স্বীকৃতি:</span>
+                    <span className="font-semibold text-emerald-700 dark:text-emerald-400">COL Executive Certificate</span>
                   </div>
                 </div>
               </div>
@@ -245,13 +249,13 @@ export default function CourseDetailPage({ params }: PageProps) {
           {/* Left Column (8 cols): Syllabus, Mentors, Projects, Certificate, FAQ */}
           <div className="lg:col-span-8 space-y-8">
             {/* Tab Buttons Navigation */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-1.5 shadow-2xs flex items-center gap-1 overflow-x-auto">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-1.5 shadow-2xs flex items-center gap-1 overflow-x-auto">
               <button
                 onClick={() => setActiveTab('syllabus')}
                 className={`py-2.5 px-4 rounded-xl text-xs sm:text-sm font-serif font-bold transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === 'syllabus'
-                    ? 'bg-[#0A192F] text-[#E5A93C] shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    ? 'bg-amber-500 text-slate-950 dark:bg-[#C8963E] dark:text-slate-950 shadow-xs font-black'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
                 }`}
               >
                 {lang === 'bn' ? 'সিলেবাস ও কারিকুলাম' : 'Curriculum'}
@@ -261,8 +265,8 @@ export default function CourseDetailPage({ params }: PageProps) {
                 onClick={() => setActiveTab('mentors')}
                 className={`py-2.5 px-4 rounded-xl text-xs sm:text-sm font-serif font-bold transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === 'mentors'
-                    ? 'bg-[#0A192F] text-[#E5A93C] shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    ? 'bg-amber-500 text-slate-950 dark:bg-[#C8963E] dark:text-slate-950 shadow-xs font-black'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
                 }`}
               >
                 {lang === 'bn' ? 'ফ্যাকাল্টি ও মেন্টরস' : 'Faculty Mentors'}
@@ -272,8 +276,8 @@ export default function CourseDetailPage({ params }: PageProps) {
                 onClick={() => setActiveTab('projects')}
                 className={`py-2.5 px-4 rounded-xl text-xs sm:text-sm font-serif font-bold transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === 'projects'
-                    ? 'bg-[#0A192F] text-[#E5A93C] shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    ? 'bg-amber-500 text-slate-950 dark:bg-[#C8963E] dark:text-slate-950 shadow-xs font-black'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
                 }`}
               >
                 {lang === 'bn' ? 'বোর্ডরুম কেস স্টাডি' : 'Case Studies'}
@@ -283,8 +287,8 @@ export default function CourseDetailPage({ params }: PageProps) {
                 onClick={() => setActiveTab('certificate')}
                 className={`py-2.5 px-4 rounded-xl text-xs sm:text-sm font-serif font-bold transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === 'certificate'
-                    ? 'bg-[#0A192F] text-[#E5A93C] shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    ? 'bg-amber-500 text-slate-950 dark:bg-[#C8963E] dark:text-slate-950 shadow-xs font-black'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
                 }`}
               >
                 {lang === 'bn' ? 'সনদ ও স্বীকৃতি' : 'Certificate'}
@@ -294,8 +298,8 @@ export default function CourseDetailPage({ params }: PageProps) {
                 onClick={() => setActiveTab('faq')}
                 className={`py-2.5 px-4 rounded-xl text-xs sm:text-sm font-serif font-bold transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === 'faq'
-                    ? 'bg-[#0A192F] text-[#E5A93C] shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    ? 'bg-amber-500 text-slate-950 dark:bg-[#C8963E] dark:text-slate-950 shadow-xs font-black'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
                 }`}
               >
                 {lang === 'bn' ? 'প্রশ্নোত্তর' : 'FAQs'}
@@ -337,21 +341,21 @@ export default function CourseDetailPage({ params }: PageProps) {
                     return (
                       <div
                         key={module.week}
-                        className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-2xs transition-all"
+                        className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-2xs transition-all"
                       >
                         <button
                           onClick={() => setExpandedWeek(isExpanded ? null : module.week)}
-                          className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 hover:bg-slate-50 transition-colors cursor-pointer"
+                          className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                         >
                           <div className="flex items-center gap-3">
-                            <span className="w-9 h-9 rounded-xl bg-amber-50 border border-amber-200 text-[#966718] font-serif font-bold text-xs flex items-center justify-center shrink-0">
+                            <span className="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 text-[#966718] dark:text-amber-300 font-serif font-bold text-xs flex items-center justify-center shrink-0">
                               M{module.week}
                             </span>
                             <div>
                               <p className="text-[11px] font-bold text-[#C8963E] uppercase tracking-wider">
                                 Module {module.week}
                               </p>
-                              <h4 className="text-sm sm:text-base font-serif font-bold text-slate-900">
+                              <h4 className="text-sm sm:text-base font-serif font-bold text-slate-900 dark:text-white">
                                 {module.title}
                               </h4>
                             </div>
@@ -364,14 +368,14 @@ export default function CourseDetailPage({ params }: PageProps) {
                         </button>
 
                         {isExpanded && (
-                          <div className="px-5 pb-5 pt-2 border-t border-slate-100 space-y-3 bg-slate-50/50">
+                          <div className="px-5 pb-5 pt-2 border-t border-slate-100 dark:border-slate-800 space-y-3 bg-slate-50/50 dark:bg-slate-950/40">
                             <div className="space-y-2">
-                              <p className="text-xs font-bold text-slate-700">
+                              <p className="text-xs font-bold text-slate-700 dark:text-slate-300">
                                 {lang === 'bn' ? 'ক্লাসের মূল প্রতিপাদ্য ও কেস স্টাডি:' : 'Topics & Practical Labs:'}
                               </p>
                               <ul className="space-y-1.5">
                                 {module.topics.map((topic, tIdx) => (
-                                  <li key={tIdx} className="flex items-center gap-2 text-xs text-slate-600">
+                                  <li key={tIdx} className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300">
                                     <span className="w-1.5 h-1.5 rounded-full bg-[#C8963E] shrink-0" />
                                     <span>{topic}</span>
                                   </li>
@@ -463,7 +467,7 @@ export default function CourseDetailPage({ params }: PageProps) {
             {/* Tab 4: Certificate */}
             {activeTab === 'certificate' && (
               <section className="p-8 rounded-2xl border-2 border-dashed border-[#C8963E]/50 bg-amber-50/30 text-center space-y-5">
-                <div className="w-16 h-16 rounded-full bg-[#0A192F] text-[#E5A93C] flex items-center justify-center mx-auto shadow-sm border border-[#C8963E]">
+                <div className="w-16 h-16 rounded-full bg-amber-100 dark:bg-[#0A192F] text-amber-800 dark:text-[#E5A93C] flex items-center justify-center mx-auto shadow-sm border border-amber-300 dark:border-[#C8963E]">
                   <Award className="w-8 h-8" />
                 </div>
 
@@ -504,12 +508,12 @@ export default function CourseDetailPage({ params }: PageProps) {
 
           {/* Right Column (4 cols): Sticky Enrollment Card */}
           <div className="lg:col-span-4 lg:sticky lg:top-24 space-y-4">
-            <div className="rounded-2xl bg-white border border-slate-200 shadow-xl p-6 space-y-5">
+            <div className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-6 space-y-5">
               {/* Batch Banner */}
-              <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-between text-xs">
+              <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 flex items-center justify-between text-xs">
                 <div>
-                  <span className="font-serif font-bold text-slate-900">{course.batchNumber}</span>
-                  <p className="text-[11px] text-[#966718]">আসন্ন ব্যাচে ভর্তি চলছে</p>
+                  <span className="font-serif font-bold text-slate-900 dark:text-white">{course.batchNumber}</span>
+                  <p className="text-[11px] text-[#966718] dark:text-amber-300">আসন্ন ব্যাচে ভর্তি চলছে</p>
                 </div>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-600 text-white">
                   ADMISSION OPEN
@@ -518,19 +522,23 @@ export default function CourseDetailPage({ params }: PageProps) {
 
               {/* Price Row */}
               <div className="space-y-1">
-                <span className="text-xs text-slate-500 font-semibold">কোর্স ফি (এককালীন বা কিস্তিতে):</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">কোর্স ফি (এককালীন বা কিস্তিতে):</span>
                 <div className="flex items-baseline justify-between">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-serif font-black text-slate-900">
+                    <span className="text-3xl font-serif font-black text-slate-900 dark:text-white">
                       ৳{course.price.toLocaleString()}
                     </span>
-                    <span className="text-sm text-slate-400 line-through">
-                      ৳{course.originalPrice.toLocaleString()}
-                    </span>
+                    {course.originalPrice > course.price && (
+                      <span className="text-sm text-slate-400 line-through">
+                        ৳{course.originalPrice.toLocaleString()}
+                      </span>
+                    )}
                   </div>
-                  <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 text-[#966718] border border-amber-200">
-                    {discountPercent}% OFF
-                  </span>
+                  {discountPercent > 0 && (
+                    <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 dark:bg-amber-950/60 text-[#966718] dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                      {discountPercent}% OFF
+                    </span>
+                  )}
                 </div>
               </div>
 

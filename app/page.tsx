@@ -31,6 +31,7 @@ export default function Home() {
   const {
     lang,
     setLang,
+    theme,
     enrolledCourses,
     enrollInCourse,
     courses,
@@ -117,7 +118,10 @@ export default function Home() {
   }, [courses]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
+    <div
+      data-theme={theme}
+      className={`min-h-screen flex flex-col transition-colors ${theme === 'dark' ? 'dark bg-slate-950 text-slate-100' : 'bg-[#F8FAFC] text-slate-900'}`}
+    >
       {/* Toast Notification Banner */}
       {userNotification && (
         <div className="fixed bottom-5 right-5 z-50 bg-slate-950 text-white px-5 py-3 rounded-xl shadow-2xl border border-amber-400/50 flex items-center gap-3 animate-in slide-in-from-bottom-5">
@@ -153,15 +157,15 @@ export default function Home() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold">
-                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-800 text-xs font-bold">
+                <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                 <span>{lang === 'bn' ? 'লাইভ ক্যারিয়ার ট্র্যাক' : 'Live Career Tracks'}</span>
               </div>
             </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-950 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-950 dark:text-white tracking-tight">
               {lang === 'bn' ? 'আপকামিং লাইভ ব্যাচসমূহ' : 'Explore Live Batches'}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 mt-1">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
               {lang === 'bn'
                 ? 'ইন্ডাস্ট্রি এক্সপার্টদের সাথে হাতে-কলমে প্র্যাকটিস ও লাইভ ফিডব্যাক নিয়ে শিখুন।'
                 : 'Interactive online cohorts with hands-on practice and real-time mentor code review.'}
@@ -172,21 +176,21 @@ export default function Home() {
           <div className="flex items-center gap-3 shrink-0">
             <Link
               href="/courses"
-              className="text-xs font-bold text-amber-700 hover:text-amber-900 flex items-center gap-1 bg-amber-50 hover:bg-amber-100 px-3 py-2 rounded-xl border border-amber-200 transition-colors"
+              className="text-xs font-bold text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-300 flex items-center gap-1 bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 dark:hover:bg-amber-900/60 px-3 py-2 rounded-xl border border-amber-200 dark:border-amber-800 transition-colors"
             >
               <span>{lang === 'bn' ? 'সব কোর্স পেজ' : 'All Courses Page'}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
 
             <div className="flex items-center gap-2 shrink-0">
-              <span className="text-xs font-semibold text-slate-500 hidden sm:inline flex items-center gap-1">
+              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 hidden sm:inline flex items-center gap-1">
                 <ArrowUpDown className="w-3.5 h-3.5" />
                 {lang === 'bn' ? 'সাজান:' : 'Sort by:'}
               </span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="text-xs font-semibold py-2 px-3 rounded-xl border border-slate-300 bg-white text-slate-800 outline-none hover:border-amber-400 transition-colors cursor-pointer shadow-2xs"
+                className="text-xs font-semibold py-2 px-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 outline-none hover:border-amber-400 transition-colors cursor-pointer shadow-2xs"
               >
                 <option value="featured">{lang === 'bn' ? 'ফিচার্ড (Featured)' : 'Featured'}</option>
                 <option value="rating">{lang === 'bn' ? 'টপ রেটেড (Top Rated)' : 'Top Rated'}</option>
@@ -218,8 +222,8 @@ export default function Home() {
             ))}
           </div>
         ) : (
-          <div className="py-16 text-center bg-white rounded-2xl border border-slate-200 p-8 space-y-3">
-            <p className="text-base font-bold text-slate-800">
+          <div className="py-16 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 space-y-3">
+            <p className="text-base font-bold text-slate-800 dark:text-slate-200">
               {lang === 'bn'
                 ? 'এই ক্যাটাগরিতে কোনো কোর্স পাওয়া যায়নি।'
                 : 'No courses found in this category.'}
@@ -240,10 +244,10 @@ export default function Home() {
         <div className="mt-12 text-center">
           <Link
             href="/courses"
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-md transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#A97B28] hover:brightness-110 text-slate-950 font-serif font-black text-sm shadow-md transition-all cursor-pointer border border-[#C8963E]/40 active:scale-95"
           >
             <span>{lang === 'bn' ? 'সকল লাইভ কোর্স ও ক্যারিয়ার ট্র্যাক ক্যাটালগ দেখুন' : 'View Complete Course Catalog'}</span>
-            <ArrowRight className="w-4 h-4 text-[#FFC000]" />
+            <ArrowRight className="w-4 h-4 text-slate-950" />
           </Link>
         </div>
       </section>

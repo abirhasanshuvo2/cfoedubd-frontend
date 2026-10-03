@@ -13,6 +13,9 @@ import { DEFAULT_SYSTEM_INFO, SystemInformation } from '@/data/system-info';
 export interface CfoContextType {
   lang: 'bn' | 'en';
   setLang: (lang: 'bn' | 'en') => void;
+  theme: 'light' | 'dark';
+  setTheme: (theme: 'light' | 'dark') => void;
+  toggleTheme: () => void;
   enrolledCourses: Course[];
   enrollInCourse: (course: Course) => void;
   user: { name: string; phone: string; email: string } | null;
@@ -42,6 +45,7 @@ export function CfoProvider({ children }: { children: React.ReactNode }) {
 
   // Default values set statically for pristine SSR and hydration consistency
   const [lang, setLangState] = useState<'bn' | 'en'>('bn');
+  const [theme, setThemeState] = useState<'light' | 'dark'>('light');
   const [enrolledCourses, setEnrolledCourses] = useState<Course[]>([]);
   const [user, setUser] = useState<{ name: string; phone: string; email: string } | null>(null);
 
@@ -50,18 +54,39 @@ export function CfoProvider({ children }: { children: React.ReactNode }) {
   const [apiCourses, setApiCourses] = useState<ApiCourse[]>(INITIAL_API_COURSES);
   const [coursesLoading, setCoursesLoading] = useState<boolean>(false);
 
-  // Client-side hydration sync to safely read preferences and clear any legacy mock user sessions
+  // Client-side hydration sync to safely read preferences and apply dark/light theme
   useEffect(() => {
     const timer = setTimeout(() => {
       try {
+        const savedTheme = localStorage.getItem('cfo_theme');
+        if (savedTheme === 'dark' || savedTheme === 'light') {
+          setThemeState(savedTheme);
+          if (typeof document !== 'undefined') {
+            const root = document.documentElement;
+            const body = document.body;
+            if (savedTheme === 'dark') {
+              root.classList.add('dark');
+              root.setAttribute('data-theme', 'dark');
+              if (body) body.classList.add('dark');
+            } else {
+              root.classList.remove('dark');
+              root.setAttribute('data-theme', 'light');
+              if (body) body.classList.remove('dark');
+            }
+          }
+        } else if (typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // Fallback to system preference if user hasn't set
+          setThemeState('dark');
+          if (typeof document !== 'undefined') {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+            if (document.body) document.body.classList.add('dark');
+          }
+        }
+
         const savedLang = localStorage.getItem('cfo_lang') || localStorage.getItem('ostad_lang');
         if (savedLang === 'bn' || savedLang === 'en') {
           setLangState(savedLang);
-        }
-        // Remove any dark mode classes or storage keys
-        localStorage.removeItem('cfo_theme');
-        if (typeof document !== 'undefined') {
-          document.documentElement.classList.remove('dark');
         }
         // Explicitly clear any mock logged in user session per user requirement
         localStorage.removeItem('cfo_user');
@@ -73,6 +98,41 @@ export function CfoProvider({ children }: { children: React.ReactNode }) {
     }, 0);
     return () => clearTimeout(timer);
   }, []);
+
+  const setTheme = (newTheme: 'light' | 'dark') => {
+    setThemeState(newTheme);
+    try {
+      localStorage.setItem('cfo_theme', newTheme);
+      if (typeof document !== 'undefined') {
+        const root = document.documentElement;
+        const body = document.body;
+        if (newTheme === 'dark') {
+          root.classList.add('dark');
+          root.classList.remove('light');
+          root.setAttribute('data-theme', 'dark');
+          if (body) {
+            body.classList.add('dark');
+            body.classList.remove('light');
+          }
+        } else {
+          root.classList.remove('dark');
+          root.classList.add('light');
+          root.setAttribute('data-theme', 'light');
+          if (body) {
+            body.classList.remove('dark');
+            body.classList.add('light');
+          }
+        }
+      }
+    } catch {
+      // ignore
+    }
+  };
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+  };
 
   const setLang = (newLang: 'bn' | 'en') => {
     setLangState(newLang);
@@ -226,6 +286,9 @@ export function CfoProvider({ children }: { children: React.ReactNode }) {
       value={{
         lang,
         setLang,
+        theme,
+        setTheme,
+        toggleTheme,
         enrolledCourses,
         enrollInCourse,
         user,

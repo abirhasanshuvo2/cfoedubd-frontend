@@ -12,29 +12,37 @@ import {
   TrendingUp,
   FileText
 } from 'lucide-react';
+import { useCfo } from '@/context/CfoContext';
 
 interface StatsSectionProps {
   lang: 'bn' | 'en';
 }
 
 export default function StatsSection({ lang }: StatsSectionProps) {
+  const { systemInfo } = useCfo();
+
+  // Dynamic values connected to API / system-information
+  const sessionsVal = systemInfo.classes ? `${Number(systemInfo.classes).toLocaleString()}+` : '2,090+';
+  const learnersVal = systemInfo.graduates ? `${Number(systemInfo.graduates).toLocaleString()}+` : '3,100+';
+  const instructorsVal = systemInfo.students ? `${Number(systemInfo.students).toLocaleString()}+` : '50+';
+
   const stats = [
     {
-      value: '2,090+',
+      value: sessionsVal,
       label: lang === 'bn' ? 'সমাপ্ত সেশন' : 'Finished Sessions',
       desc: lang === 'bn' ? 'সরাসরি ইন্টারঅ্যাক্টিভ ক্লাস' : 'Live Interactive Classes',
       icon: Video,
       color: 'from-amber-500 to-amber-600',
     },
     {
-      value: '3,100+',
+      value: learnersVal,
       label: lang === 'bn' ? 'নিবন্ধিত শিক্ষার্থী' : 'Enrolled Learners',
       desc: lang === 'bn' ? 'কর্পোরেট পেশাদার ও গ্র্যাজুয়েট' : 'Professionals & Graduates',
       icon: Users,
       color: 'from-[#C8963E] to-[#B8860B]',
     },
     {
-      value: '50+',
+      value: instructorsVal,
       label: lang === 'bn' ? 'অনলাইন প্রশিক্ষক' : 'Online Instructors',
       desc: lang === 'bn' ? 'অভিজ্ঞ ইন্ডাস্ট্রি এক্সপার্ট' : 'Practicing Industry Mentors',
       icon: GraduationCap,
@@ -89,17 +97,17 @@ export default function StatsSection({ lang }: StatsSectionProps) {
   ];
 
   return (
-    <section className="py-16 sm:py-20 bg-white border-b border-slate-200">
+    <section className="py-16 sm:py-20 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         
         {/* Real Live Platform Metrics */}
         <div>
           <div className="text-center max-w-2xl mx-auto mb-10">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-[#966718] border border-amber-200 text-xs font-bold mb-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/60 text-[#966718] dark:text-amber-300 border border-amber-200 dark:border-amber-800 text-xs font-bold mb-2">
               <Sparkles className="w-3.5 h-3.5 text-[#C8963E]" />
               <span>{lang === 'bn' ? 'আমাদের অর্জনের পরিসংখ্যান' : 'Our Live Track Record'}</span>
             </span>
-            <h2 className="text-2xl sm:text-3xl font-serif font-black text-slate-900 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-serif font-black text-slate-900 dark:text-white tracking-tight">
               {lang === 'bn' ? 'লক্ষাধিক ঘণ্টার শিক্ষা ও প্রফেশনাল অগ্রগতি' : 'Empowering Learners Across Bangladesh'}
             </h2>
           </div>
@@ -110,18 +118,18 @@ export default function StatsSection({ lang }: StatsSectionProps) {
               return (
                 <div
                   key={idx}
-                  className="p-6 rounded-2xl bg-[#F8FAFC] border border-slate-200/80 hover:border-[#C8963E] transition-all text-center space-y-2 group shadow-2xs"
+                  className="p-6 rounded-2xl bg-[#F8FAFC] dark:bg-slate-950 border border-slate-200/80 dark:border-slate-850 hover:border-[#C8963E] transition-all text-center space-y-2 group shadow-2xs"
                 >
-                  <div className="w-12 h-12 mx-auto rounded-xl bg-white border border-slate-200 flex items-center justify-center text-[#C8963E] group-hover:scale-110 transition-transform shadow-xs">
+                  <div className="w-12 h-12 mx-auto rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-[#C8963E] group-hover:scale-110 transition-transform shadow-xs">
                     <Icon className="w-6 h-6" />
                   </div>
-                  <p className="text-3xl sm:text-4xl font-serif font-black text-[#0A192F] tracking-tight">
+                  <p className="text-3xl sm:text-4xl font-serif font-black text-slate-900 dark:text-[#E5A93C] tracking-tight">
                     {s.value}
                   </p>
-                  <p className="text-sm font-bold text-slate-900">
+                  <p className="text-sm font-bold text-slate-900 dark:text-white">
                     {s.label}
                   </p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     {s.desc}
                   </p>
                 </div>
@@ -133,16 +141,16 @@ export default function StatsSection({ lang }: StatsSectionProps) {
         {/* Why Choose Us / We Guarantee Section from Official cfoedubd.com */}
         <div>
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0A192F] text-[#E5A93C] border border-[#C8963E]/40 text-xs font-bold mb-3">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 dark:bg-[#0A192F] text-amber-900 dark:text-[#E5A93C] border border-amber-300 dark:border-[#C8963E]/40 text-xs font-bold mb-3 shadow-2xs">
               <BookOpen className="w-3.5 h-3.5 text-[#C8963E]" />
               <span>{lang === 'bn' ? 'কেন আমরা আলাদা? • আমাদের প্রতিশ্রুতি' : 'Why Choose Us? • We Guarantee'}</span>
             </span>
-            <h3 className="text-2xl sm:text-3xl font-serif font-black text-slate-900 tracking-tight">
+            <h3 className="text-2xl sm:text-3xl font-serif font-black text-slate-900 dark:text-white tracking-tight">
               {lang === 'bn'
                 ? 'মানসম্মত শিক্ষা ও ক্যারিয়ার উপযোগী প্রফেশনাল প্রস্তুতি'
                 : 'Commitment to Excellence in Executive Learning'}
             </h3>
-            <p className="text-xs sm:text-sm text-slate-600 mt-2">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-2">
               {lang === 'bn'
                 ? 'সিএফও এডুকেশন বাংলাদেশের প্রতিটি কোর্স আধুনিক চাহিদা ও বাস্তবমুখী কার্যপদ্ধতি অনুযায়ী পরিচালিত হয়।'
                 : 'Every course is designed to empower participants with boardroom skills, modern software, and direct applicability.'}
@@ -155,28 +163,28 @@ export default function StatsSection({ lang }: StatsSectionProps) {
               return (
                 <div
                   key={idx}
-                  className="p-6 rounded-2xl bg-white border border-slate-200 hover:border-[#C8963E] transition-all flex flex-col justify-between group shadow-2xs hover:shadow-md"
+                  className="p-6 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-[#C8963E] transition-all flex flex-col justify-between group shadow-2xs hover:shadow-md"
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-[#0A192F] group-hover:bg-[#0A192F] group-hover:text-[#E5A93C] transition-colors">
+                      <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-slate-900 border border-amber-200/80 dark:border-slate-800 flex items-center justify-center text-amber-800 dark:text-[#E5A93C] group-hover:bg-amber-100 dark:group-hover:bg-[#0A192F] group-hover:text-amber-900 dark:group-hover:text-[#E5A93C] transition-colors">
                         <Icon className="w-5 h-5" />
                       </div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#966718] px-2 py-0.5 rounded bg-amber-50 border border-amber-200">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#966718] dark:text-amber-300 px-2 py-0.5 rounded bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800">
                         {item.tag}
                       </span>
                     </div>
 
-                    <h4 className="text-base font-serif font-bold text-slate-900 group-hover:text-[#C8963E] transition-colors">
+                    <h4 className="text-base font-serif font-bold text-slate-900 dark:text-white group-hover:text-[#C8963E] transition-colors">
                       {item.title}
                     </h4>
 
-                    <p className="text-xs text-slate-600 leading-relaxed">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       {item.description}
                     </p>
                   </div>
 
-                  <div className="pt-4 mt-4 border-t border-slate-100 flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700">
+                  <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                     <span>{lang === 'bn' ? '১০০% নিশ্চিত মান' : 'Quality Assured'}</span>
                   </div>

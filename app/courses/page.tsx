@@ -34,7 +34,7 @@ function CoursesContent() {
   const urlSearch = searchParams.get('search') || '';
   const urlFacilitator = searchParams.get('facilitator') || '';
 
-  const { lang, courses, refreshCourses, coursesLoading, isLiveApiConnected } = useCfo();
+  const { lang, courses, refreshCourses, coursesLoading, isLiveApiConnected, theme } = useCfo();
   const [selectedCategory, setSelectedCategory] = useState<string>(urlCategory);
   const [searchQuery, setSearchQuery] = useState<string>(urlSearch);
   const [clearedFacilitator, setClearedFacilitator] = useState<boolean>(false);
@@ -106,7 +106,10 @@ function CoursesContent() {
   }, [selectedFacilitator, selectedCategory, searchQuery, sortBy, courses]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
+    <div
+      data-theme={theme}
+      className={`min-h-screen flex flex-col transition-colors ${theme === 'dark' ? 'dark bg-slate-950 text-slate-100' : 'bg-[#F8FAFC] text-slate-900'}`}
+    >
       <Navbar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
@@ -114,48 +117,48 @@ function CoursesContent() {
       />
 
       {/* Page Header */}
-      <section className="bg-[#0A192F] text-white py-14 sm:py-18 border-b border-[#1E3A8A] relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(200,150,62,0.18),rgba(10,25,47,0))]" />
+      <section className="bg-gradient-to-b from-amber-50/90 via-slate-50 to-white dark:bg-[#0A192F] text-slate-900 dark:text-white py-14 sm:py-18 border-b border-slate-200 dark:border-[#1E3A8A] relative overflow-hidden transition-colors">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(200,150,62,0.18),transparent)]" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1E3A8A]/50 text-[#E5A93C] border border-[#C8963E]/40 text-xs font-bold mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 dark:bg-[#1E3A8A]/50 text-amber-900 dark:text-[#E5A93C] border border-amber-300 dark:border-[#C8963E]/40 text-xs font-bold mb-4 shadow-2xs">
               <Award className="w-3.5 h-3.5 text-[#C8963E]" />
               <span>{lang === 'bn' ? 'প্রফেশনাল এক্সিকিউটিভ প্রোগ্রাম ও ক্যারিয়ার ট্র্যাক' : 'Professional Executive Programs & Tracks'}</span>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black text-white tracking-tight leading-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black text-slate-900 dark:text-white tracking-tight leading-tight">
               {lang === 'bn' ? (
                 <>
                   করপোরেট ফিন্যান্স, ট্যাক্স ও <br />
-                  <span className="text-[#E5A93C]">সি-স্যুট এক্সিকিউটিভ প্রোগ্রাম</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#966718] dark:from-[#FFDF79] dark:via-[#E5A93C] dark:to-[#C8963E]">সি-স্যুট এক্সিকিউটিভ প্রোগ্রাম</span>
                 </>
               ) : (
                 <>
                   Corporate Finance, Tax & <br />
-                  <span className="text-[#E5A93C]">Executive C-Suite Programs</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#966718] dark:from-[#FFDF79] dark:via-[#E5A93C] dark:to-[#C8963E]">Executive C-Suite Programs</span>
                 </>
               )}
             </h1>
 
-            <p className="text-xs sm:text-sm md:text-base text-slate-300 mt-3 leading-relaxed">
+            <p className="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-300 mt-3 leading-relaxed">
               {lang === 'bn'
                 ? 'আইসিএবি ও আইসিএমএবি ফেলোদের সরাসরি মেন্টরশিপে বাস্তব কেস স্টাডি, এনবিআর ই-ট্যাক্স রিটার্ন ও এসএপি-ফাইকো (SAP-FICO) ক্লাউড ল্যাব সম্বলিত ক্যারিয়ার রূপান্তরকারী প্রোগ্রাম।'
                 : 'Case-study driven financial modeling, corporate taxation, and enterprise SAP-FICO ERP masterclasses instructed by practicing senior FCAs and corporate CFOs.'}
             </p>
 
             {/* Quick Metrics */}
-            <div className="flex flex-wrap items-center gap-6 mt-6 pt-6 border-t border-[#1E3A8A] text-xs text-slate-300">
+            <div className="flex flex-wrap items-center gap-6 mt-6 pt-6 border-t border-slate-200 dark:border-[#1E3A8A] text-xs text-slate-600 dark:text-slate-300">
               <div className="flex items-center gap-2">
-                <GraduationCap className="w-4 h-4 text-[#E5A93C]" />
+                <GraduationCap className="w-4 h-4 text-[#C8963E]" />
                 <span>{COURSES.length} {lang === 'bn' ? 'টি ফ্ল্যাগশিপ ও পিজিডি প্রোগ্রাম' : 'Flagship & PGD Programs'}</span>
               </div>
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>{lang === 'bn' ? '৯৫% লার্নার সন্তুষ্টি ও এক্সিকিউটিভ নেটওয়ার্ক' : '95% Learner Satisfaction'}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Building2 className="w-4 h-4 text-[#E5A93C]" />
+                <Building2 className="w-4 h-4 text-[#C8963E]" />
                 <span>{lang === 'bn' ? 'সিটি সেন্টার মতিঝিল ও অনলাইন হাইব্রিড ক্যাম্পাস' : 'City Centre & Hybrid Studio'}</span>
               </div>
             </div>
@@ -179,20 +182,20 @@ function CoursesContent() {
                     ? 'কোর্সের নাম বা কি-ওয়ার্ড দিয়ে খুঁজুন (যেমন: CFO, VAT, SAP, FP&A)...'
                     : 'Search by program or skill (e.g., CFO, VAT, SAP, FP&A)...'
                 }
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-slate-300 focus:border-[#C8963E] focus:ring-2 focus:ring-[#C8963E]/20 outline-none text-xs text-slate-900 shadow-2xs"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-[#C8963E] focus:ring-2 focus:ring-[#C8963E]/20 outline-none text-xs shadow-2xs"
               />
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
+            <span className="text-xs font-bold text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
               <ArrowUpDown className="w-3.5 h-3.5 text-slate-400" />
               {lang === 'bn' ? 'সাজান:' : 'Sort by:'}
             </span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="text-xs font-semibold py-2 px-3 rounded-xl border border-slate-300 bg-white text-slate-800 outline-none shadow-2xs cursor-pointer hover:border-[#C8963E]"
+              className="text-xs font-semibold py-2 px-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 outline-none shadow-2xs cursor-pointer hover:border-[#C8963E]"
             >
               <option value="featured">{lang === 'bn' ? 'ফিচার্ড (Featured)' : 'Featured'}</option>
               <option value="rating">{lang === 'bn' ? 'টপ রেটেড (Top Rated)' : 'Top Rated'}</option>
@@ -204,16 +207,16 @@ function CoursesContent() {
 
         {/* Active Facilitator Filter Badge */}
         {selectedFacilitator && (
-          <div className="mb-6 p-4 rounded-2xl bg-amber-50/80 border border-[#C8963E]/30 flex flex-wrap items-center justify-between gap-3 animate-in fade-in duration-200">
+          <div className="mb-6 p-4 rounded-2xl bg-amber-50/80 dark:bg-slate-900 border border-amber-200 dark:border-amber-900/50 flex flex-wrap items-center justify-between gap-3 animate-in fade-in duration-200">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-[#0A192F] text-[#E5A93C] flex items-center justify-center shrink-0">
-                <UserCheck className="w-4 h-4" />
+              <div className="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-[#C8963E] border border-amber-200 dark:border-amber-800 flex items-center justify-center shrink-0">
+                <UserCheck className="w-4 h-4 text-[#C8963E]" />
               </div>
               <div>
-                <p className="text-[11px] font-bold uppercase tracking-wider text-amber-900">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-amber-900 dark:text-amber-400">
                   {lang === 'bn' ? 'নির্বাচিত ফ্যাকাল্টি ফিল্টার' : 'Filtered by Facilitator'}
                 </p>
-                <p className="text-sm font-bold text-slate-900">
+                <p className="text-sm font-bold text-slate-900 dark:text-white">
                   {selectedFacilitator}
                 </p>
               </div>
@@ -222,7 +225,7 @@ function CoursesContent() {
             <button
               type="button"
               onClick={() => setClearedFacilitator(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-amber-300 text-amber-900 hover:bg-amber-100 text-xs font-bold transition-colors cursor-pointer shadow-2xs"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 border border-amber-300 dark:border-slate-700 text-amber-900 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-slate-700 text-xs font-bold transition-colors cursor-pointer shadow-2xs"
             >
               <X className="w-3.5 h-3.5" />
               <span>{lang === 'bn' ? 'সব শিক্ষকের কোর্স দেখুন' : 'Show All Facilitators'}</span>
@@ -273,15 +276,15 @@ function CoursesContent() {
         )}
 
         {/* Career Counseling CTA */}
-        <div className="mt-16 p-6 sm:p-8 rounded-2xl bg-[#0A192F] text-white border border-[#1E3A8A] flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+        <div className="mt-16 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-amber-50/90 via-slate-50 to-amber-100/60 dark:from-[#0A192F] dark:via-[#0D254C] dark:to-[#1E3A8A] text-slate-900 dark:text-white border border-amber-200 dark:border-[#1E3A8A] flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm transition-colors">
           <div className="space-y-1 text-center md:text-left">
-            <span className="text-[11px] font-bold text-[#E5A93C] uppercase tracking-wider">
+            <span className="text-[11px] font-bold text-[#966718] dark:text-[#E5A93C] uppercase tracking-wider">
               {lang === 'bn' ? 'এক্সিকিউটিভ অ্যাকাডেমিক কাউন্সেলিং' : 'Executive Academic Counseling'}
             </span>
-            <h3 className="text-xl font-serif font-bold text-white">
+            <h3 className="text-xl font-serif font-bold text-slate-900 dark:text-white">
               {lang === 'bn' ? 'কোন প্রোগ্রামটি আপনার ক্যারিয়ারের জন্য সেরা বুঝতে পারছেন না?' : 'Need guidance selecting the right executive program?'}
             </h3>
-            <p className="text-xs text-slate-300 max-w-xl">
+            <p className="text-xs text-slate-600 dark:text-slate-300 max-w-xl">
               {lang === 'bn'
                 ? 'আমাদের সিনিয়র অ্যাকাডেমিক কাউন্সেলরদের সাথে কথা বলে জেনে নিন আপনার অভিজ্ঞতা ও বর্তমান পদ অনুযায়ী সেরা ক্যারিয়ার পাথ।'
                 : 'Speak with our senior fellows and admission counselors to map your progression to the C-suite.'}
@@ -290,7 +293,7 @@ function CoursesContent() {
 
           <Link
             href="/contact"
-            className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#C8963E] to-[#B8860B] hover:from-[#d4af37] hover:to-[#C8963E] text-slate-950 font-serif font-black text-xs sm:text-sm flex items-center gap-2 shrink-0 transition-all shadow-md cursor-pointer"
+            className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#B8860B] hover:from-[#d4af37] hover:to-[#C8963E] text-slate-950 font-serif font-black text-xs sm:text-sm flex items-center gap-2 shrink-0 transition-all shadow-md cursor-pointer"
           >
             <span>{lang === 'bn' ? 'পরামর্শকের সাথে কথা বলুন' : 'Book Consultation'}</span>
             <ArrowRight className="w-4 h-4" />

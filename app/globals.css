@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
     --brand-navy: #0A192F;
@@ -8,14 +10,30 @@
     --brand-gold-light: #E5A93C;
     --brand-gold-hover: #D4AF37;
     --surface-bg: #F8FAFC;
+    --card-bg: #FFFFFF;
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --border-subtle: #E2E8F0;
+  }
+
+  .dark,
+  html.dark,
+  body.dark,
+  [data-theme='dark'] {
+    --surface-bg: #030712;
+    --card-bg: #0B132B;
+    --text-primary: #F8FAFC;
+    --text-secondary: #94A3B8;
+    --border-subtle: #1E293B;
   }
 
   body {
-    background-color: #F8FAFC;
-    color: #0F172A;
+    background-color: var(--surface-bg) !important;
+    color: var(--text-primary);
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   /* Refined typography scale for academic leadership */
@@ -25,9 +43,192 @@
   }
 }
 
-/* Subtle luxury gold gradient utilities */
-.bg-gold-gradient {
-  background: linear-gradient(135deg, #DFB257 0%, #C8963E 50%, #A97B28 100%);
+/* Global Dark Mode Overrides for pristine appearance */
+html.dark .bg-\[\#F8FAFC\],
+.dark .bg-\[\#F8FAFC\],
+body.dark .bg-\[\#F8FAFC\] {
+  background-color: #030712 !important;
+}
+
+html.dark .bg-white,
+.dark .bg-white,
+body.dark .bg-white {
+  background-color: #0b132b !important;
+}
+
+html.dark .text-slate-900,
+.dark .text-slate-900,
+html.dark .text-slate-950,
+.dark .text-slate-950 {
+  color: #f8fafc !important;
+}
+
+html.dark .text-slate-800,
+.dark .text-slate-800,
+html.dark .text-slate-700,
+.dark .text-slate-700 {
+  color: #e2e8f0 !important;
+}
+
+html.dark .text-slate-600,
+.dark .text-slate-600,
+html.dark .text-slate-500,
+.dark .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+html.dark .border-slate-200,
+.dark .border-slate-200,
+html.dark .border-slate-100,
+.dark .border-slate-100,
+html.dark .border-slate-300,
+.dark .border-slate-300 {
+  border-color: #1e293b !important;
+}
+
+html.dark .bg-slate-50,
+.dark .bg-slate-50,
+html.dark .bg-slate-100,
+.dark .bg-slate-100 {
+  background-color: #0f172a !important;
+}
+
+/* Dedicated Light vs Dark Mode styling for Banners, Appbar and Hero */
+:root,
+html:not(.dark),
+body:not(.dark) {
+  --topbar-bg: #FFFDF7;
+  --topbar-border: #F3E8D0;
+  --appbar-bg: #FFFFFF;
+  --appbar-text: #0F172A;
+  --appbar-border: #E2E8F0;
+  --hero-bg: #F8FAFC;
+  --hero-card-bg: #FFFFFF;
+  --hero-card-border: #E2E8F0;
+  --hero-text-primary: #0F172A;
+  --hero-text-secondary: #475569;
+}
+
+.dark,
+html.dark,
+body.dark {
+  --topbar-bg: #0A192F;
+  --topbar-border: #1E3A8A;
+  --appbar-bg: #0A192F;
+  --appbar-text: #FFFFFF;
+  --appbar-border: #1E3A8A;
+  --hero-bg: #0A192F;
+  --hero-card-bg: #0B132B;
+  --hero-card-border: #1E293B;
+  --hero-text-primary: #FFFFFF;
+  --hero-text-secondary: #94A3B8;
+}
+
+/* Ensure light mode on appbar navigation strip */
+html:not(.dark) .bg-\[\#0A192F\],
+body:not(.dark) .bg-\[\#0A192F\] {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) .bg-\[\#0A192F\] a,
+body:not(.dark) .bg-\[\#0A192F\] a,
+html:not(.dark) .bg-\[\#0A192F\] button,
+body:not(.dark) .bg-\[\#0A192F\] button {
+  color: #334155 !important;
+}
+
+html:not(.dark) .bg-\[\#0A192F\] a:hover,
+body:not(.dark) .bg-\[\#0A192F\] a:hover {
+  color: #c8963e !important;
+  background-color: #f8fafc !important;
+}
+
+/* Light mode for Hero section */
+html:not(.dark) #hero-section,
+body:not(.dark) #hero-section {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) #hero-section h1 {
+  color: #0f172a !important;
+}
+
+html:not(.dark) #hero-section p {
+  color: #475569 !important;
+}
+
+html:not(.dark) #hero-section .text-white {
+  color: #0f172a !important;
+}
+
+html:not(.dark) #hero-section .text-slate-200,
+html:not(.dark) #hero-section .text-slate-300,
+html:not(.dark) #hero-section .text-slate-400 {
+  color: #64748b !important;
+}
+
+html:not(.dark) #hero-section .border-slate-800,
+html:not(.dark) #hero-section .border-slate-700 {
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) #hero-section .bg-slate-900,
+html:not(.dark) #hero-section .bg-slate-950,
+html:not(.dark) #hero-section .from-slate-900 {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) #hero-section .bg-slate-950\/80,
+html:not(.dark) #hero-section .bg-slate-950\/90 {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* Page headers light mode for /courses, /about, and course details */
+html:not(.dark) .page-executive-header {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) .page-executive-header h1 {
+  color: #0f172a !important;
+}
+
+html:not(.dark) .page-executive-header p {
+  color: #475569 !important;
+}
+
+html:not(.dark) .page-executive-header .text-slate-300,
+html:not(.dark) .page-executive-header .text-slate-400 {
+  color: #64748b !important;
+}
+
+/* Light mode for footer */
+html:not(.dark) footer {
+  background-color: #f8fafc !important;
+  color: #334155 !important;
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) footer .text-white {
+  color: #0f172a !important;
+}
+
+html:not(.dark) footer .text-slate-300,
+html:not(.dark) footer .text-slate-400 {
+  color: #64748b !important;
+}
+
+html:not(.dark) footer .border-slate-800,
+html:not(.dark) footer .border-\[\#1E3A8A\] {
+  border-color: #e2e8f0 !important;
 }
 
 .text-gold-gradient {
@@ -44,8 +245,19 @@
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.dark .executive-card {
+  background: #0f172a;
+  border: 1px solid rgba(30, 41, 59, 0.85);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+}
+
 .executive-card:hover {
   border-color: rgba(200, 150, 62, 0.4);
   box-shadow: 0 12px 24px -6px rgba(10, 25, 47, 0.08), 0 4px 8px -2px rgba(10, 25, 47, 0.04);
   transform: translateY(-2px);
+}
+
+.dark .executive-card:hover {
+  border-color: rgba(200, 150, 62, 0.6);
+  box-shadow: 0 14px 28px -6px rgba(0, 0, 0, 0.5), 0 6px 12px -2px rgba(200, 150, 62, 0.1);
 }
