@@ -125,6 +125,7 @@ export default function Home() {
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         onSelectCategory={(catId) => setSelectedCategory(catId)}
+        onOpenAuth={() => setIsAuthOpen(true)}
       />
 
       {/* Ostad-Style Hero Banner Section (Exact Match to Screenshot) */}
