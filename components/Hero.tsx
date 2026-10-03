@@ -12,7 +12,6 @@ import {
   Clock,
   Briefcase,
   FileText,
-  Download,
   Building2,
   GraduationCap,
   Calendar
@@ -50,7 +49,7 @@ export default function Hero({
           {/* Left Column: Prestigious Accreditation, Headline, Values, CTAs */}
           <div className="lg:col-span-7 space-y-7">
             
-            {/* Accreditation Header Line (Unboxed, elegant metadata typography) */}
+            {/* Accreditation Header Line */}
             <div className="flex items-center gap-2.5 text-xs text-slate-600 dark:text-slate-300 font-medium tracking-wide">
               <span className="flex h-2 w-2 relative shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E5A93C] opacity-75"></span>
@@ -135,13 +134,13 @@ export default function Hero({
                 <ArrowRight className="w-4 h-4" />
               </Link>
 
-              <Link
-                href="/courses"
+              <button
+                onClick={onExploreCourses}
                 className="px-5 py-3.5 rounded-xl bg-white dark:bg-slate-900/90 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:border-[#C8963E]/60 text-slate-800 dark:text-slate-200 font-semibold text-xs sm:text-sm flex items-center gap-2 shadow-2xs transition-all cursor-pointer"
               >
                 <FileText className="w-4 h-4 text-[#C8963E]" />
                 <span>{lang === 'bn' ? 'সকল লাইভ কোর্স' : 'All Live Batches'}</span>
-              </Link>
+              </button>
 
               <Link
                 href="/certificates"
@@ -152,7 +151,7 @@ export default function Hero({
               </Link>
             </div>
 
-            {/* Institutional Live Ticker Stats from cfoedubd.com */}
+            {/* Institutional Live Ticker Stats */}
             <div className="pt-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div>
                 <p className="text-2xl sm:text-3xl font-serif font-black text-slate-900 dark:text-white">
@@ -239,66 +238,22 @@ export default function Hero({
                       </div>
                       <div className="p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
                         <span className="text-[10px] text-[#966718] dark:text-[#C8963E] font-bold block">সেমিস্টার ৩</span>
-                        <span className="text-[11px] text-slate-800 dark:text-slate-300 font-semibold truncate block mt-0.5">ট্রেজারি ও অডিট</span>
+                        <span className="text-[11px] text-slate-800 dark:text-slate-300 font-semibold truncate block mt-0.5">CFO ক্যাপস্টোন</span>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 space-y-2">
-                    <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider block">
-                      {lang === 'bn' ? 'কোর্সের প্রধান বৈশিষ্ট্য ও কাঠামো:' : 'Course Highlights & Delivery:'}
-                    </span>
-                    <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                      <div className="p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
-                        <span className="text-[10px] text-[#966718] dark:text-[#C8963E] font-bold block">
-                          {lang === 'bn' ? 'ক্লাস শিডিউল' : 'Schedule'}
-                        </span>
-                        <span className="text-[11px] text-slate-800 dark:text-slate-300 font-semibold truncate block mt-0.5">
-                          {featuredCourse.schedule || 'অনলাইন লাইভ'}
-                        </span>
-                      </div>
-                      <div className="p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
-                        <span className="text-[10px] text-[#966718] dark:text-[#C8963E] font-bold block">
-                          {lang === 'bn' ? 'মোট ক্লাস' : 'Sessions'}
-                        </span>
-                        <span className="text-[11px] text-slate-800 dark:text-slate-300 font-semibold truncate block mt-0.5">
-                          {featuredCourse.totalClasses} {lang === 'bn' ? 'টি সেশন' : 'Classes'}
-                        </span>
-                      </div>
-                      <div className="p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
-                        <span className="text-[10px] text-[#966718] dark:text-[#C8963E] font-bold block">
-                          {lang === 'bn' ? 'ইন্সট্রাক্টর' : 'Faculty'}
-                        </span>
-                        <span className="text-[11px] text-slate-800 dark:text-slate-300 font-semibold truncate block mt-0.5">
-                          {featuredCourse.educator || featuredCourse.mentors[0]?.name || 'বিশেষজ্ঞ প্যানেল'}
-                        </span>
-                      </div>
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 space-y-1.5 text-xs">
+                    <div className="flex items-center justify-between text-slate-600 dark:text-slate-400">
+                      <span>{lang === 'bn' ? 'মোট ক্লাস সংখ্যা:' : 'Total Classes:'}</span>
+                      <span className="font-bold text-slate-800 dark:text-slate-200">{featuredCourse.totalClasses} টি লাইভ সেশন</span>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-600 dark:text-slate-400">
+                      <span>{lang === 'bn' ? 'ক্লাস শিডিউল:' : 'Schedule:'}</span>
+                      <span className="font-bold text-slate-800 dark:text-slate-200">{featuredCourse.schedule}</span>
                     </div>
                   </div>
                 )}
-
-                {/* Batch Information & Schedule */}
-                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/90 border border-slate-200 dark:border-slate-800 space-y-2">
-                  <div className="flex items-center justify-between text-xs text-slate-700 dark:text-slate-300">
-                    <span className="flex items-center gap-1.5 font-medium">
-                      <Calendar className="w-3.5 h-3.5 text-[#C8963E]" />
-                      {lang === 'bn' ? 'ওরিয়েন্টেশন / ক্লাস শুরু:' : 'Course Orientation:'}
-                    </span>
-                    <span className="font-bold text-[#966718] dark:text-[#E5A93C]">
-                      {featuredCourse.startDate || (lang === 'bn' ? 'চলতি সেশন' : 'Open')}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between text-xs text-slate-700 dark:text-slate-300 pt-1 border-t border-slate-200 dark:border-slate-800/80">
-                    <span className="flex items-center gap-1.5 font-medium">
-                      <Clock className="w-3.5 h-3.5 text-[#C8963E]" />
-                      {lang === 'bn' ? 'ক্লাসের সময়সূচি:' : 'Class Timings:'}
-                    </span>
-                    <span className="font-medium text-slate-700 dark:text-slate-300">
-                      {featuredCourse.schedule}
-                    </span>
-                  </div>
-                </div>
 
                 {/* Pricing & Admission CTA */}
                 <div className="pt-2 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">

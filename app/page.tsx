@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
-import Hero from '@/components/Hero';
+import OstadHeroBanner from '@/components/OstadHeroBanner';
 import CategoryPills from '@/components/CategoryPills';
 import CourseCard from '@/components/CourseCard';
 import CourseDetailsModal from '@/components/CourseDetailsModal';
@@ -20,7 +20,6 @@ import { COURSES, Course } from '@/data/cfo-data';
 import { useCfo } from '@/context/CfoContext';
 import {
   Sparkles,
-  ArrowUpDown,
   CheckCircle2,
   ArrowRight,
   BookOpen,
@@ -108,15 +107,6 @@ export default function Home() {
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const featuredCourse = useMemo(() => {
-    // Prefer the flagship CFO or finance course if present, otherwise the first course
-    if (!courses || courses.length === 0) return COURSES[0];
-    const flagship = courses.find(
-      (c) => c.category === 'cfo-flagship' || c.slug.includes('cfo') || c.title.toLowerCase().includes('cfo')
-    );
-    return flagship || courses[0];
-  }, [courses]);
-
   return (
     <div
       data-theme={theme}
@@ -137,68 +127,19 @@ export default function Home() {
         onSelectCategory={(catId) => setSelectedCategory(catId)}
       />
 
-      {/* Hero Section */}
-      <Hero
-        lang={lang}
-        onExploreCourses={scrollToCourses}
-        onOpenFreeWorkshops={() => {
-          const el = document.getElementById('free-workshops');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }}
-        onOpenCareerQuiz={() => setIsQuizOpen(true)}
-        featuredCourse={featuredCourse}
-        onSelectCourse={(course) => setSelectedCourse(course)}
-        onEnrollCourse={(course) => setEnrollingCourse(course)}
-      />
+      {/* Ostad-Style Hero Banner Section (Exact Match to Screenshot) */}
+      <OstadHeroBanner onStartLearning={scrollToCourses} />
 
       {/* Main Courses Catalog Section */}
       <section id="all-courses-section" className="py-14 sm:py-18 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-          <div>
-            <div className="flex flex-wrap items-center gap-2 mb-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-800 text-xs font-bold">
-                <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                <span>{lang === 'bn' ? 'লাইভ ক্যারিয়ার ট্র্যাক' : 'Live Career Tracks'}</span>
-              </div>
-            </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-950 dark:text-white tracking-tight">
-              {lang === 'bn' ? 'আপকামিং লাইভ ব্যাচসমূহ' : 'Explore Live Batches'}
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
-              {lang === 'bn'
-                ? 'ইন্ডাস্ট্রি এক্সপার্টদের সাথে হাতে-কলমে প্র্যাকটিস ও লাইভ ফিডব্যাক নিয়ে শিখুন।'
-                : 'Interactive online cohorts with hands-on practice and real-time mentor code review.'}
-            </p>
-          </div>
-
-          {/* Sort Control & All Courses Link */}
-          <div className="flex items-center gap-3 shrink-0">
-            <Link
-              href="/courses"
-              className="text-xs font-bold text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-300 flex items-center gap-1 bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 dark:hover:bg-amber-900/60 px-3 py-2 rounded-xl border border-amber-200 dark:border-amber-800 transition-colors"
-            >
-              <span>{lang === 'bn' ? 'সব কোর্স পেজ' : 'All Courses Page'}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 hidden sm:inline flex items-center gap-1">
-                <ArrowUpDown className="w-3.5 h-3.5" />
-                {lang === 'bn' ? 'সাজান:' : 'Sort by:'}
-              </span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
-                className="text-xs font-semibold py-2 px-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 outline-none hover:border-amber-400 transition-colors cursor-pointer shadow-2xs"
-              >
-                <option value="featured">{lang === 'bn' ? 'ফিচার্ড (Featured)' : 'Featured'}</option>
-                <option value="rating">{lang === 'bn' ? 'টপ রেটেড (Top Rated)' : 'Top Rated'}</option>
-                <option value="price-asc">{lang === 'bn' ? 'ফি: কম থেকে বেশি' : 'Price: Low to High'}</option>
-                <option value="price-desc">{lang === 'bn' ? 'ফি: বেশি থেকে কম' : 'Price: High to Low'}</option>
-              </select>
-            </div>
-          </div>
+        {/* Clean, Noiseless Section Heading (Exact Match to Screenshot) */}
+        <div className="text-center mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white flex items-center justify-center gap-2.5 tracking-tight">
+            <span className="text-[#E62E2D] font-mono text-xl sm:text-2xl select-none leading-none animate-pulse">
+              ((•))
+            </span>
+            <span>{lang === 'bn' ? 'আপকামিং লাইভ কোর্স' : 'Upcoming Live Courses'}</span>
+          </h2>
         </div>
 
         {/* Category Pills Filter */}
@@ -255,7 +196,7 @@ export default function Home() {
       {/* Official cfoedubd.com Statistics & Guarantees */}
       <OfficialWebsiteStats lang={lang} />
 
-      {/* Learning Methodology (Why Ostad) */}
+      {/* Learning Methodology (Chartered Officer Limited) */}
       <LearningMethodology
         lang={lang}
         onExploreCourses={scrollToCourses}

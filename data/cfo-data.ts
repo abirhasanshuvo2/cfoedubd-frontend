@@ -49,6 +49,8 @@ export interface Course {
   isPopular?: boolean;
   isFeatured?: boolean;
   educator?: string;
+  thumbnail?: string;
+  image?: string;
 }
 
 export interface Workshop {
