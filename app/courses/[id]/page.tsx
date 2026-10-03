@@ -118,7 +118,7 @@ export default function CourseDetailPage({ params }: PageProps) {
       </div>
 
       {/* Hero Header Section */}
-      <header className="bg-gradient-to-b from-amber-50/90 via-slate-50 to-white dark:bg-[#0A192F] text-slate-900 dark:text-white py-10 sm:py-14 border-b border-slate-200 dark:border-[#1E3A8A] relative overflow-hidden transition-colors">
+      <header className="bg-gradient-to-b from-amber-50/90 via-slate-50 to-white dark:from-[#0A192F] dark:via-[#0D254C] dark:to-[#0A192F] dark:bg-[#0A192F] text-slate-900 dark:text-white py-10 sm:py-14 border-b border-slate-200 dark:border-[#1E3A8A] relative overflow-hidden transition-colors">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(200,150,62,0.18),transparent)]" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

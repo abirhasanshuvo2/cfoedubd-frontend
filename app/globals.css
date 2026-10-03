@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where(.dark, .dark *, [data-theme='dark'], [data-theme='dark'] *));
 
 @layer base {
   :root {
@@ -190,6 +190,86 @@ html:not(.dark) #hero-section .bg-slate-950\/90 {
   border-color: #e2e8f0 !important;
 }
 
+/* Dedicated Page Hero Banner - Guaranteed Light in Light Mode, Deep Navy in Dark Mode */
+.page-hero-banner {
+  background: linear-gradient(180deg, rgba(255, 251, 235, 0.95) 0%, rgba(248, 250, 252, 0.98) 50%, #ffffff 100%) !important;
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.dark .page-hero-banner,
+html.dark .page-hero-banner,
+body.dark .page-hero-banner,
+[data-theme='dark'] .page-hero-banner {
+  background: linear-gradient(180deg, #0A192F 0%, #0D254C 50%, #020617 100%) !important;
+  background-color: #0A192F !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid #1E3A8A !important;
+}
+
+.page-hero-banner h1,
+.page-hero-banner h2,
+.page-hero-banner h3 {
+  color: #0f172a !important;
+}
+
+.dark .page-hero-banner h1,
+.dark .page-hero-banner h2,
+.dark .page-hero-banner h3,
+html.dark .page-hero-banner h1,
+html.dark .page-hero-banner h2,
+html.dark .page-hero-banner h3,
+body.dark .page-hero-banner h1,
+body.dark .page-hero-banner h2,
+body.dark .page-hero-banner h3,
+[data-theme='dark'] .page-hero-banner h1,
+[data-theme='dark'] .page-hero-banner h2,
+[data-theme='dark'] .page-hero-banner h3 {
+  color: #ffffff !important;
+}
+
+.page-hero-banner p {
+  color: #475569 !important;
+}
+
+.dark .page-hero-banner p,
+html.dark .page-hero-banner p,
+body.dark .page-hero-banner p,
+[data-theme='dark'] .page-hero-banner p {
+  color: #cbd5e1 !important;
+}
+
+.page-hero-banner .hero-pill {
+  background-color: #fef3c7 !important;
+  color: #78350f !important;
+  border: 1px solid #fcd34d !important;
+}
+
+.dark .page-hero-banner .hero-pill,
+html.dark .page-hero-banner .hero-pill,
+body.dark .page-hero-banner .hero-pill,
+[data-theme='dark'] .page-hero-banner .hero-pill {
+  background-color: rgba(30, 58, 138, 0.6) !important;
+  color: #E5A93C !important;
+  border: 1px solid rgba(200, 150, 62, 0.4) !important;
+}
+
+.page-hero-banner .hero-search-bar {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+.dark .page-hero-banner .hero-search-bar,
+html.dark .page-hero-banner .hero-search-bar,
+body.dark .page-hero-banner .hero-search-bar,
+[data-theme='dark'] .page-hero-banner .hero-search-bar {
+  background-color: rgba(15, 23, 42, 0.95) !important;
+  color: #ffffff !important;
+  border-color: rgba(200, 150, 62, 0.4) !important;
+}
+
 /* Page headers light mode for /courses, /about, and course details */
 html:not(.dark) .page-executive-header {
   background-color: #f8fafc !important;
@@ -261,3 +341,26 @@ html:not(.dark) footer .border-\[\#1E3A8A\] {
   border-color: rgba(200, 150, 62, 0.6);
   box-shadow: 0 14px 28px -6px rgba(0, 0, 0, 0.5), 0 6px 12px -2px rgba(200, 150, 62, 0.1);
 }
+
+/* Page Hero and Header Sections in Dark Mode */
+html.dark section.dark\:from-\[\#0A192F\],
+.dark section.dark\:from-\[\#0A192F\],
+[data-theme='dark'] section.dark\:from-\[\#0A192F\],
+html.dark header.dark\:from-\[\#0A192F\],
+.dark header.dark\:from-\[\#0A192F\],
+[data-theme='dark'] header.dark\:from-\[\#0A192F\] {
+  background-image: linear-gradient(to bottom, #0A192F, #0D254C, #0A192F) !important;
+  background-color: #0A192F !important;
+  color: #ffffff !important;
+  border-bottom-color: #1E3A8A !important;
+}
+
+html.dark section.dark\:from-\[\#0A192F\] h1,
+.dark section.dark\:from-\[\#0A192F\] h1,
+[data-theme='dark'] section.dark\:from-\[\#0A192F\] h1,
+html.dark header.dark\:from-\[\#0A192F\] h1,
+.dark header.dark\:from-\[\#0A192F\] h1,
+[data-theme='dark'] header.dark\:from-\[\#0A192F\] h1 {
+  color: #ffffff !important;
+}
+

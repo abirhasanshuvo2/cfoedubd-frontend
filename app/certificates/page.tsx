@@ -175,7 +175,7 @@ function CertificateVerificationContent() {
       <Navbar />
 
       {/* Verification Hero */}
-      <section className="relative bg-gradient-to-b from-amber-50/90 via-slate-50 to-white dark:bg-[#0A192F] text-slate-900 dark:text-white pt-12 pb-16 px-4 overflow-hidden border-b border-slate-200 dark:border-[#1E3A8A] transition-colors">
+      <section className="relative bg-gradient-to-b from-amber-50/90 via-slate-50 to-white dark:from-[#0A192F] dark:via-[#0D254C] dark:to-[#0A192F] dark:bg-[#0A192F] text-slate-900 dark:text-white pt-12 pb-16 px-4 overflow-hidden border-b border-slate-200 dark:border-[#1E3A8A] transition-colors">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(200,150,62,0.22),rgba(10,25,47,0))]" />
 
         <div className="max-w-4xl mx-auto relative z-10 text-center space-y-4">
