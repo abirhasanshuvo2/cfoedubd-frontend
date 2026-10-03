@@ -12,6 +12,7 @@ import StudentLmsModal from '@/components/StudentLmsModal';
 import LearningMethodology from '@/components/LearningMethodology';
 import CareerQuizModal from '@/components/CareerQuizModal';
 import OfficialWebsiteStats from '@/components/OfficialWebsiteStats';
+import FreeLiveDemoSection from '@/components/FreeLiveDemoSection';
 import FaqSection from '@/components/FaqSection';
 import Footer from '@/components/Footer';
 import AuthModal from '@/components/AuthModal';
@@ -192,6 +193,9 @@ export default function Home() {
           </Link>
         </div>
       </section>
+
+      {/* Free Live Demo Class Section (Exact match to Ostad design) */}
+      <FreeLiveDemoSection lang={lang} />
 
       {/* Official cfoedubd.com Statistics & Guarantees */}
       <OfficialWebsiteStats lang={lang} />
