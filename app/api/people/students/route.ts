@@ -32,10 +32,10 @@ const FALLBACK_STUDENTS_RESPONSE = {
         status: 1,
       },
     ],
-    first_page_url: 'http://127.0.0.1:8000/api/people/students?page=1',
+    first_page_url: '/api/people/students?page=1',
     from: 1,
     last_page: 1,
-    last_page_url: 'http://127.0.0.1:8000/api/people/students?page=1',
+    last_page_url: '/api/people/students?page=1',
     links: [
       {
         url: null,
@@ -44,7 +44,7 @@ const FALLBACK_STUDENTS_RESPONSE = {
         active: false,
       },
       {
-        url: 'http://127.0.0.1:8000/api/people/students?page=1',
+        url: '/api/people/students?page=1',
         label: '1',
         page: 1,
         active: true,
@@ -57,7 +57,7 @@ const FALLBACK_STUDENTS_RESPONSE = {
       },
     ],
     next_page_url: null,
-    path: 'http://127.0.0.1:8000/api/people/students',
+    path: '/api/people/students',
     per_page: 15,
     prev_page_url: null,
     to: 2,

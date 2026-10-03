@@ -17,7 +17,7 @@ export interface CertificateData {
   download_url: string;
 }
 
-// Complete mock dataset matching the user's exact API schema and payload
+// Clean dataset without any exposed raw API URLs or localhost links
 const MOCK_CERTIFICATES: CertificateData[] = [
   {
     id: 1,
@@ -25,15 +25,15 @@ const MOCK_CERTIFICATES: CertificateData[] = [
     grade: 'A+',
     registration_id: '222',
     student_name: 'Md Ali Hosen',
-    father_name: 'Mr ali hosen father',
-    mother_name: 'Mrs ali hosen mother',
-    class_name: 'Laravel REST API Masterclass',
-    session_title: '2027-28',
+    father_name: 'Mr. Ali Hosen',
+    mother_name: 'Mrs. Ali Hosen',
+    class_name: 'Chartered Financial Officer (CFO)',
+    session_title: 'Batch 2026-Q1',
     start_date: '22 Aug 2026',
     end_date: '13 Sep 2026',
     issued_at: '28 Sep 2026',
-    download_url: 'http://127.0.0.1:8000/api/enrollment/certificates/222/download',
-    view_url: 'http://127.0.0.1:8000/api/enrollment/certificates/222/download',
+    download_url: '/api/enrollment/certificates/222/download',
+    view_url: '/api/enrollment/certificates/222/view',
   },
   {
     id: 2,
@@ -43,13 +43,13 @@ const MOCK_CERTIFICATES: CertificateData[] = [
     student_name: 'John Doe',
     father_name: 'Robert Doe',
     mother_name: 'Sarah Doe',
-    class_name: 'Laravel REST API Masterclass',
+    class_name: 'Corporate Tax & VAT Masterclass',
     session_title: 'Batch 2026-Q1',
     start_date: '01 Jun 2026',
     end_date: '20 Aug 2026',
     issued_at: '22 Aug 2026',
-    download_url: 'http://127.0.0.1:8000/api/enrollment/certificates/5/download',
-    view_url: 'http://127.0.0.1:8000/api/enrollment/certificates/5/download',
+    download_url: '/api/enrollment/certificates/5/download',
+    view_url: '/api/enrollment/certificates/5/view',
   },
   {
     id: 3,
@@ -64,8 +64,8 @@ const MOCK_CERTIFICATES: CertificateData[] = [
     start_date: '10 May 2026',
     end_date: '05 Sep 2026',
     issued_at: '15 Sep 2026',
-    download_url: 'http://127.0.0.1:8000/api/enrollment/certificates/8/download',
-    view_url: 'http://127.0.0.1:8000/api/enrollment/certificates/8/download',
+    download_url: '/api/enrollment/certificates/8/download',
+    view_url: '/api/enrollment/certificates/8/view',
   },
   {
     id: 4,
@@ -80,8 +80,8 @@ const MOCK_CERTIFICATES: CertificateData[] = [
     start_date: '15 Jan 2025',
     end_date: '10 Dec 2025',
     issued_at: '10 Jan 2026',
-    download_url: 'http://127.0.0.1:8000/api/enrollment/certificates/COL-CFO-2025-9921/download',
-    view_url: 'http://127.0.0.1:8000/api/enrollment/certificates/COL-CFO-2025-9921/download',
+    download_url: '/api/enrollment/certificates/COL-CFO-2025-9921/download',
+    view_url: '/api/enrollment/certificates/COL-CFO-2025-9921/view',
   },
 ];
 
@@ -89,55 +89,65 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const registrationId = searchParams.get('registration_id');
 
-  if (!registrationId) {
+  if (!registrationId || !registrationId.trim()) {
     return NextResponse.json(
-      {
-        success: false,
-        message: 'Registration ID is required',
-        data: [],
-      },
+      { success: false, message: 'registration_id parameter is required' },
       { status: 400 }
     );
   }
 
-  // 1. Attempt to query live backend API if available
+  const queryTrimmed = registrationId.trim().toLowerCase();
+
+  // 1. Attempt to query live backend API if available (server-side only, never exposing URL to client)
   try {
-    const backendBase = (
+    const backendBase =
       process.env.BACKEND_API_URL ||
       process.env.NEXT_PUBLIC_BACKEND_API_URL ||
-      'http://127.0.0.1:8000'
-    ).replace(/\/$/, '');
-    const backendUrl = `${backendBase}/api/enrollment/certificates/lookup?registration_id=${encodeURIComponent(
-      registrationId
+      'http://127.0.0.1:8000';
+
+    const backendUrl = `${backendBase.replace(/\/$/, '')}/api/enrollment/certificates/lookup?registration_id=${encodeURIComponent(
+      registrationId.trim()
     )}`;
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 2500);
+
     const res = await fetch(backendUrl, {
+      signal: controller.signal,
       headers: {
         Accept: 'application/json',
       },
-      signal: AbortSignal.timeout(3500),
     });
+    clearTimeout(timeout);
 
     if (res.ok) {
       const data = await res.json();
-      if (data && data.success && Array.isArray(data.data) && data.data.length > 0) {
-        return NextResponse.json(data);
+      if (data && (Array.isArray(data) || Array.isArray(data.data))) {
+        const rawList = Array.isArray(data) ? data : data.data;
+        // Clean download URLs before sending to client so internal backend URLs are never exposed
+        const cleanList = rawList.map((item: CertificateData) => ({
+          ...item,
+          download_url: `/api/enrollment/certificates/${encodeURIComponent(String(item.registration_id || item.serial_number))}/download`,
+          view_url: `/api/enrollment/certificates/${encodeURIComponent(String(item.registration_id || item.serial_number))}/view`,
+        }));
+        return NextResponse.json({ success: true, data: cleanList });
       }
     }
   } catch {
-    // Backend fetch failed (e.g. running outside local network); proceed to fallback
+    // Backend unreachable, fallback to verified mock records
   }
 
-  // 2. Fallback matching
-  const normalizedQuery = registrationId.trim().toLowerCase();
+  // 2. Filter Mock Records
   const matched = MOCK_CERTIFICATES.filter(
     (c) =>
-      c.registration_id.toLowerCase() === normalizedQuery ||
-      c.serial_number.toString() === normalizedQuery ||
-      c.student_name.toLowerCase().includes(normalizedQuery)
+      c.registration_id.toLowerCase() === queryTrimmed ||
+      String(c.serial_number) === queryTrimmed ||
+      c.student_name.toLowerCase().includes(queryTrimmed)
   );
 
   return NextResponse.json({
     success: true,
     data: matched,
+    isMockFallback: true,
   });
 }

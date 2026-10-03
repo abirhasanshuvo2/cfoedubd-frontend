@@ -31,7 +31,7 @@ export const INITIAL_API_NEWS: ApiNewsItem[] = [
     readTime: '3 min read',
     summary: 'this is a new summary',
     source: 'https://www.thedailystar.net/news/bangladesh/news/mymensingh-bears-the-brunt-nations-load-shedding-4279436',
-    image: 'http://localhost:8000/storage/news/y1sUuCVReQvRvL0XfF4VF6slPzjtDmb8ZEGsyOlT.jpg',
+    image: '/api/image-proxy?url=' + encodeURIComponent('https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800&auto=format&fit=crop&q=80'),
     featured: false,
   },
 ];

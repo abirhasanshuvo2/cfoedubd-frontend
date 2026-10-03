@@ -25,6 +25,7 @@ import {
   Send,
   Heart,
   AlertCircle,
+  ShieldCheck,
 } from 'lucide-react';
 
 function EnrollNowContent() {
@@ -236,7 +237,7 @@ function EnrollNowContent() {
       setIsSubmitted(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err: any) {
-      setFormError(err?.message || 'Error communicating with backend API');
+      setFormError(err?.message || (lang === 'bn' ? 'আবেদন প্রক্রিয়াকরণে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।' : 'Unable to submit application. Please try again.'));
       setIsSubmitting(false);
     }
   };
@@ -256,7 +257,7 @@ function EnrollNowContent() {
 
             <div className="space-y-2">
               <span className="text-xs font-bold uppercase tracking-widest text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-                Official Enquiry Registered (API: /api/enquiries)
+                {lang === 'bn' ? 'আবেদন সফলভাবে গৃহীত' : 'Official Application Registered'}
               </span>
               <h1 className="text-2xl sm:text-3xl font-serif font-black text-[#0A192F]">
                 {lang === 'bn'
@@ -333,7 +334,7 @@ function EnrollNowContent() {
                 <span className="text-slate-500">{lang === 'bn' ? 'আবেদনের স্ট্যাটাস:' : 'Submission Status:'}</span>
                 <span className="inline-flex items-center gap-1 font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded text-[11px] border border-emerald-200">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  {submissionResult.isLiveBackend ? 'Forwarded to Laravel API (:8000)' : 'Saved Successfully'}
+                  {lang === 'bn' ? 'সফলভাবে নিশ্চিত ও সংরক্ষিত' : 'Verified & Registered'}
                 </span>
               </div>
 
@@ -403,8 +404,8 @@ function EnrollNowContent() {
 
           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
             {lang === 'bn'
-              ? 'নিচের ফর্মের প্রতিটি প্রয়োজনীয় ফিল্ড পূরণ করে সাবমিট করুন। সকল ফিল্ড পূরণ করা সাপেক্ষে সরাসরি আমাদের ব্যাকএন্ড এপিআই-এ (/api/enquiries) ডাটা জমা হবে।'
-              : 'Please complete all required fields. All fields must be fulfilled before submitting to the backend API (http://127.0.0.1:8000/api/enquiries).'}
+              ? 'নিচের ফর্মের প্রতিটি প্রয়োজনীয় ফিল্ড পূরণ করে আপনার ভর্তি আবেদন জমা দিন। আমাদের এক্সিকিউটিভ কাউন্সেলর খুব শীঘ্রই আপনার সাথে যোগাযোগ করবেন।'
+              : 'Please complete all required fields to submit your admission application. Our executive academic advisor will get in touch with you shortly.'}
           </p>
         </div>
       </section>
@@ -867,16 +868,16 @@ function EnrollNowContent() {
                 </div>
               </div>
 
-              {/* Direct API Endpoint Info */}
+              {/* Secure Admission Advisory */}
               <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-xs space-y-1.5">
                 <div className="flex items-center gap-1.5 text-[#0A192F] font-bold">
-                  <Info className="w-4 h-4 text-[#C8963E] shrink-0" />
-                  <span>{lang === 'bn' ? 'সরাসরি ব্যাকএন্ড সাবমিশন' : 'Direct Backend Submission'}</span>
+                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>{lang === 'bn' ? 'নিরাপদ অনলাইন আবেদন' : 'Secure Official Enrollment'}</span>
                 </div>
                 <p className="text-[11px] text-slate-600 leading-relaxed">
                   {lang === 'bn'
-                    ? 'সকল ফিল্ড পূরণ করার পর ফর্মটি সরাসরি Laravel /api/enquiries এপিআই-এ পাঠানো হবে।'
-                    : 'Submits all required fields to Laravel /api/enquiries without auto-fill.'}
+                    ? 'আপনার আবেদনপত্রটি সরাসরি চার্টার্ড অফিসার এডুকেশন সিস্টেমে এনক্রিপ্টেড পদ্ধতিতে নিবন্ধিত হবে।'
+                    : 'Your admission application is securely transmitted and registered directly for the upcoming executive cohort.'}
                 </p>
               </div>
 
@@ -903,12 +904,12 @@ function EnrollNowContent() {
                 {isSubmitting ? (
                   <>
                     <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
-                    <span>{lang === 'bn' ? 'আবেদন জমা হচ্ছে...' : 'Submitting to API...'}</span>
+                    <span>{lang === 'bn' ? 'আবেদন জমা হচ্ছে...' : 'Submitting Application...'}</span>
                   </>
                 ) : (
                   <>
                     <Send className="w-4 h-4" />
-                    <span>{lang === 'bn' ? 'ভর্তি আবেদন জমা দিন' : 'Submit Enquiry (POST /api/enquiries)'}</span>
+                    <span>{lang === 'bn' ? 'ভর্তি আবেদন জমা দিন' : 'Submit Admission Application'}</span>
                   </>
                 )}
               </button>

@@ -52,57 +52,11 @@ export function resolveNewsImage(image: string | null | undefined, category?: st
 }
 
 export async function fetchNewsArticles(page: number = 1): Promise<FetchNewsResult> {
-  let directBase = (
-    process.env.NEXT_PUBLIC_BACKEND_API_URL ||
-    'http://127.0.0.1:8000'
-  ).replace(/\/$/, '');
-
-  if (typeof window !== 'undefined') {
-    const custom = localStorage.getItem('cfo_custom_api_url');
-    if (custom && custom.trim()) {
-      directBase = custom.trim().replace(/\/$/, '');
-    }
-  }
-
-  // 1. Direct browser fetch to Laravel API: http://127.0.0.1:8000/api/settings/news
-  try {
-    const directRes = await fetch(`${directBase}/api/settings/news?page=${page}`, {
-      headers: {
-        Accept: 'application/json',
-      },
-      signal: AbortSignal.timeout(3500),
-    });
-
-    if (directRes.ok) {
-      const json = await directRes.json();
-      if (json && json.data) {
-        const paginated = json.data;
-        const items = Array.isArray(paginated.data) ? paginated.data : Array.isArray(paginated) ? paginated : [];
-        return {
-          items,
-          pagination: {
-            current_page: paginated.current_page || page,
-            last_page: paginated.last_page || 1,
-            per_page: paginated.per_page || 12,
-            total: paginated.total ?? items.length,
-            next_page_url: paginated.next_page_url,
-            prev_page_url: paginated.prev_page_url,
-            links: paginated.links,
-          },
-          isLiveBackend: true,
-        };
-      }
-    }
-  } catch {
-    // Direct call failed
-  }
-
-  // 2. Next.js internal API proxy route: /api/news
+  // Call Next.js internal API proxy route: /api/news
   try {
     const proxyRes = await fetch(`/api/news?page=${page}`, {
       headers: {
         Accept: 'application/json',
-        'x-custom-backend-url': directBase,
       },
     });
 
@@ -127,10 +81,10 @@ export async function fetchNewsArticles(page: number = 1): Promise<FetchNewsResu
       }
     }
   } catch {
-    // Proxy fallback
+    // Next.js proxy route failed
   }
 
-  // 3. Fallback to INITIAL_API_NEWS (the 2 items from database)
+  // Fallback to INITIAL_API_NEWS
   return {
     items: INITIAL_API_NEWS,
     pagination: {

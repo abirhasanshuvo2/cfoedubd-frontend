@@ -63,10 +63,10 @@ const FALLBACK_EDUCATORS_RESPONSE = {
         courses: ['PGD in Advanced VAT & Corporate Taxation', 'Customs Bond & Mushak 9.1 Return'],
       },
     ],
-    first_page_url: 'http://127.0.0.1:8000/api/people/educators?page=1',
+    first_page_url: '/api/people/educators?page=1',
     from: 1,
     last_page: 1,
-    last_page_url: 'http://127.0.0.1:8000/api/people/educators?page=1',
+    last_page_url: '/api/people/educators?page=1',
     links: [
       {
         url: null,
@@ -75,7 +75,7 @@ const FALLBACK_EDUCATORS_RESPONSE = {
         active: false,
       },
       {
-        url: 'http://127.0.0.1:8000/api/people/educators?page=1',
+        url: '/api/people/educators?page=1',
         label: '1',
         page: 1,
         active: true,
@@ -88,7 +88,7 @@ const FALLBACK_EDUCATORS_RESPONSE = {
       },
     ],
     next_page_url: null,
-    path: 'http://127.0.0.1:8000/api/people/educators',
+    path: '/api/people/educators',
     per_page: 15,
     prev_page_url: null,
     to: 4,

@@ -70,81 +70,13 @@ export async function submitEnrollmentEnquiry(
 ): Promise<EnrollmentApiResponse> {
   const cleanPayload = sanitizeEnquiryPayload(payload);
 
-  let directBase = (
-    process.env.NEXT_PUBLIC_BACKEND_API_URL ||
-    'http://127.0.0.1:8000'
-  ).replace(/\/$/, '');
-
-  if (typeof window !== 'undefined') {
-    const custom = localStorage.getItem('cfo_custom_api_url');
-    if (custom && custom.trim()) {
-      directBase = custom.trim().replace(/\/$/, '');
-    }
-  }
-
-  // 1. Direct POST to user's Laravel endpoint: /api/enquiries
-  try {
-    const directRes = await fetch(`${directBase}/api/enquiries`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify(cleanPayload),
-      signal: AbortSignal.timeout(4000),
-    });
-
-    const directData = await directRes.json();
-
-    if (directRes.ok || directRes.status === 201) {
-      return {
-        success: true,
-        isLiveBackend: true,
-        message: directData?.message || 'Enquiry submitted successfully to backend',
-        data: directData?.data || directData,
-      };
-    } else if (directRes.status === 422) {
-      return {
-        success: false,
-        message: directData?.message || 'Laravel validation failed',
-        errors: directData?.errors,
-        isLiveBackend: true,
-      };
-    }
-  } catch {
-    // Try legacy /api/enrollment/enroll-now if /api/enquiries fails directly
-    try {
-      const legacyRes = await fetch(`${directBase}/api/enrollment/enroll-now`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify(cleanPayload),
-        signal: AbortSignal.timeout(3000),
-      });
-      const legacyData = await legacyRes.json();
-      if (legacyRes.ok || legacyRes.status === 201) {
-        return {
-          success: true,
-          isLiveBackend: true,
-          message: legacyData?.message || 'Enquiry recorded',
-          data: legacyData?.data || legacyData,
-        };
-      }
-    } catch {
-      // Direct call failed (e.g. Mixed Content / CORS / backend unavailable from browser)
-    }
-  }
-
-  // 2. Second attempt: Internal Next.js API route proxy /api/enquiries
+  // Dispatch to internal Next.js API route proxy /api/enquiries (handles backend communication server-side)
   try {
     const proxyRes = await fetch('/api/enquiries', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        'x-custom-backend-url': directBase,
       },
       body: JSON.stringify(cleanPayload),
     });
@@ -163,7 +95,7 @@ export async function submitEnrollmentEnquiry(
     if (proxyRes.ok || proxyRes.status === 201) {
       return {
         success: true,
-        message: proxyData?.message,
+        message: proxyData?.message || 'Enquiry recorded successfully',
         isLiveBackend: Boolean(proxyData?.isLiveBackend),
         data: proxyData?.data,
       };

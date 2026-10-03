@@ -89,29 +89,6 @@ function CertificateVerificationContent() {
           // Internal proxy call failed
         }
 
-        // 2. Direct browser fetch to local Laravel backend if running locally
-        if (results.length === 0) {
-          try {
-            const directRes = await fetch(
-              `http://127.0.0.1:8000/api/enrollment/certificates/lookup?registration_id=${encodeURIComponent(
-                trimmedId
-              )}`,
-              {
-                headers: { Accept: 'application/json' },
-                signal: AbortSignal.timeout(2000),
-              }
-            );
-            if (directRes.ok) {
-              const json = await directRes.json();
-              if (json.success && Array.isArray(json.data)) {
-                results = json.data;
-              }
-            }
-          } catch {
-            // Direct local fetch failed
-          }
-        }
-
         if (results.length > 0) {
           setCertificates(results);
           setErrorMessage(null);
@@ -339,10 +316,10 @@ function CertificateVerificationContent() {
               </div>
             </div>
 
-            {/* Render Each Certificate: Direct PDF Viewer + API Details */}
+            {/* Render Each Certificate: Direct PDF Viewer + Official Details */}
             {certificates.map((cert) => {
               const pdfUrl = getPdfViewUrl(cert);
-              const directDownload = cert.download_url || `/api/enrollment/certificates/${cert.registration_id}/download`;
+              const directDownload = `/api/enrollment/certificates/${encodeURIComponent(cert.registration_id)}/download`;
 
               return (
                 <div
@@ -587,7 +564,7 @@ function CertificateVerificationContent() {
 
               <div className="flex items-center gap-2">
                 <a
-                  href={previewModalCert.download_url || `/api/enrollment/certificates/${previewModalCert.registration_id}/download`}
+                  href={`/api/enrollment/certificates/${encodeURIComponent(previewModalCert.registration_id)}/download`}
                   download={`Certificate_${previewModalCert.student_name.replace(/[^a-zA-Z0-9]/g, '_')}_${previewModalCert.registration_id}.pdf`}
                   target="_blank"
                   rel="noopener noreferrer"

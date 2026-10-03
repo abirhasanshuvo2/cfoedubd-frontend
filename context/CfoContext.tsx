@@ -153,34 +153,8 @@ export function CfoProvider({ children }: { children: React.ReactNode }) {
 
   const fetchCourses = useCallback(async () => {
     setCoursesLoading(true);
-    const directUrl = (process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://127.0.0.1:8000').replace(/\/$/, '');
 
-    // 1. Try local client-side direct fetch to user's backend http://127.0.0.1:8000/api/courses
-    try {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 1800);
-      const res = await fetch(`${directUrl}/api/courses`, {
-        signal: controller.signal,
-        headers: { Accept: 'application/json' },
-      });
-      clearTimeout(timer);
-      if (res.ok) {
-        const json = await res.json();
-        const rawList = extractCoursesArray(json);
-        if (rawList.length > 0) {
-          setApiCourses(rawList);
-          const adapted = rawList.map(adaptApiCourseToCfoCourse);
-          setCourses(adapted);
-          setIsLiveApiConnected(true);
-          setCoursesLoading(false);
-          return;
-        }
-      }
-    } catch {
-      // Fallback to Next.js API proxy route
-    }
-
-    // 2. Next.js internal proxy route
+    // Call internal Next.js proxy route (server proxies to backend safely)
     try {
       const res = await fetch('/api/courses');
       if (res.ok) {
@@ -196,47 +170,25 @@ export function CfoProvider({ children }: { children: React.ReactNode }) {
         }
       }
     } catch {
-      // Keep dynamic courses
+      // Keep fallback courses
     } finally {
       setCoursesLoading(false);
     }
   }, []);
 
   const fetchSystemInfo = useCallback(async () => {
-    const directUrl = (process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://127.0.0.1:8000').replace(/\/$/, '');
-    try {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 1200);
-      const res = await fetch(`${directUrl}/api/system-information`, {
-        signal: controller.signal,
-        headers: { Accept: 'application/json' },
-      });
-      clearTimeout(timer);
-      if (res.ok) {
-        const json = await res.json();
-        if (json?.data) {
-          setSystemInfo(json.data);
-          setIsLiveApiConnected(true);
-          return;
-        }
-      }
-    } catch {
-      // Fallback to internal Next.js proxy
-    }
-
+    // Call internal Next.js proxy route (server proxies to backend safely)
     try {
       const res = await fetch('/api/system-information');
       if (res.ok) {
         const json = await res.json();
         if (json?.data) {
           setSystemInfo(json.data);
-          if (json.isLive) {
-            setIsLiveApiConnected(true);
-          }
+          setIsLiveApiConnected(true);
         }
       }
     } catch {
-      // keep default system info
+      // Keep initial system info
     }
   }, []);
 
