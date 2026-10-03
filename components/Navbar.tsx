@@ -330,6 +330,16 @@ export default function Navbar({
             )}
           </button>
 
+          {/* View Certificate / Verify Certificate (Always prominent) */}
+          <Link
+            href="/certificates"
+            className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-emerald-200/90 dark:border-emerald-800/80 bg-emerald-50/80 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 font-bold text-xs transition-colors shrink-0 whitespace-nowrap"
+            title="সনদ যাচাই ও ভিউ / View & Verify Certificate"
+          >
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <span>{lang === 'bn' ? 'সনদ যাচাই' : 'Verify Certificate'}</span>
+          </Link>
+
           {/* Learner Login */}
           <button
             onClick={handleAuthTrigger}
