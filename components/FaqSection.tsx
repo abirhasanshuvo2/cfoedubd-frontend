@@ -30,8 +30,8 @@ export default function FaqSection({ lang }: FaqSectionProps) {
 
           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-2">
             {lang === 'bn'
-              ? 'চার্টার্ড অফিসার লিমিটেডের সিএফও প্রোগ্রাম, ক্লাস শিডিউল, কিস্তি সুবিধা ও সনদ সংক্রান্ত প্রয়োজনীয় তথ্য।'
-              : 'Key details about CFO credentials, schedule, semester installments, and certifications.'}
+              ? 'CFOEDUBD-এর কোর্স, প্রশিক্ষক, অনলাইন ক্লাস, পূর্বশর্ত ও করপোরেট ট্রেনিং সংক্রান্ত প্রয়োজনীয় তথ্য।'
+              : 'Essential details about CFOEDUBD courses, instructors, online sessions, prerequisites, and corporate training.'}
           </p>
         </div>
 

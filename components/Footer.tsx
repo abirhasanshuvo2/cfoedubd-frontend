@@ -234,102 +234,57 @@ export default function Footer({ lang: propLang }: FooterProps = {}) {
 
         </div>
 
-        {/* Bottom Horizontal Payment Strip (Exactly matching the design in screenshot) */}
+        {/* Bottom Horizontal Payment Strip (Only the 5 requested gateways) */}
         <div className="pt-6 border-t border-slate-200/90 dark:border-slate-800 space-y-5">
-          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
-            <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mr-1 shrink-0">
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 mr-1 shrink-0">
               Pay With
             </span>
 
-            {/* Payment Gateway Logos */}
-            {/* VISA */}
-            <div className="h-7 px-2.5 rounded bg-white border border-slate-200 flex items-center justify-center shadow-2xs">
-              <span className="font-sans font-black text-xs tracking-tighter text-[#1A1F71] italic">VISA</span>
+            {/* 1. VISA */}
+            <div className="w-14 h-9 sm:w-16 sm:h-10 rounded-lg bg-white border border-slate-200/90 shadow-2xs flex items-center justify-center p-1 hover:border-slate-300 transition-colors">
+              <span className="font-sans font-black text-sm sm:text-base tracking-tighter text-[#1A1F71] italic">
+                VISA
+              </span>
             </div>
 
-            {/* Mastercard */}
-            <div className="h-7 px-2 rounded bg-white border border-slate-200 flex items-center justify-center gap-0.5 shadow-2xs">
-              <div className="w-3.5 h-3.5 rounded-full bg-[#EB001B] opacity-90 -mr-1.5" />
-              <div className="w-3.5 h-3.5 rounded-full bg-[#F79E1B] opacity-90" />
+            {/* 2. Mastercard */}
+            <div className="w-14 h-9 sm:w-16 sm:h-10 rounded-lg bg-white border border-slate-200/90 shadow-2xs flex items-center justify-center p-1 hover:border-slate-300 transition-colors">
+              <div className="relative flex items-center justify-center w-8 h-6">
+                <div className="w-5 h-5 rounded-full bg-[#EB001B]" />
+                <div className="w-5 h-5 rounded-full bg-[#F79E1B] -ml-2.5 mix-blend-multiply opacity-95" />
+              </div>
             </div>
 
-            {/* AMEX */}
-            <div className="h-7 px-2 rounded bg-[#002663] text-white font-bold text-[9px] flex items-center justify-center shadow-2xs tracking-tighter">
-              AMEX
+            {/* 3. bKash */}
+            <div className="w-14 h-9 sm:w-16 sm:h-10 rounded-lg bg-white border border-slate-200/90 shadow-2xs flex items-center justify-center p-1 hover:border-slate-300 transition-colors">
+              <div className="flex items-center tracking-tight">
+                <span className="font-serif font-black text-base sm:text-lg text-[#E2136E] leading-none">b</span>
+                <span className="font-sans font-bold text-xs sm:text-sm text-slate-900 leading-none">Kash</span>
+              </div>
             </div>
 
-            {/* UnionPay */}
-            <div className="h-7 px-2 rounded bg-white border border-slate-200 flex items-center justify-center text-[9px] font-bold text-[#E21836] shadow-2xs">
-              UnionPay
+            {/* 4. Nagad */}
+            <div className="w-14 h-9 sm:w-16 sm:h-10 rounded-lg bg-white border border-slate-200/90 shadow-2xs flex items-center justify-center gap-1 p-1 hover:border-slate-300 transition-colors">
+              <div className="w-3.5 h-3.5 rounded-full border-2 border-[#F7931E] border-t-red-600 border-r-red-600 flex items-center justify-center shrink-0">
+                <div className="w-1 h-1 rounded-full bg-red-600" />
+              </div>
+              <span className="font-bold text-xs sm:text-sm text-[#ED1C24] leading-none">
+                নগদ
+              </span>
             </div>
 
-            {/* DBBL Nexus */}
-            <div className="h-7 px-2 rounded bg-white border border-slate-200 flex items-center justify-center gap-1 shadow-2xs">
-              <span className="text-[10px] font-black text-[#006A4E]">DBBL</span>
-              <span className="text-[9px] font-bold text-slate-600">NEXUS</span>
-            </div>
-
-            {/* bKash */}
-            <div className="h-7 px-2.5 rounded bg-white border border-slate-200 flex items-center justify-center gap-1 shadow-2xs">
-              <div className="w-2.5 h-2.5 bg-[#E2136E] rotate-45 rounded-[1px]" />
-              <span className="text-xs font-black text-[#E2136E]">bKash</span>
-            </div>
-
-            {/* Nagad */}
-            <div className="h-7 px-2.5 rounded bg-white border border-slate-200 flex items-center justify-center gap-1 shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-[#F7931E]" />
-              <span className="text-xs font-black text-[#F7931E]">নগদ</span>
-            </div>
-
-            {/* Upay */}
-            <div className="h-7 px-2 rounded bg-white border border-slate-200 flex items-center justify-center text-[10px] font-black text-[#00529B] shadow-2xs">
-              upay
-            </div>
-
-            {/* Rocket */}
-            <div className="h-7 px-2 rounded bg-white border border-slate-200 flex items-center justify-center text-[10px] font-black text-[#8C3494] shadow-2xs">
-              Rocket
-            </div>
-
-            {/* Tap */}
-            <div className="h-7 px-2 rounded bg-white border border-slate-200 flex items-center justify-center text-[9px] font-bold text-[#E31B23] shadow-2xs">
-              tap
-            </div>
-
-            {/* City Bank */}
-            <div className="h-7 px-2 rounded bg-white border border-slate-200 flex items-center justify-center text-[9px] font-bold text-[#D31F26] shadow-2xs">
-              City Bank
-            </div>
-
-            {/* BRAC Bank */}
-            <div className="h-7 px-2 rounded bg-white border border-slate-200 flex items-center justify-center text-[9px] font-bold text-[#0072BC] shadow-2xs">
-              BRAC BANK
-            </div>
-
-            {/* Bank Asia */}
-            <div className="h-7 px-2 rounded bg-white border border-slate-200 flex items-center justify-center text-[9px] font-bold text-[#005B94] shadow-2xs">
-              Bank Asia
-            </div>
-
-            {/* Islami Bank */}
-            <div className="h-7 px-2 rounded bg-white border border-slate-200 flex items-center justify-center text-[9px] font-bold text-[#00843D] shadow-2xs">
-              IBBL
-            </div>
-
-            {/* AB Bank */}
-            <div className="h-7 px-2 rounded bg-white border border-slate-200 flex items-center justify-center text-[9px] font-bold text-[#C8102E] shadow-2xs">
-              AB Bank
-            </div>
-
-            {/* MTB */}
-            <div className="h-7 px-2 rounded bg-white border border-slate-200 flex items-center justify-center text-[9px] font-bold text-[#ED1C24] shadow-2xs">
-              MTB
-            </div>
-
-            {/* Verified By SSLCOMMERZ Badge */}
-            <div className="h-7 px-2.5 rounded bg-[#004B87] text-white flex items-center justify-center gap-1 shadow-2xs ml-auto">
-              <span className="text-[8px] font-bold uppercase tracking-wider text-blue-200">Verified By</span>
-              <span className="text-[10px] font-black tracking-tight text-white">SSLCOMMERZ</span>
+            {/* 5. Rocket */}
+            <div className="w-14 h-9 sm:w-16 sm:h-10 rounded-lg bg-[#8C3494] border border-[#75267D] shadow-2xs flex flex-col items-center justify-center p-0.5 text-white hover:opacity-95 transition-opacity">
+              <div className="flex items-center gap-1">
+                <svg className="w-3 h-3 fill-white shrink-0 rotate-12" viewBox="0 0 24 24">
+                  <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                </svg>
+                <div className="flex flex-col items-start leading-none">
+                  <span className="text-[6px] font-bold tracking-wider uppercase opacity-90">ROCKET</span>
+                  <span className="text-[9px] font-black leading-tight">রকেট</span>
+                </div>
+              </div>
             </div>
           </div>
 
