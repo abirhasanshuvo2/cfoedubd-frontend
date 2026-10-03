@@ -11,7 +11,6 @@ import EnrollmentModal from '@/components/EnrollmentModal';
 import StudentLmsModal from '@/components/StudentLmsModal';
 import LearningMethodology from '@/components/LearningMethodology';
 import CareerQuizModal from '@/components/CareerQuizModal';
-import AppDownloadBanner from '@/components/AppDownloadBanner';
 import OfficialWebsiteStats from '@/components/OfficialWebsiteStats';
 import FaqSection from '@/components/FaqSection';
 import Footer from '@/components/Footer';
@@ -202,9 +201,6 @@ export default function Home() {
         lang={lang}
         onExploreCourses={scrollToCourses}
       />
-
-      {/* Mobile App Download Banner */}
-      <AppDownloadBanner lang={lang} />
 
       {/* FAQ Section */}
       <FaqSection lang={lang} />
