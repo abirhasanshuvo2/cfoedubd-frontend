@@ -13,6 +13,7 @@ import {
   ShieldCheck,
   User,
   GraduationCap,
+  BookOpen,
 } from 'lucide-react';
 import { COURSES, Course } from '@/data/cfo-data';
 import { useCfo } from '@/context/CfoContext';
@@ -34,7 +35,7 @@ export default function Navbar({
   setSearchQuery: externalSetSearchQuery,
 }: NavbarProps) {
   const router = useRouter();
-  const { lang, setLang, courses, systemInfo, theme, toggleTheme } = useCfo();
+  const { lang, setLang, courses, theme, toggleTheme } = useCfo();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -95,40 +96,38 @@ export default function Navbar({
     <header className="sticky top-0 z-50 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/90 dark:border-slate-800 shadow-xs transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         
-        {/* Left: Brand Logo (COL + Chartered Officer) */}
+        {/* Left: Brand Logo (COL - Bold and Big) */}
         <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-          <Link href="/" className="inline-flex items-center gap-2 group whitespace-nowrap">
-            {systemInfo.logo ? (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img
-                src={systemInfo.logo}
-                alt={systemInfo.name}
-                className="h-8 w-auto max-w-[110px] object-contain drop-shadow-xs shrink-0"
-              />
-            ) : (
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#0A192F] via-[#0D254C] to-[#1E3A8A] flex items-center justify-center shadow-xs border border-[#FFC000]/60 relative group-hover:scale-105 transition-transform shrink-0">
-                <span className="font-serif font-black text-xs text-[#FFC000] tracking-tighter">
-                  COL
-                </span>
-                <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-[#FFC000] rounded-full border border-white dark:border-slate-900" />
-              </div>
-            )}
-            <div className="flex items-center gap-1.5 whitespace-nowrap">
-              <span className="font-serif font-black text-base lg:text-lg tracking-tight text-slate-950 dark:text-white leading-tight">
-                {systemInfo.name || 'Chartered Officer'}
+          <Link href="/" className="inline-flex items-center gap-2.5 group whitespace-nowrap">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#0A192F] via-[#0D254C] to-[#1E3A8A] flex items-center justify-center shadow-md border border-[#FFC000]/70 relative group-hover:scale-105 transition-transform shrink-0">
+              <span className="font-serif font-black text-sm sm:text-base text-[#FFC000] tracking-tight">
+                COL
               </span>
-              <span className="text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-800 hidden sm:inline-block">
+              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#FFC000] rounded-full border border-white dark:border-slate-900" />
+            </div>
+            <div className="flex items-center gap-2 whitespace-nowrap">
+              <span className="font-serif font-black text-xl sm:text-2xl tracking-tight text-slate-950 dark:text-white leading-none">
+                COL<span className="text-[#FFC000]">.</span>
+              </span>
+              <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-800 hidden sm:inline-block">
                 cfoedubd.com
               </span>
             </div>
           </Link>
         </div>
 
-        {/* Center: Clean Nav Links (Matching official cfoedubd.com structure) */}
+        {/* Center: Clean Nav Links (With Courses, Facilitator, Certificates, Media, About, Contact) */}
         <nav className="hidden md:flex items-center gap-5 xl:gap-7 text-xs font-bold text-slate-700 dark:text-slate-200">
           <Link
+            href="/courses"
+            className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors whitespace-nowrap flex items-center gap-1.5"
+          >
+            <BookOpen className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+            <span>{lang === 'bn' ? 'কোর্সসমূহ' : 'Courses'}</span>
+          </Link>
+          <Link
             href="/facilitator"
-            className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors whitespace-nowrap flex items-center gap-1"
+            className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors whitespace-nowrap flex items-center gap-1.5"
           >
             <GraduationCap className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
             <span>{lang === 'bn' ? 'ফ্যাসিলিটেটর' : 'Facilitator'}</span>
@@ -139,12 +138,6 @@ export default function Navbar({
           >
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>{lang === 'bn' ? 'সনদ যাচাই' : 'Verify Certificate'}</span>
-          </Link>
-          <Link
-            href="/admission"
-            className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors whitespace-nowrap"
-          >
-            {lang === 'bn' ? 'ভর্তি তথ্য' : 'Admission'}
           </Link>
           <Link
             href="/media-news"
@@ -321,6 +314,13 @@ export default function Navbar({
               {lang === 'bn' ? 'হোম' : 'Home'}
             </Link>
             <Link
+              href="/courses"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block px-3 py-2.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-amber-600 dark:text-amber-400"
+            >
+              {lang === 'bn' ? '📚 কোর্সসমূহ (Courses)' : '📚 Courses'}
+            </Link>
+            <Link
               href="/facilitator"
               onClick={() => setIsMobileMenuOpen(false)}
               className="block px-3 py-2.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-amber-700 dark:text-amber-400"
@@ -333,13 +333,6 @@ export default function Navbar({
               className="block px-3 py-2.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-emerald-700 dark:text-emerald-400"
             >
               {lang === 'bn' ? '🛡️ সনদ যাচাই (Verify Certificate)' : '🛡️ Verify Certificate'}
-            </Link>
-            <Link
-              href="/admission"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block px-3 py-2.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
-            >
-              {lang === 'bn' ? 'ভর্তি তথ্য ও ফি' : 'Admission & Fees'}
             </Link>
             <Link
               href="/media-news"
