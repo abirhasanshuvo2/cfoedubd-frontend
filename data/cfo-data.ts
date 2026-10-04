@@ -51,6 +51,22 @@ export interface Course {
   educator?: string;
   thumbnail?: string;
   image?: string;
+  classId?: string;
+  days?: string[];
+  timeSlot?: string;
+  language?: string | null;
+  level?: string;
+  minAge?: number;
+  maxAge?: number;
+  endDate?: string | null;
+  meetLink?: string | null;
+  video?: string | null;
+  vide?: string | null;
+  videoLink?: string | null;
+  video_link?: string | null;
+  video_url?: string | null;
+  totalStudents?: number;
+  status?: number;
 }
 
 export interface Workshop {
@@ -102,6 +118,10 @@ export interface ApiCourse {
   educator: string;
   total_students: number;
   meet_link: string | null;
+  video?: string | null;
+  vide?: string | null;
+  video_link?: string | null;
+  video_url?: string | null;
   days: string[];
   time: string;
   language: string | null;
@@ -114,15 +134,128 @@ export interface ApiCourse {
   status: number;
 }
 
+export interface ResolvedCourseVideo {
+  hasVideo: boolean;
+  rawUrl: string | null;
+  embedUrl: string;
+  autoplayEmbedUrl: string;
+  thumbnailUrl: string | null;
+  isDirectVideoFile: boolean;
+  directVideoUrl: string | null;
+}
+
+export function resolveCourseVideo(
+  rawInput: string | null | undefined,
+  backendBaseUrl: string = 'http://127.0.0.1:8000'
+): ResolvedCourseVideo {
+  const defaultYoutubeId = '-HeZs3qthR8';
+  const trimmed = typeof rawInput === 'string' ? rawInput.trim() : '';
+
+  if (!trimmed) {
+    return {
+      hasVideo: false,
+      rawUrl: `https://www.youtube.com/watch?v=${defaultYoutubeId}`,
+      embedUrl: `https://www.youtube.com/embed/${defaultYoutubeId}?rel=0`,
+      autoplayEmbedUrl: `https://www.youtube.com/embed/${defaultYoutubeId}?autoplay=1&rel=0`,
+      thumbnailUrl: `https://img.youtube.com/vi/${defaultYoutubeId}/hqdefault.jpg`,
+      isDirectVideoFile: false,
+      directVideoUrl: null,
+    };
+  }
+
+  // Handle relative storage paths from Laravel backend (e.g., "/storage/videos/..." or "storage/...")
+  let normalizedUrl = trimmed;
+  if (trimmed.startsWith('/storage/') || trimmed.startsWith('storage/')) {
+    const cleanBase = backendBaseUrl.replace(/\/$/, '');
+    const cleanPath = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+    normalizedUrl = `${cleanBase}${cleanPath}`;
+  }
+
+  // 1. Check if it's a direct video file (.mp4, .webm, .ogg, .mov)
+  const isDirectFile = /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(normalizedUrl);
+  if (isDirectFile) {
+    return {
+      hasVideo: true,
+      rawUrl: normalizedUrl,
+      embedUrl: normalizedUrl,
+      autoplayEmbedUrl: normalizedUrl,
+      thumbnailUrl: null,
+      isDirectVideoFile: true,
+      directVideoUrl: normalizedUrl,
+    };
+  }
+
+  // 2. Check if it's a YouTube URL (watch?v=, youtu.be/, embed/, shorts/, live/)
+  const ytRegex =
+    /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?|shorts|live)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/i;
+  const ytMatch = normalizedUrl.match(ytRegex);
+  if (ytMatch && ytMatch[1]) {
+    const videoId = ytMatch[1];
+    return {
+      hasVideo: true,
+      rawUrl: normalizedUrl,
+      embedUrl: `https://www.youtube.com/embed/${videoId}?rel=0`,
+      autoplayEmbedUrl: `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`,
+      thumbnailUrl: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+      isDirectVideoFile: false,
+      directVideoUrl: null,
+    };
+  }
+
+  // 3. Check if it's a Vimeo URL
+  const vimeoMatch = normalizedUrl.match(/vimeo\.com\/(?:video\/)?(\d+)/i);
+  if (vimeoMatch && vimeoMatch[1]) {
+    const vimeoId = vimeoMatch[1];
+    return {
+      hasVideo: true,
+      rawUrl: normalizedUrl,
+      embedUrl: `https://player.vimeo.com/video/${vimeoId}`,
+      autoplayEmbedUrl: `https://player.vimeo.com/video/${vimeoId}?autoplay=1`,
+      thumbnailUrl: null,
+      isDirectVideoFile: false,
+      directVideoUrl: null,
+    };
+  }
+
+  // 4. Check if it's a Google Drive video link
+  const driveMatch = normalizedUrl.match(/drive\.google\.com\/file\/d\/([^/]+)/i);
+  if (driveMatch && driveMatch[1]) {
+    const driveId = driveMatch[1];
+    const previewUrl = `https://drive.google.com/file/d/${driveId}/preview`;
+    return {
+      hasVideo: true,
+      rawUrl: normalizedUrl,
+      embedUrl: previewUrl,
+      autoplayEmbedUrl: previewUrl,
+      thumbnailUrl: null,
+      isDirectVideoFile: false,
+      directVideoUrl: null,
+    };
+  }
+
+  // 5. Fallback for any other embeddable or custom video URL
+  return {
+    hasVideo: true,
+    rawUrl: normalizedUrl,
+    embedUrl: normalizedUrl,
+    autoplayEmbedUrl: normalizedUrl,
+    thumbnailUrl: null,
+    isDirectVideoFile: false,
+    directVideoUrl: null,
+  };
+}
+
 export const INITIAL_API_COURSES: ApiCourse[] = [
   {
     id: 6,
     class_id: "CLS-CRVNJ2AKP1",
     name: "Flutter Courses",
     category: "CSE Courses",
-    educator: "Super Admin",
+    educator: "Mr Teacher S",
     total_students: 0,
     meet_link: null,
+    vide: "https://www.youtube.com/watch?v=-HeZs3qthR8",
+    video: "https://www.youtube.com/watch?v=-HeZs3qthR8",
     days: [],
     time: "morning",
     language: null,
@@ -140,8 +273,10 @@ export const INITIAL_API_COURSES: ApiCourse[] = [
     name: "Flutter state management",
     category: "CSE Courses",
     educator: "Md. Abir Hasan",
-    total_students: 0,
+    total_students: 1,
     meet_link: "https://meet.google.com/def-uvw",
+    vide: "https://www.youtube.com/watch?v=-HeZs3qthR8",
+    video: "https://www.youtube.com/watch?v=-HeZs3qthR8",
     days: ["Monday", "Wednesday", "Friday"],
     time: "evening",
     language: "English",
@@ -158,9 +293,11 @@ export const INITIAL_API_COURSES: ApiCourse[] = [
     class_id: "CLS-002",
     name: "Laravel REST API Masterclass",
     category: "CSE Courses",
-    educator: "Super Admin",
-    total_students: 1,
+    educator: "Mr Teacher S",
+    total_students: 2,
     meet_link: "https://meet.google.com/def-uvw",
+    vide: "https://www.youtube.com/watch?v=-HeZs3qthR8",
+    video: "https://www.youtube.com/watch?v=-HeZs3qthR8",
     days: ["Monday", "Wednesday", "Friday"],
     time: "evening",
     language: "English",
@@ -177,9 +314,11 @@ export const INITIAL_API_COURSES: ApiCourse[] = [
     class_id: "CLS-001",
     name: "Machine Learning Course",
     category: "CSE Courses",
-    educator: "Super Admin",
+    educator: "Mr Teacher S",
     total_students: 2,
     meet_link: null,
+    vide: "https://www.youtube.com/watch?v=-HeZs3qthR8",
+    video: "https://www.youtube.com/watch?v=-HeZs3qthR8",
     days: [],
     time: "morning",
     language: "Bengali",
@@ -233,6 +372,35 @@ export function adaptApiCourseToCfoCourse(item: any): Course {
   }
 
   const educatorName = item.educator || item.instructor || item.teacher || 'Senior Faculty Member';
+  const totalStudentsNum = typeof item.total_students === 'number' ? item.total_students : 0;
+
+  // Extract video link from backend response (supports video, vide, video_link, video_url, etc.)
+  let rawVideoLink: string | null =
+    item.video ||
+    item.vide ||
+    item.video_link ||
+    item.video_url ||
+    item.videoLink ||
+    item.videoUrl ||
+    item.demo_video ||
+    item.demo_video_link ||
+    item.demo_video_url ||
+    item.youtube_link ||
+    item.youtube_url ||
+    item.intro_video ||
+    null;
+
+  if (!rawVideoLink && item && typeof item === 'object') {
+    const matchingVideoKey = Object.keys(item).find(
+      (k) =>
+        k.toLowerCase().includes('vide') &&
+        typeof item[k] === 'string' &&
+        item[k].trim().length > 0
+    );
+    if (matchingVideoKey) {
+      rawVideoLink = item[matchingVideoKey].trim();
+    }
+  }
 
   return {
     id: `api-${courseId}`,
@@ -240,62 +408,64 @@ export function adaptApiCourseToCfoCourse(item: any): Course {
     title: rawName,
     titleEn: rawName,
     category: categoryKey,
-    categoryLabel: categoryLabel,
+    categoryLabel: item.category || categoryLabel,
     badge: isFree ? 'ফ্রি কোর্স' : `${levelUpper} ব্যাচ`,
     batchNumber: item.class_id || `Batch-${courseId}`,
     startDate: item.start_date || 'চলতি সেশনে ওপেন',
     startDateEn: item.start_date || 'Open Admission',
-    schedule: `${daysText} (${timeText})`,
-    scheduleEn: `${daysText} (${timeTextEn})`,
-    duration: item.end_date ? '৬ মাস মেয়াদি হ্যান্ডস-অন ট্র্যাক' : '৩ মাস মেয়াদি স্পেশালাইজড ট্র্যাক',
-    durationEn: item.end_date ? '6 Months Hands-on Track' : '3 Months Specialized Track',
+    schedule: `${timeText} (${daysText})`,
+    scheduleEn: `${timeTextEn} (${daysText})`,
+    duration: item.start_date && item.end_date ? `${item.start_date} হতে ${item.end_date}` : '৬ মাস মেয়াদি হ্যান্ডস-অন ট্র্যাক',
+    durationEn: item.start_date && item.end_date ? `${item.start_date} to ${item.end_date}` : '6 Months Hands-on Track',
     totalClasses: levelUpper.includes('ADVANCED') ? 48 : 36,
-    seatsLeft: 12,
-    totalSeats: 35,
+    seatsLeft: Math.max(5, 38 - totalStudentsNum),
+    totalSeats: 40,
     price: parsedPrice,
-    originalPrice: isFree ? 0 : Math.round(parsedPrice * 1.25),
-    rating: 4.9,
-    enrolledCount: (item.total_students || 0) > 0 ? (item.total_students || 0) * 40 + 25 : 18,
+    originalPrice: isFree ? 0 : Math.round(parsedPrice * 1.6),
+    rating: typeof item.rating === 'number' ? item.rating : 0,
+    enrolledCount: totalStudentsNum,
     tags: [
       item.category || 'Professional Track',
       rawLevel,
-      item.language || 'English/Bengali',
-      'Live Online Classes',
-      'Certificate Included',
+      ...(item.language ? [item.language] : []),
     ],
     mentors: [
       {
         name: educatorName,
-        role: 'লিড ফ্যাকাল্টি ও কর্পোরেট ট্রেইনার',
+        role: item.category || 'Lead Educator',
         company: 'Chartered Officer Limited (cfoedubd.com)',
-        experience: '১০+ বছর প্রফেশনাল এক্সপেরিয়েন্স',
+        experience: `${rawLevel} Level`,
         avatar: DUMMY_PERSON_AVATAR,
       },
     ],
     educator: educatorName,
-    description: item.description || `${rawName} প্রোগ্রামটি আধুনিক ইন্ডাস্ট্রিয়াল রিকোয়ারমেন্টের সাথে সামঞ্জস্য রেখে তৈরি। লাইভ ক্লাস, প্র্যাকটিক্যাল কোডিং ও রিয়েল-ওয়ার্ল্ড প্রজেক্টের মাধ্যমে ক্যারিয়ার গড়ার সুযোগ।`,
-    descriptionEn: item.descriptionEn || `${rawName} is meticulously designed to meet modern industrial requirements. Features live classes, hands-on reviews, and enterprise real-world projects.`,
-    syllabus: [
-      {
-        week: 1,
-        title: 'Core Fundamentals & Executive Overview',
-        topics: ['Program introduction & industry orientation', 'Key frameworks & standards', 'LMS tools & study resources'],
-      },
-      {
-        week: 2,
-        title: 'Advanced Applied Practical Modules',
-        topics: ['Deep-dive practical case studies', 'Real-world problem solving', 'Compliance & reporting standards'],
-      },
-      {
-        week: 3,
-        title: 'Capstone Project & Final Examination',
-        topics: ['End-to-end industrial project', 'Executive board presentation', 'Graduation & certification review'],
-      },
-    ],
-    skillsLearned: ['Executive Decision Making', 'Regulatory Compliance', 'Strategic Implementation', 'Hands-on Analytics'],
-    projects: [`${rawName} Capstone Project`, 'Real-world Case Simulation'],
-    prerequisites: ['Commitment to professional development', 'Willingness to complete live assignments'],
-    tools: ['Enterprise LMS', 'Google Meet', 'Case Study Portfolios'],
+    classId: item.class_id || `CLS-${courseId}`,
+    days: days,
+    timeSlot: time,
+    language: item.language || null,
+    level: rawLevel,
+    minAge: typeof item.min_age === 'number' ? item.min_age : 0,
+    maxAge: typeof item.max_age === 'number' ? item.max_age : 0,
+    endDate: item.end_date || null,
+    meetLink: item.meet_link || null,
+    video: rawVideoLink,
+    vide: rawVideoLink,
+    videoLink: rawVideoLink,
+    video_link: rawVideoLink,
+    video_url: rawVideoLink,
+    totalStudents: totalStudentsNum,
+    status: typeof item.status === 'number' ? item.status : 1,
+    description:
+      item.description ||
+      `${rawName} (${item.category || 'Professional Program'}) — পরিচালিত হচ্ছে ${educatorName}-এর তত্ত্বাবধানে।`,
+    descriptionEn:
+      item.descriptionEn ||
+      `${rawName} (${item.category || 'Professional Program'}) — conducted by ${educatorName}.`,
+    syllabus: Array.isArray(item.syllabus) ? item.syllabus : [],
+    skillsLearned: Array.isArray(item.skillsLearned) ? item.skillsLearned : [],
+    projects: Array.isArray(item.projects) ? item.projects : [],
+    prerequisites: Array.isArray(item.prerequisites) ? item.prerequisites : [],
+    tools: Array.isArray(item.tools) ? item.tools : [],
     isFeatured: parsedPrice > 10000 || levelUpper.includes('ADVANCED'),
   };
 }

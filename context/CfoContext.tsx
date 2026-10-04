@@ -154,19 +154,50 @@ export function CfoProvider({ children }: { children: React.ReactNode }) {
   const fetchCourses = useCallback(async () => {
     setCoursesLoading(true);
 
-    // Call internal Next.js proxy route (server proxies to backend safely)
+    // 1. Call internal Next.js proxy route (server proxies to backend safely)
     try {
-      const res = await fetch('/api/courses');
+      const res = await fetch('/api/courses', { cache: 'no-store' });
       if (res.ok) {
         const json = await res.json();
         const rawList = extractCoursesArray(json);
+        if (rawList.length > 0 && json.isLive) {
+          setApiCourses(rawList);
+          const adapted = rawList.map(adaptApiCourseToCfoCourse);
+          setCourses(adapted);
+          setIsLiveApiConnected(true);
+          setCoursesLoading(false);
+          return;
+        }
+
+        // 2. If server proxy fell back (e.g. cloud preview with user's local 127.0.0.1:8000 backend),
+        // try direct client-side fetch from browser to local backend before using fallback list
+        try {
+          const directBase = (
+            process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://127.0.0.1:8000'
+          ).replace(/\/$/, '');
+          const directRes = await fetch(`${directBase}/api/courses`, {
+            headers: { Accept: 'application/json' },
+            cache: 'no-store',
+          });
+          if (directRes.ok) {
+            const directJson = await directRes.json();
+            const directList = extractCoursesArray(directJson);
+            if (directList.length > 0) {
+              setApiCourses(directList);
+              setCourses(directList.map(adaptApiCourseToCfoCourse));
+              setIsLiveApiConnected(true);
+              setCoursesLoading(false);
+              return;
+            }
+          }
+        } catch {
+          // Direct local backend fetch not reachable from client browser
+        }
+
         if (rawList.length > 0) {
           setApiCourses(rawList);
           const adapted = rawList.map(adaptApiCourseToCfoCourse);
           setCourses(adapted);
-          if (json.isLive) {
-            setIsLiveApiConnected(true);
-          }
         }
       }
     } catch {

@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
-import { ApiCourse, INITIAL_API_COURSES } from '@/data/cfo-data';
+import { INITIAL_API_COURSES } from '@/data/cfo-data';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const backendBaseUrl =
@@ -9,7 +11,7 @@ export async function GET() {
 
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
 
     const targetUrl = `${backendBaseUrl.replace(/\/$/, '')}/api/courses`;
     const response = await fetch(targetUrl, {
@@ -17,7 +19,7 @@ export async function GET() {
       headers: {
         Accept: 'application/json',
       },
-      next: { revalidate: 30 },
+      cache: 'no-store',
     });
 
     clearTimeout(timeoutId);
