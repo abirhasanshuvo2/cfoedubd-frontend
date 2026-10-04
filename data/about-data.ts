@@ -166,6 +166,6 @@ export const OFFICIAL_ABOUT_DATA: AboutData = {
       iconName: 'Building2',
     },
   ],
-  videoUrl: 'https://www.youtube.com/watch?v=S7W6YGyaHOY',
-  youtubeId: 'S7W6YGyaHOY',
+  videoUrl: 'https://www.youtube.com/watch?v=-HeZs3qthR8&t=1s',
+  youtubeId: '-HeZs3qthR8',
 };

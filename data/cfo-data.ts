@@ -154,9 +154,9 @@ export function resolveCourseVideo(
   if (!trimmed) {
     return {
       hasVideo: false,
-      rawUrl: `https://www.youtube.com/watch?v=${defaultYoutubeId}`,
-      embedUrl: `https://www.youtube.com/embed/${defaultYoutubeId}?rel=0`,
-      autoplayEmbedUrl: `https://www.youtube.com/embed/${defaultYoutubeId}?autoplay=1&rel=0`,
+      rawUrl: `https://www.youtube.com/watch?v=${defaultYoutubeId}&t=1s`,
+      embedUrl: `https://www.youtube.com/embed/${defaultYoutubeId}?start=1&rel=0`,
+      autoplayEmbedUrl: `https://www.youtube.com/embed/${defaultYoutubeId}?autoplay=1&start=1&rel=0`,
       thumbnailUrl: `https://img.youtube.com/vi/${defaultYoutubeId}/hqdefault.jpg`,
       isDirectVideoFile: false,
       directVideoUrl: null,
@@ -191,11 +191,13 @@ export function resolveCourseVideo(
   const ytMatch = normalizedUrl.match(ytRegex);
   if (ytMatch && ytMatch[1]) {
     const videoId = ytMatch[1];
+    const timeMatch = normalizedUrl.match(/[?&](?:t|start)=(\d+)/i);
+    const startParam = timeMatch && timeMatch[1] ? `&start=${timeMatch[1]}` : '';
     return {
       hasVideo: true,
       rawUrl: normalizedUrl,
-      embedUrl: `https://www.youtube.com/embed/${videoId}?rel=0`,
-      autoplayEmbedUrl: `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`,
+      embedUrl: `https://www.youtube.com/embed/${videoId}?rel=0${startParam}`,
+      autoplayEmbedUrl: `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0${startParam}`,
       thumbnailUrl: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
       isDirectVideoFile: false,
       directVideoUrl: null,
@@ -254,8 +256,8 @@ export const INITIAL_API_COURSES: ApiCourse[] = [
     educator: "Mr Teacher S",
     total_students: 0,
     meet_link: null,
-    vide: "https://www.youtube.com/watch?v=-HeZs3qthR8",
-    video: "https://www.youtube.com/watch?v=-HeZs3qthR8",
+    vide: "https://www.youtube.com/watch?v=-HeZs3qthR8&t=1s",
+    video: "https://www.youtube.com/watch?v=-HeZs3qthR8&t=1s",
     days: [],
     time: "morning",
     language: null,
@@ -275,8 +277,8 @@ export const INITIAL_API_COURSES: ApiCourse[] = [
     educator: "Md. Abir Hasan",
     total_students: 1,
     meet_link: "https://meet.google.com/def-uvw",
-    vide: "https://www.youtube.com/watch?v=-HeZs3qthR8",
-    video: "https://www.youtube.com/watch?v=-HeZs3qthR8",
+    vide: "https://www.youtube.com/watch?v=-HeZs3qthR8&t=1s",
+    video: "https://www.youtube.com/watch?v=-HeZs3qthR8&t=1s",
     days: ["Monday", "Wednesday", "Friday"],
     time: "evening",
     language: "English",
@@ -296,8 +298,8 @@ export const INITIAL_API_COURSES: ApiCourse[] = [
     educator: "Mr Teacher S",
     total_students: 2,
     meet_link: "https://meet.google.com/def-uvw",
-    vide: "https://www.youtube.com/watch?v=-HeZs3qthR8",
-    video: "https://www.youtube.com/watch?v=-HeZs3qthR8",
+    vide: "https://www.youtube.com/watch?v=-HeZs3qthR8&t=1s",
+    video: "https://www.youtube.com/watch?v=-HeZs3qthR8&t=1s",
     days: ["Monday", "Wednesday", "Friday"],
     time: "evening",
     language: "English",
@@ -317,8 +319,8 @@ export const INITIAL_API_COURSES: ApiCourse[] = [
     educator: "Mr Teacher S",
     total_students: 2,
     meet_link: null,
-    vide: "https://www.youtube.com/watch?v=-HeZs3qthR8",
-    video: "https://www.youtube.com/watch?v=-HeZs3qthR8",
+    vide: "https://www.youtube.com/watch?v=-HeZs3qthR8&t=1s",
+    video: "https://www.youtube.com/watch?v=-HeZs3qthR8&t=1s",
     days: [],
     time: "morning",
     language: "Bengali",

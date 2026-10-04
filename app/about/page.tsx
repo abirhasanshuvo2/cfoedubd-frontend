@@ -193,7 +193,7 @@ export default function AboutPage() {
 
           <div className="relative aspect-video max-w-4xl mx-auto rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl">
             <iframe
-              src="https://www.youtube.com/embed/S7W6YGyaHOY"
+              src="https://www.youtube.com/embed/-HeZs3qthR8?start=1&rel=0"
               title="Chartered Officer Limited Official Introduction"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
