@@ -100,7 +100,7 @@ export default function ContactPage() {
       {/* Main Content */}
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full space-y-12">
         {/* Contact Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-2xs space-y-3">
             <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-[#C8963E] border border-amber-200 dark:border-amber-800 flex items-center justify-center">
               <MapPin className="w-6 h-6" />
@@ -111,9 +111,6 @@ export default function ContactPage() {
             <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
               {systemInfo.address || 'সিটি সেন্টার (লেভেল-২৫), মতিঝিল বা/এ, ঢাকা-১০০০, বাংলাদেশ।'}
             </p>
-            <span className="text-[11px] font-semibold text-[#966718] dark:text-amber-300 block pt-1">
-              বাংলাদেশ ব্যাংক ও শাপলা চত্বরের সংলগ্ন • Level-25 (Lift-26)
-            </span>
           </div>
 
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-2xs space-y-3">
@@ -129,19 +126,6 @@ export default function ContactPage() {
                 <p className="font-mono font-bold text-slate-900 dark:text-white">{systemInfo.mobile}</p>
               )}
               <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">{systemInfo.email || 'cfoedubd@gmail.com'}</p>
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-2xs space-y-3">
-            <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center">
-              <Clock className="w-6 h-6" />
-            </div>
-            <h3 className="text-base font-serif font-bold text-slate-900 dark:text-white">
-              {lang === 'bn' ? 'অফিস ও কাউন্সেলিং সময়' : 'Office & Counseling Hours'}
-            </h3>
-            <div className="text-xs text-slate-600 dark:text-slate-300 space-y-1">
-              <p><span className="font-semibold text-slate-800 dark:text-slate-200">শনিবার – বৃহস্পতিবার:</span> সকাল ৯:০০ – রাত ৮:০০</p>
-              <p><span className="font-semibold text-slate-800 dark:text-slate-200">শুক্রবার:</span> দুপুর ২:৩০ – রাত ৮:৩০ (এক্সিকিউটিভ ক্লাস)</p>
             </div>
           </div>
         </div>
@@ -203,32 +187,16 @@ export default function ContactPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="font-bold text-slate-700">ইমেইল ঠিকানা *</label>
-                    <input
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      placeholder="name@company.com"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:border-[#C8963E]"
-                    />
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="font-bold text-slate-700">অনুসন্ধানের বিষয়</label>
-                    <select
-                      value={formData.subject}
-                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-slate-900 bg-white"
-                    >
-                      <option value="CFO Program Inquiry">CFO ফ্ল্যাগশিপ প্রোগ্রাম তথ্য</option>
-                      <option value="VAT & Tax PGD">কাস্টমস, ভ্যাট ও ট্যাক্স পিজিডি</option>
-                      <option value="SAP FICO">ফিনটেক ও এসএপি-ফাইকো ল্যাব</option>
-                      <option value="Corporate Training">কর্পোরেট ইন-হাউস ট্রেনিং</option>
-                    </select>
-                  </div>
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-700">ইমেইল ঠিকানা *</label>
+                  <input
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="name@company.com"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:border-[#C8963E]"
+                  />
                 </div>
 
                 <div className="space-y-1">

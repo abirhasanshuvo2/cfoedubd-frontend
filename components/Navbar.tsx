@@ -242,15 +242,6 @@ export default function Navbar({
             )}
           </button>
 
-          {/* Learner Login */}
-          <button
-            onClick={handleAuthTrigger}
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 transition-colors cursor-pointer"
-          >
-            <User className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-            <span>{lang === 'bn' ? 'লগইন' : 'Login'}</span>
-          </button>
-
           {/* Primary CTA: "অনলাইন ভর্তি →" */}
           <Link
             href="/enroll-now?course=Chartered%20Financial%20Officer%20(CFO)"
@@ -344,17 +335,10 @@ export default function Navbar({
           </div>
 
           {/* Quick Actions in Mobile Drawer */}
-          <div className="pt-2 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 gap-2">
-            <button
-              onClick={handleAuthTrigger}
-              className="py-2.5 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer"
-            >
-              <User className="w-3.5 h-3.5 text-amber-600" />
-              <span>{lang === 'bn' ? 'স্টুডেন্ট লগইন' : 'Learner Login'}</span>
-            </button>
+          <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
             <button
               onClick={toggleTheme}
-              className="py-2.5 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer"
+              className="w-full py-2.5 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer"
             >
               {theme === 'dark' ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-slate-700" />}
               <span>{theme === 'dark' ? 'Light Theme' : 'Dark Theme'}</span>
