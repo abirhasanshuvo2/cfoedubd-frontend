@@ -116,7 +116,7 @@ export default function Navbar({
           </Link>
         </div>
 
-        {/* Center: Clean Nav Links (With Courses, Facilitator, Certificates, Media, About, Contact) */}
+        {/* Center: Clean Nav Links (With Courses, Certificates, Media, About, Contact) */}
         <nav className="hidden md:flex items-center gap-5 xl:gap-7 text-xs font-bold text-slate-700 dark:text-slate-200">
           <Link
             href="/courses"
@@ -124,13 +124,6 @@ export default function Navbar({
           >
             <BookOpen className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
             <span>{lang === 'bn' ? 'কোর্সসমূহ' : 'Courses'}</span>
-          </Link>
-          <Link
-            href="/facilitator"
-            className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors whitespace-nowrap flex items-center gap-1.5"
-          >
-            <GraduationCap className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-            <span>{lang === 'bn' ? 'ফ্যাসিলিটেটর' : 'Facilitator'}</span>
           </Link>
           <Link
             href="/certificates"
@@ -319,13 +312,6 @@ export default function Navbar({
               className="block px-3 py-2.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-amber-600 dark:text-amber-400"
             >
               {lang === 'bn' ? '📚 কোর্সসমূহ (Courses)' : '📚 Courses'}
-            </Link>
-            <Link
-              href="/facilitator"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block px-3 py-2.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-amber-700 dark:text-amber-400"
-            >
-              {lang === 'bn' ? '👨‍🏫 ফ্যাসিলিটেটর (Facilitator)' : '👨‍🏫 Facilitator'}
             </Link>
             <Link
               href="/certificates"

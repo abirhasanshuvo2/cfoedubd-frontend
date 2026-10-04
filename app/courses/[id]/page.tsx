@@ -29,30 +29,33 @@ import {
   GraduationCap
 } from 'lucide-react';
 
-interface PageProps {
-  params: Promise<{ id: string }>;
-}
+export default function CourseDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const unwrappedParams = use(params);
+  const id = String(unwrappedParams?.id || '');
+  const { lang, courses, theme, systemInfo } = useCfo();
 
-export default function CourseDetailPage({ params }: PageProps) {
-  const { id } = use(params);
-  const { lang, courses, theme } = useCfo();
+  console.log('[DEBUG CourseDetail] unwrappedParams:', unwrappedParams, 'id:', id);
 
-  const allCourses = courses && courses.length > 0 ? courses : COURSES;
-  const decodedId = decodeURIComponent(id);
-  const course = allCourses.find(
+  // Merge both live backend courses and catalog programs so all links resolve seamlessly
+  const combinedCourses = [...(courses || []), ...COURSES];
+  const decodedId = decodeURIComponent(id).toLowerCase().trim();
+  const course = combinedCourses.find(
     (c) =>
-      c.id === id ||
-      c.slug === id ||
-      c.id === decodedId ||
-      c.slug === decodedId ||
-      c.title.toLowerCase() === decodedId.toLowerCase()
+      c.id.toLowerCase() === decodedId ||
+      (c.slug && c.slug.toLowerCase() === decodedId) ||
+      c.id.replace(/^api-/, '').toLowerCase() === decodedId ||
+      c.title.toLowerCase() === decodedId ||
+      (c.titleEn && c.titleEn.toLowerCase() === decodedId) ||
+      (c.batchNumber && c.batchNumber.toLowerCase() === decodedId)
   );
+
+  console.log('[DEBUG CourseDetail] found course:', course?.title, 'total combined:', combinedCourses.length);
 
   if (!course) {
     notFound();
   }
 
-  const [activeTab, setActiveTab] = useState<'syllabus' | 'mentors' | 'projects' | 'certificate' | 'faq'>('syllabus');
+  const [activeTab, setActiveTab] = useState<'syllabus' | 'projects' | 'certificate' | 'faq'>('syllabus');
   const [expandedWeek, setExpandedWeek] = useState<number | null>(1);
   const [copiedLink, setCopiedLink] = useState(false);
 
@@ -181,33 +184,6 @@ export default function CourseDetailPage({ params }: PageProps) {
                   <span>{course.totalClasses} {lang === 'bn' ? 'টি ইন্টারঅ্যাক্টিভ সেশন' : 'Executive Sessions'}</span>
                 </div>
               </div>
-
-              {/* Mentors Row */}
-              <div className="pt-4 border-t border-slate-200 dark:border-[#1E3A8A] flex items-center gap-3">
-                <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
-                  {lang === 'bn' ? 'কোর্স লিড ফ্যাকাল্টি:' : 'Lead Faculty:'}
-                </span>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full overflow-hidden border border-[#C8963E] bg-slate-100 dark:bg-slate-800 shrink-0">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={course.mentors[0]?.avatar || '/dummy-avatar.svg'}
-                      alt={course.mentors[0]?.name}
-                      onError={(e) => {
-                        e.currentTarget.src = '/dummy-avatar.svg';
-                      }}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <p className="text-xs font-serif font-bold text-slate-900 dark:text-white">{course.mentors[0]?.name}</p>
-                    <p className="text-[11px] text-slate-600 dark:text-slate-300">
-                      {course.mentors[0]?.role} •{' '}
-                      <strong className="text-[#966718] dark:text-[#E5A93C] font-semibold">{course.mentors[0]?.company}</strong>
-                    </p>
-                  </div>
-                </div>
-              </div>
             </div>
 
             {/* Right Column Header summary preview */}
@@ -230,7 +206,9 @@ export default function CourseDetailPage({ params }: PageProps) {
                   </div>
                   <div className="flex justify-between py-1.5">
                     <span className="text-slate-500 dark:text-slate-400">ক্যাম্পাস মাধ্যম:</span>
-                    <span className="font-semibold text-amber-800 dark:text-[#E5A93C]">সিটি সেন্টার মতিঝিল / লাইভ</span>
+                    <span className="font-semibold text-amber-800 dark:text-[#E5A93C]">
+                      {systemInfo.address ? 'সিটি সেন্টার মতিঝিল / লাইভ' : 'ক্যাম্পাস / অনলাইন লাইভ'}
+                    </span>
                   </div>
                   <div className="flex justify-between py-1.5">
                     <span className="text-slate-500 dark:text-slate-400">স্বীকৃতি:</span>
@@ -246,7 +224,7 @@ export default function CourseDetailPage({ params }: PageProps) {
       {/* Main Two-Column Body */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left Column (8 cols): Syllabus, Mentors, Projects, Certificate, FAQ */}
+          {/* Left Column (8 cols): Syllabus, Projects, Certificate, FAQ */}
           <div className="lg:col-span-8 space-y-8">
             {/* Tab Buttons Navigation */}
             <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-1.5 shadow-2xs flex items-center gap-1 overflow-x-auto">
@@ -259,17 +237,6 @@ export default function CourseDetailPage({ params }: PageProps) {
                 }`}
               >
                 {lang === 'bn' ? 'সিলেবাস ও কারিকুলাম' : 'Curriculum'}
-              </button>
-
-              <button
-                onClick={() => setActiveTab('mentors')}
-                className={`py-2.5 px-4 rounded-xl text-xs sm:text-sm font-serif font-bold transition-all cursor-pointer whitespace-nowrap ${
-                  activeTab === 'mentors'
-                    ? 'bg-amber-500 text-slate-950 dark:bg-[#C8963E] dark:text-slate-950 shadow-xs font-black'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
-                }`}
-              >
-                {lang === 'bn' ? 'ফ্যাকাল্টি ও মেন্টরস' : 'Faculty Mentors'}
               </button>
 
               <button
@@ -310,14 +277,14 @@ export default function CourseDetailPage({ params }: PageProps) {
             {activeTab === 'syllabus' && (
               <section className="space-y-6">
                 {/* Skills Learned Box */}
-                <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-3">
-                  <h3 className="text-base font-serif font-bold text-slate-900 flex items-center gap-2">
+                <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-3">
+                  <h3 className="text-base font-serif font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-[#C8963E]" />
                     <span>{lang === 'bn' ? 'এই প্রোগ্রামে অর্জিত হবে যেসকল দক্ষতা' : 'Executive Competencies'}</span>
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
                     {course.skillsLearned.map((skill, idx) => (
-                      <div key={idx} className="flex items-start gap-2 text-xs text-slate-700">
+                      <div key={idx} className="flex items-start gap-2 text-xs text-slate-700 dark:text-slate-300">
                         <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                         <span className="font-medium">{skill}</span>
                       </div>
@@ -328,7 +295,7 @@ export default function CourseDetailPage({ params }: PageProps) {
                 {/* Week by Week Curriculum Accordion */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-serif font-bold text-slate-900">
+                    <h3 className="text-lg font-serif font-bold text-slate-900 dark:text-white">
                       {lang === 'bn' ? 'মডিউল ও সেশনভিত্তিক কারিকুলাম' : 'Curriculum Modules'}
                     </h3>
                     <span className="text-xs text-slate-500 font-semibold">
@@ -391,56 +358,14 @@ export default function CourseDetailPage({ params }: PageProps) {
               </section>
             )}
 
-            {/* Tab 2: Mentors */}
-            {activeTab === 'mentors' && (
-              <section className="space-y-4">
-                <div className="space-y-1">
-                  <h3 className="text-lg font-serif font-bold text-slate-900">
-                    {lang === 'bn' ? 'আইসিএবি/আইসিএমএবি ফেলো ও করপোরেট সিএফও মেন্টরস' : 'Faculty Council'}
-                  </h3>
-                  <p className="text-xs text-slate-600">
-                    আমাদের মেন্টররা দেশের শীর্ষস্থানীয় শিল্পগোষ্ঠীসমূহে অর্থ বিভাগে নেতৃত্ব দিচ্ছেন।
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {course.mentors.map((mentor, idx) => (
-                    <div
-                      key={idx}
-                      className="p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs flex items-center gap-4"
-                    >
-                      <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[#C8963E] bg-slate-100 shrink-0">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={mentor.avatar || '/dummy-avatar.svg'}
-                          alt={mentor.name}
-                          onError={(e) => {
-                            e.currentTarget.src = '/dummy-avatar.svg';
-                          }}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <h4 className="text-sm font-serif font-bold text-slate-900">{mentor.name}</h4>
-                        <p className="text-xs text-[#966718] font-medium">
-                          {mentor.role} @ <span className="font-bold text-slate-900">{mentor.company}</span>
-                        </p>
-                        <p className="text-xs text-slate-500">অভিজ্ঞতা: {mentor.experience}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Tab 3: Projects */}
+            {/* Tab 2: Projects */}
             {activeTab === 'projects' && (
               <section className="space-y-4">
                 <div className="space-y-1">
-                  <h3 className="text-lg font-serif font-bold text-slate-900">
+                  <h3 className="text-lg font-serif font-bold text-slate-900 dark:text-white">
                     {lang === 'bn' ? 'বোর্ডরুম ডিফেন্স ও রিয়েল-লাইফ কেস স্টাডি' : 'Boardroom Case Studies'}
                   </h3>
-                  <p className="text-xs text-slate-600">
+                  <p className="text-xs text-slate-600 dark:text-slate-400">
                     বাস্তব ডিএসই তালিকাভুক্ত আর্থিক প্রতিবেদন ও এনবিআর রিটার্ন অডিট সমাধান।
                   </p>
                 </div>
@@ -449,13 +374,13 @@ export default function CourseDetailPage({ params }: PageProps) {
                   {course.projects.map((proj, idx) => (
                     <div
                       key={idx}
-                      className="p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-3"
+                      className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-3"
                     >
-                      <div className="w-8 h-8 rounded-lg bg-amber-50 border border-amber-200 text-[#966718] font-mono font-bold text-xs flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 text-[#966718] dark:text-amber-300 font-mono font-bold text-xs flex items-center justify-center">
                         #{idx + 1}
                       </div>
-                      <h4 className="text-sm font-serif font-bold text-slate-900 leading-snug">{proj}</h4>
-                      <p className="text-xs text-slate-500">
+                      <h4 className="text-sm font-serif font-bold text-slate-900 dark:text-white leading-snug">{proj}</h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
                         লাইভ এসএপি সিস্টেম ও জাতীয় রাজস্ব বোর্ডের পোর্টালে সরাসরি প্রয়োগযোগ্য।
                       </p>
                     </div>
@@ -466,24 +391,24 @@ export default function CourseDetailPage({ params }: PageProps) {
 
             {/* Tab 4: Certificate */}
             {activeTab === 'certificate' && (
-              <section className="p-8 rounded-2xl border-2 border-dashed border-[#C8963E]/50 bg-amber-50/30 text-center space-y-5">
+              <section className="p-8 rounded-2xl border-2 border-dashed border-[#C8963E]/50 bg-amber-50/30 dark:bg-slate-900/60 text-center space-y-5">
                 <div className="w-16 h-16 rounded-full bg-amber-100 dark:bg-[#0A192F] text-amber-800 dark:text-[#E5A93C] flex items-center justify-center mx-auto shadow-sm border border-amber-300 dark:border-[#C8963E]">
                   <Award className="w-8 h-8" />
                 </div>
 
                 <div>
-                  <span className="text-xs font-serif font-bold text-[#966718] uppercase tracking-widest block">
+                  <span className="text-xs font-serif font-bold text-[#966718] dark:text-amber-400 uppercase tracking-widest block">
                     Professional Verifiable Executive Credential
                   </span>
-                  <h3 className="text-xl font-serif font-black text-slate-900 mt-1">
+                  <h3 className="text-xl font-serif font-black text-slate-900 dark:text-white mt-1">
                     {lang === 'bn' ? course.title : course.titleEn}
                   </h3>
-                  <p className="text-xs text-slate-600 max-w-md mx-auto mt-2 leading-relaxed">
+                  <p className="text-xs text-slate-600 dark:text-slate-300 max-w-md mx-auto mt-2 leading-relaxed">
                     কোর্সটি সফলভাবে সম্পন্ন করার পর চার্টার্ড অফিসার লিমিটেড (COL) কর্তৃক আনুষ্ঠানিকভাবে পেশাদার এক্সিকিউটিভ সার্টিফিকেট প্রদান করা হয়।
                   </p>
                 </div>
 
-                <div className="inline-flex items-center gap-2 p-2.5 rounded-xl bg-white border border-amber-200 text-xs font-mono text-slate-800 shadow-2xs">
+                <div className="inline-flex items-center gap-2 p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-amber-200 dark:border-amber-800/60 text-xs font-mono text-slate-800 dark:text-slate-200 shadow-2xs">
                   <span>অনলাইন ভেরিফিকেশন আইডি: COL-CFO-2026-{course.id.slice(-4).toUpperCase()}</span>
                 </div>
               </section>
@@ -497,9 +422,9 @@ export default function CourseDetailPage({ params }: PageProps) {
                   { q: 'কোর্স ফি কি কিস্তিতে পরিশোধের সুযোগ আছে?', a: 'হ্যাঁ, সিএফও ১ বছর প্রোগ্রামে ৩টি সহজ সেমিস্টার কিস্তিতে ফি পরিশোধের পূর্ণ সুযোগ রয়েছে।' },
                   { q: 'কোর্স শেষে কী ধরনের সার্টিফিকেট পাওয়া যাবে?', a: 'সফলভাবে প্রতিটি মডিউল ও প্রজেক্ট সম্পন্ন করার পর চার্টার্ড অফিসার লিমিটেড (COL) কর্তৃক প্রফেশনাল এক্সিকিউটিভ সার্টিফিকেট প্রদান করা হয়।' },
                 ].map((item, idx) => (
-                  <div key={idx} className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-1.5">
-                    <h4 className="text-sm font-serif font-bold text-slate-900">{item.q}</h4>
-                    <p className="text-xs text-slate-600 leading-relaxed">{item.a}</p>
+                  <div key={idx} className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-1.5">
+                    <h4 className="text-sm font-serif font-bold text-slate-900 dark:text-white">{item.q}</h4>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{item.a}</p>
                   </div>
                 ))}
               </section>
@@ -571,33 +496,36 @@ export default function CourseDetailPage({ params }: PageProps) {
               </Link>
 
               {/* Cohort Schedule Facts */}
-              <div className="space-y-2 pt-2 text-xs border-t border-slate-100">
-                <div className="flex items-center justify-between text-slate-600">
+              <div className="space-y-2 pt-2 text-xs border-t border-slate-100 dark:border-slate-800">
+                <div className="flex items-center justify-between text-slate-600 dark:text-slate-400">
                   <span>ব্যাচ ওরিয়েন্টেশন:</span>
-                  <span className="font-bold text-slate-900">{course.startDate}</span>
+                  <span className="font-bold text-slate-900 dark:text-white">{course.startDate}</span>
                 </div>
-                <div className="flex items-center justify-between text-slate-600">
+                <div className="flex items-center justify-between text-slate-600 dark:text-slate-400">
                   <span>ক্লাসের সময়:</span>
-                  <span className="font-bold text-slate-900">{course.schedule}</span>
+                  <span className="font-bold text-slate-900 dark:text-white">{course.schedule}</span>
                 </div>
-                <div className="flex items-center justify-between text-slate-600">
+                <div className="flex items-center justify-between text-slate-600 dark:text-slate-400">
                   <span>মোট সেশন:</span>
-                  <span className="font-bold text-slate-900">{course.totalClasses} টি</span>
+                  <span className="font-bold text-slate-900 dark:text-white">{course.totalClasses} টি</span>
                 </div>
-                <div className="flex items-center justify-between text-slate-600">
+                <div className="flex items-center justify-between text-slate-600 dark:text-slate-400">
                   <span>মেয়াদ:</span>
-                  <span className="font-bold text-slate-900">{course.duration}</span>
+                  <span className="font-bold text-slate-900 dark:text-white">{course.duration}</span>
                 </div>
               </div>
 
               {/* Admission Helpline */}
               <div className="text-center pt-1">
                 <a
-                  href="tel:+8801894929000"
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-[#966718] transition-colors"
+                  href={`tel:${(systemInfo.phone || '+880 1713378787').replace(/\s+/g, '')}`}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 hover:text-[#966718] dark:hover:text-[#E5A93C] transition-colors"
                 >
                   <PhoneCall className="w-3.5 h-3.5 text-[#C8963E]" />
-                  <span>ভর্তি হেল্পলাইন: +880 1894-929000</span>
+                  <span>
+                    {lang === 'bn' ? 'ভর্তি হেল্পলাইন:' : 'Helpline:'}{' '}
+                    {systemInfo.phone || '+880 1713378787'}
+                  </span>
                 </a>
               </div>
             </div>
@@ -606,11 +534,11 @@ export default function CourseDetailPage({ params }: PageProps) {
       </main>
 
       {/* Mobile Sticky Bottom Enrollment Bar */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 p-3 px-4 flex items-center justify-between shadow-2xl">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 p-3 px-4 flex items-center justify-between shadow-2xl">
         <div>
-          <span className="text-[11px] text-slate-500 block">কোর্স ফি:</span>
+          <span className="text-[11px] text-slate-500 dark:text-slate-400 block">কোর্স ফি:</span>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-lg font-serif font-black text-slate-950">৳{course.price.toLocaleString()}</span>
+            <span className="text-lg font-serif font-black text-slate-950 dark:text-white">৳{course.price.toLocaleString()}</span>
             <span className="text-xs text-slate-400 line-through">৳{course.originalPrice.toLocaleString()}</span>
           </div>
         </div>

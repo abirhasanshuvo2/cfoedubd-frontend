@@ -102,42 +102,6 @@ export default function CourseDetailsModal({
 
         {/* Modal Scrollable Body */}
         <div className="p-6 sm:p-8 overflow-y-auto space-y-8 flex-1">
-          {/* Mentors Section */}
-          <div>
-            <h3 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
-              <Users className="w-5 h-5 text-amber-500" />
-              <span>{lang === 'bn' ? 'ইন্ডাস্ট্রি মেন্টরবৃন্দ' : 'Course Mentors'}</span>
-            </h3>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {course.mentors.map((mentor, index) => (
-                <div
-                  key={index}
-                  className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center gap-3.5"
-                >
-                  <div className="w-13 h-13 rounded-full overflow-hidden border-2 border-white shadow-xs shrink-0">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={mentor.avatar || '/dummy-avatar.svg'}
-                      alt={mentor.name}
-                      onError={(e) => {
-                        e.currentTarget.src = '/dummy-avatar.svg';
-                      }}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-slate-900 text-sm sm:text-base">{mentor.name}</h4>
-                    <p className="text-xs text-slate-600 font-medium">
-                      {mentor.role} @ <span className="font-bold text-slate-900">{mentor.company}</span>
-                    </p>
-                    <p className="text-[11px] text-amber-600 font-semibold mt-0.5">{mentor.experience}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
           {/* What you will learn */}
           <div>
             <h3 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">

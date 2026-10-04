@@ -27,65 +27,74 @@ export default function AboutPage() {
 
   const metrics = [
     { 
-      number: '২,০৯০+', 
-      numberEn: '2,090+', 
-      label: 'সমাপ্ত লাইভ ও ইন্টারঅ্যাক্টিভ সেশন', 
-      labelEn: 'Finished Sessions' 
+      number: '২,০০০+', 
+      numberEn: '2000+', 
+      label: 'নিবন্ধিত শিক্ষার্থী ও কর্পোরেট এক্সিকিউটিভ', 
+      labelEn: 'Students' 
     },
     { 
-      number: '৩,১০০+', 
-      numberEn: '3,100+', 
-      label: 'নিবন্ধিত লার্নার ও এক্সিকিউটিভ', 
-      labelEn: 'Enrolled Learners' 
+      number: '৯৮%', 
+      numberEn: '98%', 
+      label: 'সফল গ্র্যাজুয়েট ও ক্যারিয়ার রূপান্তর হার', 
+      labelEn: 'Graduates' 
     },
     { 
-      number: '৫০+', 
-      numberEn: '50+', 
-      label: 'অনলাইন প্রফেশনাল ইন্সট্রাক্টর', 
-      labelEn: 'Online Instructors' 
-    },
-    { 
-      number: '৯৫%', 
-      numberEn: '95%', 
-      label: 'শিক্ষার্থী ইতিবাচক সন্তুষ্টির হার', 
-      labelEn: 'Satisfaction Rate' 
-    },
-    { 
-      number: '২৪/৭', 
-      numberEn: '24/7', 
-      label: 'অনলাইন লার্নিং ও রিসোর্স সাপোর্ট', 
-      labelEn: 'Resource Support' 
+      number: '৯০+', 
+      numberEn: '90+', 
+      label: 'বিশেষায়িত প্রফেশনাল ক্লাস ও ল্যাব', 
+      labelEn: 'Specialized Classes' 
     }
   ];
 
   const executivePillars = [
     {
-      icon: <Award className="w-6 h-6 text-[#C8963E]" />,
-      title: 'বোর্ডরুম ফাইন্যান্স ও স্ট্র্যাটেজিক লিডারশিপ',
-      titleEn: 'Boardroom Finance & Strategic Leadership',
-      description: 'থিওরি বা অ্যাকাউন্টিং জার্নাল মুখস্থের বাইরে এসে সরাসরি ডিএসই তালিকাভুক্ত কর্পোরেট ভ্যালুয়েশন, ক্যাপিটাল বাজেট ও মার্জার-অ্যাকুইজিশনের মতো সি-স্যুট সিদ্ধান্ত গ্রহণ ফ্রেমওয়ার্ক।',
-      descriptionEn: 'Beyond routine bookkeeping. Practical decision-making models for enterprise valuation, treasury, debt financing, and board-level reporting.'
+      icon: <Award className="w-6 h-6 text-amber-600 dark:text-[#FFC000]" />,
+      title: 'প্রায়োগিক প্রাসঙ্গিকতা (Practical Relevance)',
+      titleEn: 'Practical Relevance',
+      description: 'সরাসরি কর্মক্ষেত্রের বাস্তব চ্যালেঞ্জভিত্তিক প্রায়োগিক প্রশিক্ষণ, যা ফাইন্যান্স ও ফিনটেক ইন্ডাস্ট্রিতে শিক্ষার্থীদের তাৎক্ষণিক মূল্যায়ন নিশ্চিত করে।',
+      descriptionEn: 'Hands-on training directly correlating with real-world applications in finance and FinTech, ensuring graduates are immediately valuable to employers.'
     },
     {
-      icon: <Building2 className="w-6 h-6 text-blue-500" />,
-      title: 'হ্যান্ডস-অন এসএপি-ফাইকো (SAP-FICO) ও ই-ট্যাক্স ল্যাব',
-      titleEn: 'Hands-on SAP-FICO ERP & NBR Portals',
-      description: 'লাইভ এসএপি এস/৪ হানা (S/4HANA) ক্লাউড ক্লায়েন্ট ও জাতীয় রাজস্ব বোর্ডের (NBR) ই-ট্যাক্স এবং মুসক ৯.১ অনলাইন পোর্টালে সরাসরি ইনপুট ও অডিট অনুশীলন।',
-      descriptionEn: 'Hands-on live configuration in enterprise SAP S/4HANA ERP systems and direct filing on national NBR online tax/VAT portals.'
+      icon: <GraduationCap className="w-6 h-6 text-blue-600 dark:text-blue-400" />,
+      title: 'মানসম্মত শিক্ষা (Quality Education)',
+      titleEn: 'Quality Education',
+      description: 'শিক্ষার গুণগত মানে আপসহীন প্রতিশ্রুতি। প্রতিটি কোর্স শীর্ষস্থানীয় ফেলো চার্টার্ড অ্যাকাউন্ট্যান্টস (FCA) এবং করপোরেট বিশেষজ্ঞদের দ্বারা পরিচালিত।',
+      descriptionEn: 'Uncompromising commitment to quality, featuring courses designed and delivered by industry leaders and practicing FCAs/FCMAs.'
     },
     {
-      icon: <Users className="w-6 h-6 text-emerald-500" />,
-      title: 'ফেলো চার্টার্ড অ্যাকাউন্ট্যান্টস (FCA/FCMA) মেন্টরশিপ',
-      titleEn: 'Mentorship by Practicing FCAs & FCMAs',
-      description: 'আইসিএবি (ICAB) ও আইসিএমএবি (ICMAB)-এর ফেলো সদস্য এবং শীর্ষস্থানীয় বহুজাতিক ও জাতীয় শিল্পগোষ্ঠীর চিফ ফাইন্যান্সিয়াল অফিসারদের সরাসরি ক্লাস ও কেস স্টাডি।',
-      descriptionEn: 'Every module is developed and instructed by practicing Fellow Chartered Accountants and corporate CFOs with two decades of executive experience.'
+      icon: <Sparkles className="w-6 h-6 text-purple-600 dark:text-purple-400" />,
+      title: 'উদ্ভাবন ও ফিনটেক রূপান্তর (Innovation)',
+      titleEn: 'Innovation',
+      description: 'দ্রুত পরিবর্তনশীল অর্থনৈতিক পরিমণ্ডলে প্রযুক্তিগত অগ্রগতি ও ফিনটেকের সর্বশেষ ধারা অনুযায়ী কারিকুলাম নিয়মিত আধুনিকায়ন করা হয়।',
+      descriptionEn: 'Staying ahead of evolving industry trends, particularly in financial technology and ERP automation, for impactful career education.'
     },
     {
-      icon: <GraduationCap className="w-6 h-6 text-purple-500" />,
-      title: 'প্রফেশনাল এক্সিকিউটিভ সনদ ও নেটওয়ার্ক',
-      titleEn: 'Professional Executive Credentials & Network',
-      description: 'কোর্স সফলভাবে সম্পন্ন করার পর চার্টার্ড অফিসার লিমিটেড (COL) কর্তৃক সম্মানজনক প্রফেশনাল এক্সিকিউটিভ সার্টিফিকেট প্রদান এবং আজীবন অ্যালামনাই নেটওয়ার্ক সুবিধা।',
-      descriptionEn: 'Recognized professional credentials from Chartered Officer Limited (COL) with verified online certificates and lifelong alumni executive network.'
+      icon: <ShieldCheck className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />,
+      title: 'পেশাদার সততা ও নীতিশাস্ত্র (Professional Integrity)',
+      titleEn: 'Professional Integrity',
+      description: 'উচ্চতম পেশাদারিত্ব ও প্রাতিষ্ঠানিক সুশাসন অনুশীলন, যা শিক্ষার্থীদের শুধু দক্ষ কর্মী নয়, একজন নৈতিক দায়িত্বশীল নাগরিক হিসেবে গড়ে তোলে।',
+      descriptionEn: 'Instilling the highest levels of professionalism and ethical conduct, preparing learners for strategic boardroom leadership.'
+    },
+    {
+      icon: <Users className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />,
+      title: 'পারস্পরিক জ্ঞান বিনিময় (Collaborative Learning)',
+      titleEn: 'Collaborative Learning',
+      description: 'শিক্ষার্থী, অভিজ্ঞ প্রশিক্ষক এবং ইন্ডাস্ট্রি সিএফওদের মাঝে উন্মুক্ত ও গঠনমূলক নেটওয়ার্কিং ও অভিজ্ঞতা আদান-প্রদানের পরিবেশ।',
+      descriptionEn: 'A cooperative educational ecosystem where learners, instructors, and executive professionals exchange best practices.'
+    },
+    {
+      icon: <Compass className="w-6 h-6 text-rose-600 dark:text-rose-400" />,
+      title: 'গ্লোবাল স্ট্যান্ডার্ড (Global Reach)',
+      titleEn: 'Global Reach',
+      description: 'আন্তর্জাতিক মানদণ্ড অনুসরণে প্রণীত কোর্স, যা দেশীয় ও বৈশ্বিক যেকোনো চ্যালেঞ্জিং অর্থনীতিতে নেতৃত্বদানে দক্ষ করে তোলে।',
+      descriptionEn: 'Designed with a global perspective to equip learners with the skills required to succeed in any international market.'
+    },
+    {
+      icon: <Building2 className="w-6 h-6 text-teal-600 dark:text-teal-400" />,
+      title: 'ক্লায়েন্ট কেন্দ্রিক সেবা (Customer Focus)',
+      titleEn: 'Customer Focus',
+      description: 'শিক্ষার্থী ও করপোরেট ক্লায়েন্টদের প্রত্যাশা পূরণ ও আন্তরিক সহায়তা প্রদানে আমরা শতভাগ প্রতিশ্রুতিবদ্ধ।',
+      descriptionEn: 'Exceeding expectations of students and corporate clients through personalized guidance and specialized corporate solutions.'
     }
   ];
 
@@ -97,47 +106,84 @@ export default function AboutPage() {
       <Navbar />
 
       {/* Hero Header */}
-      <section className="relative bg-gradient-to-b from-amber-50/90 via-slate-50 to-white dark:from-[#0A192F] dark:via-[#0D254C] dark:to-[#0A192F] dark:bg-[#0A192F] text-slate-900 dark:text-white pt-20 pb-24 overflow-hidden border-b border-slate-200 dark:border-[#1E3A8A] transition-colors">
+      <section className="relative bg-gradient-to-b from-amber-50/90 via-slate-50 to-white dark:from-[#0A192F] dark:via-[#0D254C] dark:to-[#0A192F] dark:bg-[#0A192F] text-slate-900 dark:text-white pt-16 pb-20 overflow-hidden border-b border-slate-200 dark:border-[#1E3A8A] transition-colors">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(200,150,62,0.18),rgba(10,25,47,0))]" />
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 dark:bg-[#1E3A8A]/50 border border-amber-300 dark:border-[#C8963E]/40 text-xs font-bold text-amber-900 dark:text-[#E5A93C] shadow-2xs">
-            <Sparkles className="w-3.5 h-3.5 text-[#C8963E]" />
-            <span>{lang === 'bn' ? 'আমাদের পরিচিতি ও রূপকল্প' : 'About Chartered Officer Limited (COL)'}</span>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-100 dark:bg-[#1E3A8A]/50 border border-amber-300 dark:border-amber-400/40 text-xs font-bold text-amber-950 dark:text-[#FFC000] shadow-2xs">
+            <ShieldCheck className="w-4 h-4 text-amber-700 dark:text-[#FFC000]" />
+            <span>
+              {lang === 'bn'
+                ? 'আরজেএসসি (RJSC) নিবন্ধিত নং: S-13064/2019 • বাণিজ্য মন্ত্রণালয়'
+                : 'RJSC Reg. No: S-13064/2019 • Ministry of Commerce'}
+            </span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif font-black text-slate-950 dark:text-white tracking-tight leading-tight">
             {lang === 'bn' ? (
               <>
-                বাংলাদেশের করপোরেট ফিন্যান্স ও সি-স্যুট নেতৃত্বের <br className="hidden sm:block" />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#966718] dark:from-[#FFDF79] dark:via-[#E5A93C] dark:to-[#C8963E]">শীর্ষ পেশাদার অ্যাকাডেমি</span>
+                চার্টার্ড অফিসার লিমিটেড <br className="hidden sm:block" />
+                <span className="text-amber-800 dark:text-[#FFC000]">
+                  সিএফও ফাউন্ডেশন অব বাংলাদেশ
+                </span>
               </>
             ) : (
               <>
-                The Premier Institute for Corporate Finance <br className="hidden sm:block" />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#966718] dark:from-[#FFDF79] dark:via-[#E5A93C] dark:to-[#C8963E]">& Boardroom CFO Leadership</span>
+                Chartered Officer Limited <br className="hidden sm:block" />
+                <span className="text-amber-800 dark:text-[#FFC000]">
+                  CFO Foundation of Bangladesh
+                </span>
               </>
             )}
           </h1>
 
-          <p className="text-sm sm:text-base md:text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
-            {systemInfo.description || (lang === 'bn'
-              ? 'চার্টার্ড অফিসার লিমিটেড (COL) ও সিএফও এডুকেশন বাংলাদেশ দেশের ফাইন্যান্সিয়াল লিডারশিপ, ট্যাক্সেশন, ভ্যাট এবং প্রফেশনাল এক্সিকিউটিভ স্কিল ডেভেলপমেন্টের শীর্ষ প্ল্যাটফর্ম। দেশের হিসাবরক্ষণ কর্মকর্তা ও ফাইন্যান্স প্রফেশনালদের আধুনিক সিএফও ও স্ট্র্যাটেজিক লিডার হিসেবে গড়ে তুলতে আমরা প্রতিশ্রুতিবদ্ধ।'
-              : 'Chartered Officer Limited (COL) & CFO Education Bangladesh is the premier professional academy shaping corporate leaders, financial strategists, and executive professionals across Bangladesh.')}
+          <p className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed font-medium">
+            {lang === 'bn'
+              ? 'সিএফও ফাউন্ডেশন অব বাংলাদেশ (CFO BD) বর্তমান ও ভবিষ্যৎ চিফ ফাইন্যান্সিয়াল অফিসারদের সমন্বয়ে গঠিত একটি অলাভজনক সংগঠন যা সরকারের বাণিজ্য মন্ত্রণালয়ের অধীন আরজেএসসি (RJSC) নিবন্ধিত (রেজি নং: S-13064/2019)। চার্টার্ড অফিসার লিমিটেড (COL) প্রতিষ্ঠিত হয়েছে বাস্তবমুখী জ্ঞান ও প্রায়োগিক দক্ষতা প্রদানের মাধ্যমে পেশাজীবীদের কর্মক্ষেত্রে উৎপাদনশীলতা বৃদ্ধির লক্ষ্যে।'
+              : 'The CFO Foundation of Bangladesh (CFO BD) is a non-profit organization comprised of current and future Chief Financial Officers (CFOs) registered with the RJSC, Ministry of Commerce, Government of Bangladesh (Reg: S-13064/2019). Chartered Officer Limited (COL) was established to provide knowledge and skills that considerably strengthen on-the-job productivity.'}
           </p>
+
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href="/courses"
+              className="px-6 py-3 rounded-xl bg-[#FFC000] hover:bg-[#E6AC00] text-slate-950 font-black text-xs sm:text-sm flex items-center gap-2 shadow-md hover:shadow-lg transition-all border border-amber-300"
+            >
+              <span>{lang === 'bn' ? 'সব কোর্স দেখুন' : 'Explore Courses'}</span>
+              <ArrowRight className="w-4 h-4 stroke-[2.8]" />
+            </Link>
+
+            <a
+              href="#official-video"
+              className="px-5 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 font-bold text-xs sm:text-sm flex items-center gap-2 shadow-xs transition-colors"
+            >
+              <span>{lang === 'bn' ? 'অফিসিয়াল ভিডিও দেখুন' : 'Watch Intro Video'}</span>
+            </a>
+          </div>
         </div>
       </section>
 
-      {/* Metrics Banner */}
-      <section className="bg-slate-100/90 dark:bg-[#0D254C] text-slate-800 dark:text-white py-10 border-b border-slate-200 dark:border-[#1E3A8A] transition-colors">
+      {/* Metrics Banner (From cfoedubd.com/about) */}
+      <section className="bg-white dark:bg-[#0D254C] text-slate-800 dark:text-white py-12 border-b border-slate-200 dark:border-[#1E3A8A] transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 text-center">
+          <div className="text-center mb-8">
+            <span className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider">
+              {lang === 'bn' ? 'অফিসিয়াল পরিসংখ্যান' : 'Key Benchmarks'}
+            </span>
+            <h2 className="text-xl sm:text-2xl font-serif font-black text-slate-950 dark:text-white mt-1">
+              {lang === 'bn' ? 'cfoedubd.com অর্জন ও মাইলফলক' : 'Official Performance Metrics'}
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center max-w-4xl mx-auto">
             {metrics.map((m, idx) => (
-              <div key={idx} className="space-y-1">
-                <p className="text-2xl sm:text-3xl font-serif font-black text-amber-800 dark:text-[#E5A93C]">
+              <div
+                key={idx}
+                className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-xs hover:border-amber-400 transition-all space-y-1"
+              >
+                <p className="text-3xl sm:text-4xl font-serif font-black text-amber-800 dark:text-[#FFC000]">
                   {lang === 'bn' ? m.number : m.numberEn}
                 </p>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium">
+                <p className="text-sm font-bold text-slate-900 dark:text-white">
                   {lang === 'bn' ? m.label : m.labelEn}
                 </p>
               </div>
@@ -146,67 +192,75 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Main Pillars */}
+      {/* Main Content */}
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full space-y-16">
-        {/* Mission and Vision Grid */}
+        {/* Mission and Vision Grid (Exact from cfoedubd.com/mission) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/60 text-[#966718] dark:text-amber-300 border border-amber-200 dark:border-amber-800 text-xs font-bold">
-              <Compass className="w-3.5 h-3.5 text-[#C8963E]" />
-              <span>{lang === 'bn' ? 'আমাদের ভিশন (Vision)' : 'Our Vision'}</span>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 shadow-xs space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800 text-xs font-bold">
+              <Compass className="w-3.5 h-3.5 text-blue-600" />
+              <span>{lang === 'bn' ? 'আমাদের ভিশন (Our Vision)' : 'Our Vision'}</span>
             </div>
-            <h3 className="text-xl font-serif font-bold text-slate-900 dark:text-white">
-              {lang === 'bn' ? 'আন্তর্জাতিক মানসম্পন্ন করপোরেট লিডারশিপ তৈরি' : 'Empowering Global Financial Leadership'}
+            <h3 className="text-xl font-serif font-bold text-slate-950 dark:text-white">
+              {lang === 'bn' ? 'ইনোভেশন ও প্রায়োগিক ফাইন্যান্স শিক্ষায় শীর্ষস্থান' : 'Top Institute for Finance & FinTech Education'}
             </h3>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-line">
-              {systemInfo.about_first_section || (lang === 'bn'
-                ? 'বাংলাদেশের ব্যবসা-বাণিজ্য ও করপোরেট সেক্টরকে আন্তর্জাতিক মানে উন্নীত করতে সক্ষম সিএফও, ট্যাক্স পার্টনার এবং ফাইন্যান্সিয়াল আর্কিটেক্ট গড়ে তোলা, যারা সততা ও বাস্তব অভিজ্ঞতার সমন্বয়ে বোর্ডরুমে সিদ্ধান্ত দেবেন।'
-                : 'To be the benchmark center of executive finance learning in South Asia, producing leaders capable of navigating complex macroeconomic, tax, and governance realities.')}
+            <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
+              {lang === 'bn'
+                ? 'একটি উদ্ভাবনী, সময়োপযোগী ও বাস্তবমুখী প্রায়োগিক কারিকুলামের মাধ্যমে শিক্ষার্থীদের কর্মক্ষেত্রে সরাসরি উপযোগী ইন্ডাস্ট্রি-রেডি প্রফেশনাল হিসেবে রূপান্তর করে ফাইন্যান্স ও ফিনটেক শিক্ষায় বাংলাদেশের সবচেয়ে নির্ভরযোগ্য ও পছন্দের শীর্ষ প্রশিক্ষণ প্রতিষ্ঠান হিসেবে স্বীকৃতি অর্জন করা।'
+                : 'To be the preferred training institute for finance and FinTech education, recognized for transforming students into industry-ready professionals through an innovative, relevant, and practical curriculum.'}
             </p>
           </div>
 
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800 text-xs font-bold">
-              <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
-              <span>{lang === 'bn' ? 'আমাদের মিশন (Mission)' : 'Our Mission'}</span>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 shadow-xs space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border border-amber-200 dark:border-amber-800 text-xs font-bold">
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
+              <span>{lang === 'bn' ? 'আমাদের মিশন (Our Mission)' : 'Our Mission'}</span>
             </div>
-            <h3 className="text-xl font-serif font-bold text-slate-900 dark:text-white">
-              {lang === 'bn' ? 'তত্ত্ব ও বাস্তব কাজের দূরত্বের অবসান' : 'Bridging Academic Theory with Real Practice'}
+            <h3 className="text-xl font-serif font-bold text-slate-950 dark:text-white">
+              {lang === 'bn' ? 'অপারেশনাল শ্রেষ্ঠত্ব ও গ্লোবাল প্রতিযোগিতা সক্ষমতা' : 'Operational Excellence & Competitive Edge'}
             </h3>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-line">
-              {systemInfo.about_second_section || (lang === 'bn'
-                ? 'বিশ্বমানের কারিকুলাম, সরাসরি এসএপি-ফাইকো ক্লাউড ল্যাব, জাতীয় রাজস্ব বোর্ডের বাস্তব রিটার্ন ফাইলিং এবং আইসিএবি/আইসিএমএবি ফেলোদের সরাসরি মেন্টরশিপের মাধ্যমে পেশাদারদের হাতে-কলমে দক্ষ করা।'
-                : 'Delivering hands-on boardroom case study pedagogy, automated tax modeling, and enterprise ERP training backed by recognized government credentials.')}
+            <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
+              {lang === 'bn'
+                ? 'ফাইন্যান্স এবং ফাইন্যান্সিয়াল টেকনোলজিতে শীর্ষস্থানীয় পেশাদার প্রশিক্ষণ নিশ্চিত করা, যা শিক্ষার্থী ও করপোরেট প্রতিষ্ঠানসমূহকে অপারেশনাল উৎকর্ষ এবং গ্লোবাল মার্কেটপ্লেসে টেকসই প্রতিযোগিতামূলক সুবিধা অর্জনে সক্ষম করে তোলে।'
+                : 'To provide top-notch professional training in finance and financial technology that enables individuals and organizations to achieve operational excellence and competitive edge in the global marketplace.'}
             </p>
           </div>
         </div>
 
-        {/* 4 Pillars of Excellence */}
+        {/* 7 Core Values (Exact from cfoedubd.com/mission) */}
         <div className="space-y-8">
-          <div className="text-center max-w-3xl mx-auto space-y-3">
-            <h2 className="text-2xl sm:text-3xl font-serif font-black text-slate-900 dark:text-white">
-              {lang === 'bn' ? 'চার্টার্ড অফিসার লিমিটেডের চার মূল ভিত্তি' : 'The Four Pillars of COL Excellence'}
+          <div className="text-center max-w-3xl mx-auto space-y-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">
+              {lang === 'bn' ? 'আমাদের মূল মূল্যবোধ' : 'Core Organizational Values'}
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-serif font-black text-slate-950 dark:text-white">
+              {lang === 'bn' ? '৭টি মূল মূল্যবোধ (Core Values)' : '7 Pillars of Excellence'}
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
               {lang === 'bn'
-                ? 'আমাদের প্রতিটি প্রোগ্রাম করপোরেট দুনিয়ার কঠোর চাহিদা মাথায় রেখে ডিজাইন করা হয়েছে।'
-                : 'Engineered specifically around accountability, boardroom decisions, and real career transitions.'}
+                ? 'চার্টার্ড অফিসার লিমিটেডের প্রতিটি কারিকুলাম ও প্রশিক্ষণ এই মূল বিষয়গুলোর ওপর প্রতিষ্ঠিত।'
+                : 'Uncompromising principles that guide our academic and corporate standards.'}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {executivePillars.map((p, idx) => (
               <div
                 key={idx}
-                className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 shadow-xs hover:border-[#C8963E] hover:shadow-xl transition-all space-y-4"
+                className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-xs hover:border-amber-400 hover:shadow-md transition-all space-y-3"
               >
-                <div className="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center">
-                  {p.icon}
+                <div className="flex items-center justify-between">
+                  <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800">
+                    {p.icon}
+                  </div>
+                  <span className="font-mono font-bold text-xs text-amber-700 dark:text-amber-400">
+                    #0{idx + 1}
+                  </span>
                 </div>
-                <h3 className="text-lg font-serif font-bold text-slate-900 dark:text-white">
+                <h4 className="text-base font-serif font-bold text-slate-950 dark:text-white">
                   {lang === 'bn' ? p.title : p.titleEn}
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                </h4>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
                   {lang === 'bn' ? p.description : p.descriptionEn}
                 </p>
               </div>
@@ -214,61 +268,88 @@ export default function AboutPage() {
           </div>
         </div>
 
-        {/* Campus Location & Accreditation Card */}
-        <section className="bg-white dark:bg-[#0A192F] text-slate-900 dark:text-white rounded-3xl p-8 sm:p-12 border border-slate-200 dark:border-[#1E3A8A] space-y-8 shadow-sm transition-colors">
+        {/* Official Video Section (cfoedubd.com/about) */}
+        <section id="official-video" className="bg-slate-900 text-white rounded-3xl p-6 sm:p-10 shadow-xl space-y-6">
+          <div className="max-w-2xl mx-auto text-center space-y-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+              {lang === 'bn' ? 'অফিসিয়াল ডকুমেন্টারি' : 'Official Introduction'}
+            </span>
+            <h3 className="text-2xl sm:text-3xl font-serif font-black text-white">
+              {lang === 'bn' ? 'চার্টার্ড অফিসার লিমিটেডের ভিডিও পরিচিতি' : 'Chartered Officer Limited In Action'}
+            </h3>
+            <p className="text-xs text-slate-300">
+              {lang === 'bn'
+                ? 'সিএফও বাংলাদেশ কীভাবে প্রফেশনাল এক্সিকিউটিভ তৈরিতে ভূমিকা রাখছে তা সরাসরি দেখুন।'
+                : 'Watch how we prepare finance and corporate executives for leadership.'}
+            </p>
+          </div>
+
+          <div className="relative aspect-video max-w-4xl mx-auto rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl">
+            <iframe
+              src="https://www.youtube.com/embed/S7W6YGyaHOY"
+              title="Chartered Officer Limited Official Introduction"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-full border-0"
+            />
+          </div>
+        </section>
+
+        {/* Campus Location & Head Office */}
+        <section className="bg-white dark:bg-[#0A192F] text-slate-900 dark:text-white rounded-3xl p-8 sm:p-10 border border-slate-200 dark:border-[#1E3A8A] space-y-8 shadow-xs transition-colors">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="space-y-4">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#966718] dark:text-[#E5A93C] flex items-center gap-1.5">
-                <MapPin className="w-4 h-4 text-[#C8963E]" />
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-[#FFC000] flex items-center gap-1.5">
+                <MapPin className="w-4 h-4 text-amber-600" />
                 CAMPUS & HEAD OFFICE
               </span>
-              <h3 className="text-2xl sm:text-3xl font-serif font-black text-slate-900 dark:text-white">
+              <h3 className="text-2xl sm:text-3xl font-serif font-black text-slate-950 dark:text-white">
                 {systemInfo.address || (lang === 'bn'
-                  ? 'সিটি সেন্টার, লেভেল-২৫, মতিঝিল বা/এ, ঢাকা'
-                  : 'City Centre, Level 25, Motijheel C/A, Dhaka')}
+                  ? 'সিটি সেন্টার ৯০/১, লেভেল-২৫ (লিফট-২৬), মতিঝিল বা/এ, ঢাকা-১০০০'
+                  : 'City Centre 90/1, Level-25(Lift-26), Motijheel C/A, Dhaka-1000.')}
               </h3>
-              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
                 {lang === 'bn'
                   ? 'দেশের প্রধান বাণিজ্যিক কেন্দ্র মতিঝিলের সর্বোচ্চ আধুনিক আইকনিক টাওয়ার সিটি সেন্টারে অবস্থিত চার্টার্ড অফিসার লিমিটেডের সেন্ট্রাল ক্যাম্পাস। কর্পোরেট এক্সিকিউটিভ সেমিনার রুম, এসএপি ক্লাউড কম্পিউটার ল্যাব এবং লাইভ হাইব্রিড স্টুডিও।'
                   : 'Located at City Centre Tower (Level 25) in Motijheel Commercial Area, equipped with executive boardroom classrooms, ERP labs, and multimedia streaming studios.'}
               </p>
 
-              <div className="space-y-2 pt-2 text-xs text-slate-600 dark:text-slate-300 font-mono">
+              <div className="space-y-2 pt-2 text-xs text-slate-700 dark:text-slate-300 font-mono">
                 <div className="flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-[#C8963E]" />
+                  <Phone className="w-4 h-4 text-amber-600" />
                   <span>{systemInfo.phone || '+880 1713378787'}{systemInfo.mobile && systemInfo.mobile !== systemInfo.phone && ` / ${systemInfo.mobile}`}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-[#C8963E]" />
+                  <Mail className="w-4 h-4 text-amber-600" />
                   <span className="font-sans">{systemInfo.email || 'cfoedubd@gmail.com'}</span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-slate-50 dark:bg-slate-900/90 rounded-2xl border border-slate-200 dark:border-[#C8963E]/40 p-6 space-y-4">
-              <h4 className="text-base font-serif font-bold text-[#966718] dark:text-[#E5A93C] flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-[#C8963E]" />
+            <div className="bg-slate-50 dark:bg-slate-900/90 rounded-2xl border border-slate-200 dark:border-amber-400/40 p-6 space-y-4">
+              <h4 className="text-base font-serif font-bold text-amber-800 dark:text-[#FFC000] flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-amber-600" />
                 {lang === 'bn' ? 'আমাদের শিক্ষাদান অঙ্গীকার ও স্বীকৃতি' : 'Our Educational Commitment'}
               </h4>
-              <ul className="space-y-2.5 text-xs text-slate-600 dark:text-slate-300">
+              <ul className="space-y-2.5 text-xs text-slate-700 dark:text-slate-300 font-medium">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                   <span>অভিজ্ঞ ও উচ্চতর ডিগ্রিধারী প্রফেশনাল ইন্সট্রাক্টরদের সরাসরি মেন্টরশিপ।</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
-                  <span>জটিল বিষয়গুলোর সহজ ও প্রায়োগিক উপস্থাপনা (Quality Clarification)।</span>
+                  <span>জটিল বিষয়গুলোর সহজ ও প্রায়োগিক উপস্থাপনা (Hands-on Case Labs)।</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
-                  <span>২৪/৭ অনলাইন রিসোর্স, স্টাডি মেটেরিয়াল ও ইন্টারঅ্যাক্টিভ লাইভ সেশন।</span>
+                  <span>অনলাইন লার্নিং ও রিসোর্স সাপোর্ট এবং আজীবন অ্যালামনাই নেটওয়ার্ক।</span>
                 </li>
               </ul>
 
               <div className="pt-2 flex items-center gap-3">
                 <Link
                   href="/courses"
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#C8963E] to-[#B8860B] hover:from-[#d4af37] hover:to-[#C8963E] text-slate-950 font-serif font-black text-xs shadow-md transition-all cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl bg-[#FFC000] hover:bg-[#E6AC00] text-slate-950 font-serif font-black text-xs shadow-md transition-all cursor-pointer border border-amber-300"
                 >
                   {lang === 'bn' ? 'সকল কোর্স দেখুন' : 'Explore Courses'}
                 </Link>

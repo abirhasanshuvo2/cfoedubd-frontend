@@ -130,10 +130,10 @@ export default function LearningMethodology({
                     <span>{pillar.badge}</span>
                   </span>
                   <Link
-                    href="/facilitator"
+                    href="/courses"
                     className="text-[10px] font-bold text-slate-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors flex items-center gap-0.5"
                   >
-                    <span>{lang === 'bn' ? 'ফ্যাকাল্টি' : 'Faculty'}</span>
+                    <span>{lang === 'bn' ? 'কোর্সসমূহ' : 'Courses'}</span>
                     <ArrowRight className="w-3 h-3" />
                   </Link>
                 </div>

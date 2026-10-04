@@ -147,11 +147,6 @@ export default function Footer({ lang: propLang }: FooterProps = {}) {
                 </Link>
               </li>
               <li>
-                <Link href="/facilitator" className="hover:text-[#C8963E] transition-colors block">
-                  {lang === 'bn' ? 'ফ্যাসিলিটেটর ও মেন্টরস' : 'Facilitator & Mentors'}
-                </Link>
-              </li>
-              <li>
                 <Link href="/certificates" className="hover:text-[#C8963E] transition-colors block">
                   {lang === 'bn' ? 'সনদ যাচাই (Certificates)' : 'Verify Certificate'}
                 </Link>
@@ -210,8 +205,8 @@ export default function Footer({ lang: propLang }: FooterProps = {}) {
                 </Link>
               </li>
               <li>
-                <Link href="/facilitator" className="hover:text-[#C8963E] transition-colors block">
-                  {lang === 'bn' ? 'ফ্যাসিলিটেটর' : 'Facilitator'}
+                <Link href="/media-news" className="hover:text-[#C8963E] transition-colors block">
+                  {lang === 'bn' ? 'সংবাদ ও মিডিয়া' : 'Media & News'}
                 </Link>
               </li>
               <li>

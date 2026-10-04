@@ -156,8 +156,8 @@ function CertificateVerificationContent() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(200,150,62,0.22),rgba(10,25,47,0))]" />
 
         <div className="max-w-4xl mx-auto relative z-10 text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 dark:bg-[#1E3A8A]/60 border border-amber-300 dark:border-[#C8963E]/50 text-xs font-bold text-amber-900 dark:text-[#E5A93C] shadow-2xs">
-            <ShieldCheck className="w-4 h-4 text-[#C8963E]" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 dark:bg-[#1E3A8A]/60 border border-amber-300 dark:border-amber-400/50 text-xs font-bold text-amber-950 dark:text-[#FFC000] shadow-2xs">
+            <ShieldCheck className="w-4 h-4 text-amber-700 dark:text-[#FFC000]" />
             <span>
               {lang === 'bn'
                 ? 'অফিসিয়াল সার্টিফিকেট যাচাই ও ডাউনলোড পোর্টাল'
@@ -165,19 +165,25 @@ function CertificateVerificationContent() {
             </span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black text-slate-950 dark:text-white tracking-tight">
             {lang === 'bn' ? (
               <>
-                চার্টার্ড অফিসার <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#966718] dark:from-[#FFDF79] dark:via-[#E5A93C] dark:to-[#C8963E]">সনদপত্র যাচাই ও ডাউনলোড</span>
+                চার্টার্ড অফিসার{' '}
+                <span className="text-amber-800 dark:text-[#FFC000]">
+                  সনদপত্র যাচাই ও ডাউনলোড
+                </span>
               </>
             ) : (
               <>
-                Verify &amp; View <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#966718] dark:from-[#FFDF79] dark:via-[#E5A93C] dark:to-[#C8963E]">Official Certificate PDF</span>
+                Verify &amp; View{' '}
+                <span className="text-amber-800 dark:text-[#FFC000]">
+                  Official Certificate PDF
+                </span>
               </>
             )}
           </h1>
 
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed font-medium">
             {lang === 'bn'
               ? 'নিয়োগকারী কর্তৃপক্ষ ও শিক্ষার্থীরা চার্টার্ড অফিসার লিমিটেড কর্তৃক ইস্যুকৃত মূল পিডিএফ সনদপত্র দেখতে ও ডাউনলোড করতে রেজিস্ট্রেশন আইডি দিন।'
               : 'Enter your Registration ID to view the actual authenticated certificate PDF directly on this page and download the original file.'}
@@ -187,10 +193,10 @@ function CertificateVerificationContent() {
           <div className="max-w-xl mx-auto pt-3">
             <form
               onSubmit={handleSearchSubmit}
-              className="flex flex-col sm:flex-row gap-2 bg-white dark:bg-slate-900/90 p-2 rounded-2xl border border-slate-300 dark:border-[#C8963E]/60 shadow-md backdrop-blur-xs"
+              className="flex flex-col sm:flex-row gap-2 bg-white dark:bg-slate-900/90 p-2 rounded-2xl border-2 border-amber-300 dark:border-amber-400/60 shadow-md backdrop-blur-xs"
             >
               <div className="relative flex-1">
-                <Search className="w-4 h-4 text-[#C8963E] absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-amber-700 dark:text-[#FFC000] absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   value={regIdInput}
@@ -207,16 +213,16 @@ function CertificateVerificationContent() {
               <button
                 type="submit"
                 disabled={loading || !regIdInput.trim()}
-                className="px-6 py-3 bg-gradient-to-r from-[#C8963E] to-[#B8860B] hover:from-[#d4af37] hover:to-[#C8963E] text-slate-950 font-serif font-black text-xs rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0 shadow-md disabled:opacity-50"
+                className="px-6 py-3 bg-[#FFC000] hover:bg-[#E6AC00] text-slate-950 font-serif font-black text-xs sm:text-sm rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0 shadow-md disabled:opacity-50 border border-amber-400"
               >
                 {loading ? (
                   <>
-                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <RefreshCw className="w-4 h-4 animate-spin text-slate-950" />
                     <span>{lang === 'bn' ? 'যাচাই হচ্ছে...' : 'Verifying...'}</span>
                   </>
                 ) : (
                   <>
-                    <ShieldCheck className="w-4 h-4" />
+                    <ShieldCheck className="w-4 h-4 text-slate-950 stroke-[2.5]" />
                     <span>{lang === 'bn' ? 'সনদ দেখুন ও ডাউনলোড' : 'View & Download PDF'}</span>
                   </>
                 )}
@@ -358,9 +364,9 @@ function CertificateVerificationContent() {
                         download={`Certificate_${cert.student_name.replace(/[^a-zA-Z0-9]/g, '_')}_${cert.registration_id}.pdf`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 md:flex-initial px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#C8963E] to-[#B8860B] hover:from-[#d4af37] hover:to-[#C8963E] text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all cursor-pointer"
+                        className="flex-1 md:flex-initial px-5 py-2.5 rounded-xl bg-[#FFC000] hover:bg-[#E6AC00] text-slate-950 font-black text-xs flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all cursor-pointer border border-amber-300"
                       >
-                        <Download className="w-4 h-4 text-slate-950" />
+                        <Download className="w-4 h-4 text-slate-950 stroke-[2.5]" />
                         <span>{lang === 'bn' ? 'পিডিএফ ডাউনলোড' : 'Download PDF'}</span>
                       </a>
 
@@ -368,10 +374,10 @@ function CertificateVerificationContent() {
                       <button
                         type="button"
                         onClick={() => setPreviewModalCert(cert)}
-                        className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-[#E5A93C] font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer border border-slate-700"
+                        className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer border border-white/25 shadow-xs"
                       >
-                        <Maximize2 className="w-3.5 h-3.5" />
-                        <span className="hidden sm:inline">{lang === 'bn' ? 'ফুলস্ক্রিন' : 'Fullscreen'}</span>
+                        <Maximize2 className="w-3.5 h-3.5 text-[#FFC000]" />
+                        <span>{lang === 'bn' ? 'ফুলস্ক্রিন' : 'Fullscreen'}</span>
                       </button>
 
                       {/* 3. Open Raw in New Tab */}
@@ -379,11 +385,11 @@ function CertificateVerificationContent() {
                         href={pdfUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs flex items-center gap-1.5 transition-colors cursor-pointer border border-slate-700"
+                        className="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer border border-white/25 shadow-xs"
                         title="Open PDF in new tab"
                       >
-                        <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
-                        <span className="hidden sm:inline">{lang === 'bn' ? 'নতুন ট্যাব' : 'New Tab'}</span>
+                        <ExternalLink className="w-3.5 h-3.5 text-[#FFC000]" />
+                        <span>{lang === 'bn' ? 'নতুন ট্যাব' : 'New Tab'}</span>
                       </a>
                     </div>
                   </div>
@@ -497,28 +503,28 @@ function CertificateVerificationContent() {
         {/* Informational Guidelines when no search performed yet */}
         {!hasSearched && !loading && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
-            <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-2 text-center">
-              <div className="w-12 h-12 rounded-xl bg-amber-50 text-[#C8963E] flex items-center justify-center mx-auto border border-amber-200">
-                <FileCheck className="w-6 h-6" />
+            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-2 text-center">
+              <div className="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-[#FFC000] flex items-center justify-center mx-auto border border-amber-300 dark:border-amber-800">
+                <FileCheck className="w-6 h-6 text-amber-700 dark:text-[#FFC000]" />
               </div>
-              <h3 className="text-sm font-serif font-bold text-slate-900">
+              <h3 className="text-sm font-serif font-black text-slate-950 dark:text-white">
                 {lang === 'bn' ? 'রেজিস্ট্রেশন আইডি দিন' : 'Enter Registration ID'}
               </h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
+              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
                 {lang === 'bn'
                   ? 'আপনার সনদপত্র বা সাময়িক সনদে উল্লিখিত আইডি নম্বরটি প্রদান করে সার্চ করুন (যেমন: 222)।'
                   : 'Enter the registration ID (e.g., 222) printed on your diploma or enrollment record.'}
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-2 text-center">
-              <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto border border-emerald-200">
-                <CheckCircle2 className="w-6 h-6" />
+            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-2 text-center">
+              <div className="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-400 flex items-center justify-center mx-auto border border-emerald-300 dark:border-emerald-800">
+                <CheckCircle2 className="w-6 h-6 text-emerald-700 dark:text-emerald-400" />
               </div>
-              <h3 className="text-sm font-serif font-bold text-slate-900">
+              <h3 className="text-sm font-serif font-black text-slate-950 dark:text-white">
                 {lang === 'bn' ? 'আসল পিডিএফ প্রিভিউ' : 'Real PDF Document Viewer'}
               </h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
+              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
                 {lang === 'bn'
                   ? 'সিস্টেম সরাসরি সার্ভার হতে প্রাপ্ত অরিজিনাল পিডিএফ ফাইলটি স্ক্রিনে প্রদর্শন করবে।'
                   : 'The page embeds and displays the exact authentic PDF file directly on screen.'}
@@ -526,13 +532,13 @@ function CertificateVerificationContent() {
             </div>
 
             <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-2 text-center">
-              <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-[#C8963E] flex items-center justify-center mx-auto border border-amber-200 dark:border-amber-800">
-                <Download className="w-6 h-6 text-[#C8963E]" />
+              <div className="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-400 flex items-center justify-center mx-auto border border-blue-300 dark:border-blue-800">
+                <Download className="w-6 h-6 text-blue-700 dark:text-blue-400" />
               </div>
-              <h3 className="text-sm font-serif font-bold text-slate-900 dark:text-white">
+              <h3 className="text-sm font-serif font-black text-slate-950 dark:text-white">
                 {lang === 'bn' ? 'সরাসরি ডাউনলোড' : 'Direct 1-Click Download'}
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
                 {lang === 'bn'
                   ? 'API হতে প্রাপ্ত ডাউনলোড ইউআরএল (download_url) দিয়ে সরাসরি সনদপত্র ডাউনলোড করতে পারবেন।'
                   : 'Instantly download the certificate file directly via the API download_url.'}
@@ -549,14 +555,14 @@ function CertificateVerificationContent() {
             {/* Modal Header */}
             <div className="bg-[#0A192F] text-white px-5 py-3.5 flex items-center justify-between border-b border-[#1E3A8A] shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-[#C8963E] text-slate-950 font-bold flex items-center justify-center text-xs">
+                <div className="w-8 h-8 rounded-lg bg-[#FFC000] text-slate-950 font-bold flex items-center justify-center text-xs">
                   PDF
                 </div>
                 <div>
                   <h3 className="text-sm font-serif font-bold text-white">
                     {previewModalCert.student_name} — Certificate PDF
                   </h3>
-                  <p className="text-[11px] text-slate-400 font-mono">
+                  <p className="text-[11px] text-slate-300 font-mono">
                     ID: #{previewModalCert.registration_id} • Serial: #{previewModalCert.serial_number}
                   </p>
                 </div>
@@ -568,9 +574,9 @@ function CertificateVerificationContent() {
                   download={`Certificate_${previewModalCert.student_name.replace(/[^a-zA-Z0-9]/g, '_')}_${previewModalCert.registration_id}.pdf`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#C8963E] to-[#B8860B] hover:from-[#d4af37] hover:to-[#C8963E] text-slate-950 font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-md"
+                  className="px-4 py-2 rounded-xl bg-[#FFC000] hover:bg-[#E6AC00] text-slate-950 font-black text-xs flex items-center gap-1.5 cursor-pointer shadow-md border border-amber-300"
                 >
-                  <Download className="w-3.5 h-3.5" />
+                  <Download className="w-3.5 h-3.5 stroke-[2.5]" />
                   <span>{lang === 'bn' ? 'ডাউনলোড' : 'Download PDF'}</span>
                 </a>
 
@@ -578,17 +584,17 @@ function CertificateVerificationContent() {
                   href={getPdfViewUrl(previewModalCert)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs flex items-center gap-1.5 cursor-pointer border border-slate-700"
+                  className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer border border-white/25 shadow-xs"
                   title="Open in new window"
                 >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">{lang === 'bn' ? 'নতুন উইন্ডো' : 'New Window'}</span>
+                  <ExternalLink className="w-3.5 h-3.5 text-[#FFC000]" />
+                  <span>{lang === 'bn' ? 'নতুন উইন্ডো' : 'New Window'}</span>
                 </a>
 
                 <button
                   type="button"
                   onClick={() => setPreviewModalCert(null)}
-                  className="p-2 rounded-xl bg-slate-800 hover:bg-rose-900/80 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                  className="p-2 rounded-xl bg-white/10 hover:bg-rose-600 text-white transition-colors cursor-pointer border border-white/20"
                 >
                   <X className="w-4 h-4" />
                 </button>
