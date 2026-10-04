@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { TESTIMONIALS } from '@/data/cfo-data';
-import { Star, Quote, Award, CheckCircle2 } from 'lucide-react';
+import { Star, Quote } from 'lucide-react';
 
 interface TestimonialsProps {
   lang: 'bn' | 'en';

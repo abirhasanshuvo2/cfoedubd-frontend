@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useCfo } from '@/context/CfoContext';
-import { MessageCircle, X, Sparkles } from 'lucide-react';
+import { MessageCircle, X } from 'lucide-react';
 
 export default function WhatsAppFloatingButton() {
   const { systemInfo, lang } = useCfo();

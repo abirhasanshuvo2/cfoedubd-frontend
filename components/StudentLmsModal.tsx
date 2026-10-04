@@ -8,13 +8,8 @@ import {
   PlayCircle,
   FileCheck,
   Award,
-  Calendar,
-  ExternalLink,
   Clock,
-  Download,
-  BookOpen,
-  CheckCircle2,
-  Sparkles
+  Download
 } from 'lucide-react';
 import { Course } from '@/data/cfo-data';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -20,6 +20,7 @@ interface OstadHeroBannerProps {
 
 export default function OstadHeroBanner({ onStartLearning }: OstadHeroBannerProps) {
   const { lang } = useCfo();
+  const [bannerSrc, setBannerSrc] = useState('/assets/images/cfo_executive_banner.jpg');
 
   const handleStartLearning = () => {
     if (onStartLearning) {
@@ -146,12 +147,13 @@ export default function OstadHeroBanner({ onStartLearning }: OstadHeroBannerProp
               {/* Executive Boardroom Artwork with Mask */}
               <div className="absolute inset-0 z-0">
                 <Image
-                  src="/assets/images/cfo_executive_banner.jpg"
+                  src={bannerSrc}
                   alt="Chartered Financial Officer Program - CFO Education Bangladesh"
                   fill
                   className="object-cover object-right opacity-85 transition-transform duration-700 group-hover:scale-105"
                   priority
                   referrerPolicy="no-referrer"
+                  onError={() => setBannerSrc('https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800&auto=format&fit=crop&q=80')}
                 />
                 {/* Gradient overlay for text contrast */}
                 <div className="absolute inset-0 bg-gradient-to-r from-[#070C16] via-[#070C16]/85 to-transparent z-10 w-[70%]" />
