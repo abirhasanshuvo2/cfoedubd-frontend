@@ -46,58 +46,6 @@ export default function AboutPage() {
     }
   ];
 
-  const executivePillars = [
-    {
-      icon: <Award className="w-6 h-6 text-amber-600 dark:text-[#FFC000]" />,
-      title: 'প্রায়োগিক প্রাসঙ্গিকতা (Practical Relevance)',
-      titleEn: 'Practical Relevance',
-      description: 'সরাসরি কর্মক্ষেত্রের বাস্তব চ্যালেঞ্জভিত্তিক প্রায়োগিক প্রশিক্ষণ, যা ফাইন্যান্স ও ফিনটেক ইন্ডাস্ট্রিতে শিক্ষার্থীদের তাৎক্ষণিক মূল্যায়ন নিশ্চিত করে।',
-      descriptionEn: 'Hands-on training directly correlating with real-world applications in finance and FinTech, ensuring graduates are immediately valuable to employers.'
-    },
-    {
-      icon: <GraduationCap className="w-6 h-6 text-blue-600 dark:text-blue-400" />,
-      title: 'মানসম্মত শিক্ষা (Quality Education)',
-      titleEn: 'Quality Education',
-      description: 'শিক্ষার গুণগত মানে আপসহীন প্রতিশ্রুতি। প্রতিটি কোর্স শীর্ষস্থানীয় ফেলো চার্টার্ড অ্যাকাউন্ট্যান্টস (FCA) এবং করপোরেট বিশেষজ্ঞদের দ্বারা পরিচালিত।',
-      descriptionEn: 'Uncompromising commitment to quality, featuring courses designed and delivered by industry leaders and practicing FCAs/FCMAs.'
-    },
-    {
-      icon: <Sparkles className="w-6 h-6 text-purple-600 dark:text-purple-400" />,
-      title: 'উদ্ভাবন ও ফিনটেক রূপান্তর (Innovation)',
-      titleEn: 'Innovation',
-      description: 'দ্রুত পরিবর্তনশীল অর্থনৈতিক পরিমণ্ডলে প্রযুক্তিগত অগ্রগতি ও ফিনটেকের সর্বশেষ ধারা অনুযায়ী কারিকুলাম নিয়মিত আধুনিকায়ন করা হয়।',
-      descriptionEn: 'Staying ahead of evolving industry trends, particularly in financial technology and ERP automation, for impactful career education.'
-    },
-    {
-      icon: <ShieldCheck className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />,
-      title: 'পেশাদার সততা ও নীতিশাস্ত্র (Professional Integrity)',
-      titleEn: 'Professional Integrity',
-      description: 'উচ্চতম পেশাদারিত্ব ও প্রাতিষ্ঠানিক সুশাসন অনুশীলন, যা শিক্ষার্থীদের শুধু দক্ষ কর্মী নয়, একজন নৈতিক দায়িত্বশীল নাগরিক হিসেবে গড়ে তোলে।',
-      descriptionEn: 'Instilling the highest levels of professionalism and ethical conduct, preparing learners for strategic boardroom leadership.'
-    },
-    {
-      icon: <Users className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />,
-      title: 'পারস্পরিক জ্ঞান বিনিময় (Collaborative Learning)',
-      titleEn: 'Collaborative Learning',
-      description: 'শিক্ষার্থী, অভিজ্ঞ প্রশিক্ষক এবং ইন্ডাস্ট্রি সিএফওদের মাঝে উন্মুক্ত ও গঠনমূলক নেটওয়ার্কিং ও অভিজ্ঞতা আদান-প্রদানের পরিবেশ।',
-      descriptionEn: 'A cooperative educational ecosystem where learners, instructors, and executive professionals exchange best practices.'
-    },
-    {
-      icon: <Compass className="w-6 h-6 text-rose-600 dark:text-rose-400" />,
-      title: 'গ্লোবাল স্ট্যান্ডার্ড (Global Reach)',
-      titleEn: 'Global Reach',
-      description: 'আন্তর্জাতিক মানদণ্ড অনুসরণে প্রণীত কোর্স, যা দেশীয় ও বৈশ্বিক যেকোনো চ্যালেঞ্জিং অর্থনীতিতে নেতৃত্বদানে দক্ষ করে তোলে।',
-      descriptionEn: 'Designed with a global perspective to equip learners with the skills required to succeed in any international market.'
-    },
-    {
-      icon: <Building2 className="w-6 h-6 text-teal-600 dark:text-teal-400" />,
-      title: 'ক্লায়েন্ট কেন্দ্রিক সেবা (Customer Focus)',
-      titleEn: 'Customer Focus',
-      description: 'শিক্ষার্থী ও করপোরেট ক্লায়েন্টদের প্রত্যাশা পূরণ ও আন্তরিক সহায়তা প্রদানে আমরা শতভাগ প্রতিশ্রুতিবদ্ধ।',
-      descriptionEn: 'Exceeding expectations of students and corporate clients through personalized guidance and specialized corporate solutions.'
-    }
-  ];
-
   return (
     <div
       data-theme={theme}
@@ -224,47 +172,6 @@ export default function AboutPage() {
                 ? 'ফাইন্যান্স এবং ফাইন্যান্সিয়াল টেকনোলজিতে শীর্ষস্থানীয় পেশাদার প্রশিক্ষণ নিশ্চিত করা, যা শিক্ষার্থী ও করপোরেট প্রতিষ্ঠানসমূহকে অপারেশনাল উৎকর্ষ এবং গ্লোবাল মার্কেটপ্লেসে টেকসই প্রতিযোগিতামূলক সুবিধা অর্জনে সক্ষম করে তোলে।'
                 : 'To provide top-notch professional training in finance and financial technology that enables individuals and organizations to achieve operational excellence and competitive edge in the global marketplace.'}
             </p>
-          </div>
-        </div>
-
-        {/* 7 Core Values (Exact from cfoedubd.com/mission) */}
-        <div className="space-y-8">
-          <div className="text-center max-w-3xl mx-auto space-y-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">
-              {lang === 'bn' ? 'আমাদের মূল মূল্যবোধ' : 'Core Organizational Values'}
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-serif font-black text-slate-950 dark:text-white">
-              {lang === 'bn' ? '৭টি মূল মূল্যবোধ (Core Values)' : '7 Pillars of Excellence'}
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-              {lang === 'bn'
-                ? 'চার্টার্ড অফিসার লিমিটেডের প্রতিটি কারিকুলাম ও প্রশিক্ষণ এই মূল বিষয়গুলোর ওপর প্রতিষ্ঠিত।'
-                : 'Uncompromising principles that guide our academic and corporate standards.'}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {executivePillars.map((p, idx) => (
-              <div
-                key={idx}
-                className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-xs hover:border-amber-400 hover:shadow-md transition-all space-y-3"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800">
-                    {p.icon}
-                  </div>
-                  <span className="font-mono font-bold text-xs text-amber-700 dark:text-amber-400">
-                    #0{idx + 1}
-                  </span>
-                </div>
-                <h4 className="text-base font-serif font-bold text-slate-950 dark:text-white">
-                  {lang === 'bn' ? p.title : p.titleEn}
-                </h4>
-                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-                  {lang === 'bn' ? p.description : p.descriptionEn}
-                </p>
-              </div>
-            ))}
           </div>
         </div>
 
