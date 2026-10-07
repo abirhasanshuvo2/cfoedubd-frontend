@@ -200,8 +200,8 @@ export default function Hero({
                       : (featuredCourse.badge || (lang === 'bn' ? 'বিশেষায়িত এক্সিকিউটিভ কোর্স' : 'Executive Course'))}
                   </span>
                 </div>
-                <span className="text-xs bg-white dark:bg-[#1E3A8A]/50 text-slate-800 dark:text-slate-200 border border-amber-300 dark:border-[#C8963E]/40 px-2.5 py-0.5 rounded-full font-mono font-semibold">
-                  {featuredCourse.batchNumber}
+                <span className="text-xs bg-white dark:bg-[#1E3A8A]/50 text-slate-800 dark:text-slate-200 border border-amber-300 dark:border-[#C8963E]/40 px-2.5 py-0.5 rounded-full font-semibold">
+                  {lang === 'bn' ? 'লাইভ সেশন' : 'Live Session'}
                 </span>
               </div>
 

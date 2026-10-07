@@ -54,9 +54,6 @@ export default function CourseDetailsModal({
 
           <div className="flex flex-wrap items-center gap-2 mb-2.5">
             <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#FFC000] text-slate-950">
-              {course.batchNumber}
-            </span>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-200">
               {course.categoryLabel}
             </span>
             <span className="flex items-center gap-1 text-xs text-amber-400 font-bold ml-2">
@@ -255,15 +252,9 @@ export default function CourseDetailsModal({
                 ৳{course.originalPrice.toLocaleString()}
               </span>
             </div>
-            <span className="text-xs text-rose-600 font-bold sm:hidden">
-              {lang === 'bn' ? `মাত্র ${course.seatsLeft}টি সিট বাকি!` : `${course.seatsLeft} seats left!`}
-            </span>
           </div>
 
           <div className="flex items-center gap-3 w-full sm:w-auto">
-            <span className="hidden sm:inline-block text-xs text-rose-600 font-bold">
-              {lang === 'bn' ? `মাত্র ${course.seatsLeft}টি সিট বাকি!` : `${course.seatsLeft} seats left!`}
-            </span>
             <button
               onClick={() => {
                 onClose();

@@ -152,7 +152,7 @@ export default function ProfilePage() {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900">
-                        {course.batchNumber}
+                        {course.categoryLabel}
                       </span>
                       <span className="text-xs text-emerald-600 font-bold flex items-center gap-1">
                         <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -188,7 +188,7 @@ export default function ProfilePage() {
 
                   <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
                     <Link
-                      href={`/courses/${course.id}`}
+                      href={`/courses/${course.slug || course.id}`}
                       className="text-xs font-semibold text-slate-600 hover:text-slate-900"
                     >
                       সিলেবাস দেখুন

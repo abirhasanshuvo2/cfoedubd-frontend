@@ -29,6 +29,13 @@ export interface SystemInformation {
   students: number | string | null;
   graduates: number | string | null;
   classes: number | string | null;
+  promo_code?: string | null;
+  promo_discount?: string | number | null;
+  promo_text?: string | null;
+  announcement_title?: string | null;
+  announcement_text?: string | null;
+  announcement_link?: string | null;
+  announcement_active?: boolean | null;
 }
 
 export interface SystemInfoApiResponse {
@@ -69,4 +76,11 @@ export const DEFAULT_SYSTEM_INFO: SystemInformation = {
   students: 50,
   graduates: 3100,
   classes: 2090,
+  promo_code: "COL-EXEC",
+  promo_discount: "10%",
+  promo_text: "স্পেশাল সিজন ডিসকাউন্ট কোড: COL-EXEC ব্যবহার করে যেকোনো ব্যাচে অতিরিক্ত ছাড় উপভোগ করুন!",
+  announcement_title: "অ্যাডমিশন ওরিয়েন্টেশন ২০২৬",
+  announcement_text: "আসন্ন লাইভ ব্যাচসমূহে আসন সংখ্যা সীমিত। দ্রুত রেজিস্ট্রেশন করুন।",
+  announcement_link: "/courses",
+  announcement_active: true,
 };

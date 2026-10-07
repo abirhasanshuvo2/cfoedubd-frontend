@@ -137,7 +137,7 @@ export default function Footer({ lang: propLang }: FooterProps = {}) {
                 </Link>
               </li>
               <li>
-                <Link href="/courses?category=all" className="hover:text-[#C8963E] transition-colors block">
+                <Link href="/free-courses" className="hover:text-[#C8963E] transition-colors block">
                   {lang === 'bn' ? 'ফ্রি রিসোর্স ও কোর্স' : 'Free Courses'}
                 </Link>
               </li>

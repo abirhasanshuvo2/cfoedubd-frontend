@@ -50,10 +50,13 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
     (c) =>
       c.id.toLowerCase() === decodedId ||
       (c.slug && c.slug.toLowerCase() === decodedId) ||
-      c.id.replace(/^api-/, '').toLowerCase() === decodedId ||
+      c.title.toLowerCase().replace(/[^\p{L}\p{N}\s-]/gu, '').replace(/[\s\-_]+/g, '-') === decodedId ||
+      (c.titleEn && c.titleEn.toLowerCase().replace(/[^\p{L}\p{N}\s-]/gu, '').replace(/[\s\-_]+/g, '-') === decodedId) ||
       c.title.toLowerCase() === decodedId ||
       (c.titleEn && c.titleEn.toLowerCase() === decodedId) ||
-      (c.batchNumber && c.batchNumber.toLowerCase() === decodedId)
+      c.id.replace(/^api-/, '').toLowerCase() === decodedId ||
+      (c.batchNumber && c.batchNumber.toLowerCase() === decodedId) ||
+      ((c as any).apiId && String((c as any).apiId) === decodedId.replace(/^api-/, ''))
   );
 
   if (!course) {
@@ -72,7 +75,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
       : Math.round(basePrice * 1.6);
 
   const hasDiscount = !isFree && originalPrice > displayPrice;
-  const promoCode = course.classId ? course.classId.slice(-5).toUpperCase() : 'COL';
+  const promoCode = systemInfo.promo_code || (course.classId ? course.classId.slice(-5).toUpperCase() : 'COL');
 
   // Extract schedule & fields strictly from API response
   const hasDays = Array.isArray(course.days) && course.days.length > 0;
@@ -234,11 +237,11 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
             {/* LEFT COLUMN (7 Cols): API Badges, Title, Description, CTA+Price, 4-Col API Info Box */}
             <div className="lg:col-span-7 space-y-5">
               
-              {/* Top Badges Row: Class ID, Live Course, Level, Enrolled Students */}
+              {/* Top Badges Row: Category, Live Course, Level, Enrolled Students */}
               <div className="flex flex-wrap items-center gap-2.5">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[#2A2212] border border-amber-500/40 text-[#FFC000] text-xs font-bold shadow-2xs">
                   <GraduationCap className="w-3.5 h-3.5 text-[#FFC000]" />
-                  <span>{course.batchNumber}</span>
+                  <span>{course.categoryLabel}</span>
                 </span>
 
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[#0D2E2C] border border-teal-500/40 text-teal-300 text-xs font-bold shadow-2xs">
@@ -403,49 +406,21 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
             <div className="lg:col-span-5 lg:relative">
               <div className="lg:sticky lg:top-20 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.35)] border border-slate-200 dark:border-slate-800 p-3 sm:p-4 space-y-4 z-20">
                 
-                {/* Video Thumbnail / Inline Player Container with "Watch Demo class" Header */}
-                <div className="relative rounded-xl overflow-hidden bg-slate-950 border border-slate-200 dark:border-slate-800 aspect-[16/10] group">
-                  {/* Top Glass Header: Watch Demo class */}
-                  <div className="absolute top-0 inset-x-0 z-20 bg-slate-900/75 backdrop-blur-md px-3.5 py-2 flex items-center justify-between gap-2 border-b border-white/15">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <div className="w-6 h-6 rounded-md bg-[#FF7A45] text-white flex items-center justify-center shadow-xs shrink-0">
-                        <Play className="w-3.5 h-3.5 fill-white" />
-                      </div>
-                      <span className="text-xs sm:text-sm font-bold text-white tracking-tight truncate">
-                        Watch Demo class
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-1.5 shrink-0">
+                {/* Clean, Full-Visibility Demo Video Player Container */}
+                <div className="relative rounded-xl overflow-hidden bg-slate-950 border border-slate-200 dark:border-slate-800 aspect-[16/9] group shadow-sm">
+                  {isPlayingInline ? (
+                    <div className="relative w-full h-full bg-black flex items-center justify-center">
                       <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           setIsPlayingInline(false);
-                          setIsDemoModalOpen(true);
                         }}
-                        className="px-2 py-1 rounded bg-[#FFC000] hover:bg-[#E6AC00] text-slate-950 text-[10px] font-black transition-colors cursor-pointer"
+                        className="absolute top-2.5 right-2.5 z-30 p-1.5 rounded-full bg-black/75 hover:bg-rose-600 text-white transition-colors cursor-pointer shadow-md"
+                        title="Close video"
                       >
-                        Popup
+                        <X className="w-4 h-4" />
                       </button>
-                      {isPlayingInline && (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setIsPlayingInline(false);
-                          }}
-                          className="p-1 rounded bg-rose-600 hover:bg-rose-500 text-white transition-colors cursor-pointer"
-                          title="Close inline video"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  {isPlayingInline ? (
-                    <div className="w-full h-full pt-10 bg-black flex items-center justify-center">
                       {videoInfo.isDirectVideoFile && videoInfo.directVideoUrl ? (
                         <video
                           src={videoInfo.directVideoUrl}
@@ -466,56 +441,36 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
                   ) : (
                     <div
                       onClick={() => setIsPlayingInline(true)}
-                      className="w-full h-full cursor-pointer relative"
+                      className="w-full h-full cursor-pointer relative flex items-center justify-center"
                     >
-                      {/* YouTube Thumbnail from Backend `vide` Link */}
-                      {videoInfo.thumbnailUrl && (
+                      {/* Crystal Clear Full-Opacity Thumbnail */}
+                      {videoInfo.thumbnailUrl ? (
                         /* eslint-disable-next-line @next/next/no-img-element */
                         <img
                           src={videoInfo.thumbnailUrl}
                           alt={course.title}
-                          className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500"
+                          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
+                      ) : (
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#0A192F] via-[#0D254C] to-[#1E3A8A]" />
                       )}
 
-                      {/* Dynamic Poster Overlay with API Info */}
-                      <div
-                        className={`absolute inset-0 ${
-                          videoInfo.thumbnailUrl
-                            ? 'bg-gradient-to-t from-slate-950/95 via-slate-900/55 to-slate-950/75'
-                            : 'bg-gradient-to-br from-[#0F2027] via-[#203A43] to-[#2C5364]'
-                        } p-5 pt-12 flex flex-col justify-between`}
-                      >
-                        <div className="space-y-1.5 max-w-[80%]">
-                          <span className="inline-block px-2 py-0.5 rounded bg-[#FFC000] text-slate-950 font-black text-[10px] uppercase tracking-wider">
-                            {course.categoryLabel}
-                          </span>
-                          <h3 className="text-base sm:text-lg font-black text-white leading-snug line-clamp-2 drop-shadow">
-                            {course.title}
-                          </h3>
-                          <p className="text-[11px] font-bold text-emerald-300">
-                            {lang === 'bn' ? 'ইন্সট্রাক্টর:' : 'Instructor:'} {educatorName}
-                          </p>
-                        </div>
+                      {/* Subtle Vignette for Play Button Contrast Only */}
+                      <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
 
-                        {/* Bottom Metadata Strip inside Thumbnail (100% API fields) */}
-                        <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/15 text-[10px] text-slate-200 font-semibold">
-                          <span>{course.batchNumber}</span>
-                          {course.level && <span className="uppercase">{course.level}</span>}
-                          {course.language && <span>{course.language}</span>}
+                      {/* Center Glowing Red YouTube-style Play Button */}
+                      <div className="relative z-10 flex items-center justify-center">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-red-600/95 group-hover:bg-red-600 group-hover:scale-110 transition-all flex items-center justify-center shadow-[0_0_30px_rgba(220,38,38,0.6)] border-2 border-white/70">
+                          <Play className="w-6 h-6 text-white fill-white ml-1" />
                         </div>
                       </div>
 
-                      {/* Center Glowing Play Button */}
-                      <div className="absolute inset-0 z-10 flex items-center justify-center">
-                        <div className="relative flex items-center justify-center">
-                          <span className="absolute w-20 h-20 rounded-full bg-rose-500/30 animate-ping" />
-                          <div className="w-16 h-16 rounded-full bg-white/95 group-hover:scale-110 transition-transform flex items-center justify-center shadow-2xl border-4 border-rose-400/60">
-                            <div className="w-12 h-12 rounded-full bg-[#FF6B81] flex items-center justify-center text-white">
-                              <Play className="w-5 h-5 fill-white ml-0.5" />
-                            </div>
-                          </div>
-                        </div>
+                      {/* Bottom-left Pill: Watch Demo */}
+                      <div className="absolute bottom-2.5 left-2.5 z-10">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md text-white text-[11px] font-bold border border-white/20 shadow-md">
+                          <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                          <span>{lang === 'bn' ? 'ডেমো ক্লাস দেখুন' : 'Watch Demo Class'}</span>
+                        </span>
                       </div>
                     </div>
                   )}
@@ -749,13 +704,6 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-xs bg-slate-50 dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
             <div className="p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200/70 dark:border-slate-800">
-              <span className="text-slate-500 block mb-1">Class ID:</span>
-              <span className="font-mono font-bold text-sm text-slate-900 dark:text-white">
-                {course.batchNumber}
-              </span>
-            </div>
-
-            <div className="p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200/70 dark:border-slate-800">
               <span className="text-slate-500 block mb-1">Educator:</span>
               <span className="font-bold text-sm text-slate-900 dark:text-white">
                 {educatorName}
@@ -810,31 +758,6 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
                 {totalStudentsCount}
               </span>
             </div>
-
-            {course.meetLink && (
-              <div className="p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200/70 dark:border-slate-800 sm:col-span-2 md:col-span-3 flex items-center justify-between gap-3">
-                <div className="min-w-0">
-                  <span className="text-slate-500 block mb-0.5">Live Class Meet Link:</span>
-                  <a
-                    href={course.meetLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-mono font-bold text-emerald-600 dark:text-emerald-400 hover:underline truncate block"
-                  >
-                    {course.meetLink}
-                  </a>
-                </div>
-                <a
-                  href={course.meetLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 shrink-0"
-                >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                  <span>Join Class</span>
-                </a>
-              </div>
-            )}
           </div>
         </section>
 
@@ -950,7 +873,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
                     {course.title}
                   </h3>
                   <p className="text-[11px] text-slate-400">
-                    Instructor: {educatorName} • {course.batchNumber}
+                    Instructor: {educatorName}
                   </p>
                 </div>
               </div>
@@ -984,22 +907,11 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
               </div>
 
               <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  {course.meetLink ? (
-                    <a
-                      href={course.meetLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-2"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                      <span>Join Live Google Meet Session</span>
-                    </a>
-                  ) : (
-                    <span className="text-xs text-slate-400">
-                      Schedule: {apiTimeSlot} ({apiDays})
-                    </span>
-                  )}
+                <div className="flex items-center gap-2 text-xs text-slate-400">
+                  <Calendar className="w-3.5 h-3.5 text-[#FFC000]" />
+                  <span>
+                    {lang === 'bn' ? 'ক্লাস শিডিউল:' : 'Schedule:'} {apiTimeSlot} ({apiDays})
+                  </span>
                 </div>
 
                 <Link

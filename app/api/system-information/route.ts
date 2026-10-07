@@ -25,9 +25,13 @@ export async function GET() {
     if (response.ok) {
       const json = await response.json();
       if (json && json.data) {
+        const mergedData: SystemInformation = {
+          ...DEFAULT_SYSTEM_INFO,
+          ...json.data,
+        };
         return NextResponse.json({
           success: true,
-          data: json.data as SystemInformation,
+          data: mergedData,
           isLive: true,
         });
       }

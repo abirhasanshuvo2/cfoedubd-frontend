@@ -134,7 +134,7 @@ export default function StudentLmsModal({
               >
                 {enrolledCourses.map((c) => (
                   <option key={c.id} value={c.id}>
-                    {c.title} ({c.batchNumber})
+                    {c.title}
                   </option>
                 ))}
               </select>

@@ -145,7 +145,7 @@ export default function EnrollmentModal({
             {/* Cohort Summary Snippet */}
             <div className="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200/80 flex items-center justify-between text-xs">
               <div>
-                <p className="font-bold text-slate-900">{course.batchNumber} • {course.categoryLabel}</p>
+                <p className="font-bold text-slate-900">{course.categoryLabel} • {lang === 'bn' ? 'লাইভ প্রোগ্রাম' : 'Live Program'}</p>
                 <p className="text-slate-600">{lang === 'bn' ? course.schedule : course.scheduleEn}</p>
               </div>
               <div className="text-right">

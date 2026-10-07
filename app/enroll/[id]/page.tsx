@@ -142,7 +142,7 @@ export default function EnrollmentCheckoutPage({ params }: PageProps) {
       <div className="bg-slate-100 dark:bg-[#0A192F] border-b border-slate-200 dark:border-[#1E3A8A] text-xs py-2.5 px-4 sm:px-8 text-slate-600 dark:text-slate-400 transition-colors">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <Link
-            href={`/courses/${course.id}`}
+            href={`/courses/${course.slug || course.id}`}
             className="flex items-center gap-1 text-slate-700 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
@@ -374,7 +374,7 @@ export default function EnrollmentCheckoutPage({ params }: PageProps) {
                 <h3 className="text-base font-serif font-bold text-slate-900 leading-snug">
                   {lang === 'bn' ? course.title : course.titleEn}
                 </h3>
-                <p className="text-xs text-slate-500">{course.batchNumber}</p>
+                <p className="text-xs text-slate-500">{course.categoryLabel}</p>
               </div>
 
               <div className="space-y-2 py-3 border-y border-slate-100 text-xs">
@@ -646,8 +646,7 @@ export default function EnrollmentCheckoutPage({ params }: PageProps) {
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 max-w-lg mx-auto">
                 <strong className="text-slate-900">{fullName}</strong>, আপনাকে{' '}
-                <span className="font-bold text-[#966718]">{course.title}</span> প্রোগ্রামের{' '}
-                <span className="font-bold text-slate-900">{course.batchNumber}</span>-এ স্বাগতম।
+                <span className="font-bold text-[#966718]">{course.title}</span> প্রোগ্রামের লাইভ ব্যাচে স্বাগতম।
               </p>
             </div>
 

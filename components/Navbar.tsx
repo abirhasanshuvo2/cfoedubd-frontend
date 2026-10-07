@@ -80,7 +80,7 @@ export default function Navbar({
     if (onSelectCourse) {
       onSelectCourse(course);
     }
-    router.push(`/courses/${course.id}`);
+    router.push(`/courses/${course.slug || course.id}`);
   };
 
   const handleAuthTrigger = () => {

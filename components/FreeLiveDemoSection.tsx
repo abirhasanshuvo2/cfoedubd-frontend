@@ -176,10 +176,10 @@ export default function FreeLiveDemoSection({ lang }: FreeLiveDemoSectionProps) 
                       </span>
                     </div>
 
-                    {/* Course Category / Batch Tag */}
+                    {/* Course Category Tag */}
                     <div className="absolute bottom-3 left-3 right-3 z-10">
-                      <span className="px-2 py-0.5 rounded bg-black/70 backdrop-blur-xs text-[10px] font-mono font-semibold text-amber-300 truncate block">
-                        {course.batchNumber || course.categoryLabel}
+                      <span className="px-2 py-0.5 rounded bg-black/70 backdrop-blur-xs text-[10px] font-semibold text-amber-300 truncate block">
+                        {course.categoryLabel}
                       </span>
                     </div>
                   </div>

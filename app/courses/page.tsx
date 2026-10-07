@@ -32,18 +32,34 @@ function CoursesContent() {
   const searchParams = useSearchParams();
   const urlCategory = searchParams.get('category') || 'all';
   const urlSearch = searchParams.get('search') || '';
+  const urlFilter = searchParams.get('filter') || searchParams.get('type') || '';
+  const initialIsFree = urlFilter.toLowerCase() === 'free' || urlCategory.toLowerCase() === 'free';
 
   const { lang, courses, refreshCourses, coursesLoading, isLiveApiConnected, theme } = useCfo();
-  const [selectedCategory, setSelectedCategory] = useState<string>(urlCategory);
+  const [selectedCategory, setSelectedCategory] = useState<string>(urlCategory === 'free' ? 'all' : urlCategory);
+  const [pricingFilter, setPricingFilter] = useState<'all' | 'free' | 'paid'>(initialIsFree ? 'free' : 'all');
   const [searchQuery, setSearchQuery] = useState<string>(urlSearch);
   const [sortBy, setSortBy] = useState<'featured' | 'rating' | 'price-asc' | 'price-desc'>('featured');
 
   const filteredCourses = useMemo(() => {
     let list = [...(courses && courses.length > 0 ? courses : [])];
 
-    // Filter by Category
+    // Filter by Pricing (All, Free, or Paid)
+    if (pricingFilter === 'free') {
+      list = list.filter((c) => c.price === 0);
+    } else if (pricingFilter === 'paid') {
+      list = list.filter((c) => c.price > 0);
+    }
+
+    // Filter by Category (supports dynamic key or label)
     if (selectedCategory !== 'all') {
-      list = list.filter((c) => c.category === selectedCategory);
+      const target = selectedCategory.toLowerCase();
+      list = list.filter(
+        (c) =>
+          c.category.toLowerCase() === target ||
+          c.categoryLabel.toLowerCase() === target ||
+          (c as any).category_slug === target
+      );
     }
 
     // Filter by Search Query
@@ -68,7 +84,7 @@ function CoursesContent() {
     }
 
     return list;
-  }, [selectedCategory, searchQuery, sortBy, courses]);
+  }, [selectedCategory, pricingFilter, searchQuery, sortBy, courses]);
 
   return (
     <div
@@ -168,6 +184,62 @@ function CoursesContent() {
               <option value="price-desc">{lang === 'bn' ? 'কোর্স ফি: বেশি থেকে কম' : 'Fee: High to Low'}</option>
             </select>
           </div>
+        </div>
+
+        {/* Pricing Segment Filter: All | Free Only | Paid */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
+          <div className="inline-flex items-center p-1 rounded-xl bg-slate-200/80 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-bold shadow-2xs">
+            <button
+              type="button"
+              onClick={() => setPricingFilter('all')}
+              className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
+                pricingFilter === 'all'
+                  ? 'bg-white dark:bg-slate-900 text-slate-950 dark:text-white shadow-xs font-black'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              {lang === 'bn' ? 'সকল কোর্স' : 'All Courses'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setPricingFilter('free')}
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
+                pricingFilter === 'free'
+                  ? 'bg-emerald-600 text-white shadow-xs font-black'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400'
+              }`}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${pricingFilter === 'free' ? 'bg-white' : 'bg-emerald-500'}`} />
+              <span>{lang === 'bn' ? 'ফ্রি কোর্স' : 'Free Courses'}</span>
+              <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${pricingFilter === 'free' ? 'bg-white/20 text-white' : 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'}`}>
+                {(courses && courses.length > 0 ? courses : COURSES).filter((c) => c.price === 0).length}
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setPricingFilter('paid')}
+              className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
+                pricingFilter === 'paid'
+                  ? 'bg-white dark:bg-slate-900 text-slate-950 dark:text-white shadow-xs font-black'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              {lang === 'bn' ? 'পেইড কোর্স' : 'Paid Courses'}
+            </button>
+          </div>
+
+          {pricingFilter === 'free' && (
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-800 text-xs text-emerald-900 dark:text-emerald-300 font-bold animate-in fade-in">
+              <span>{lang === 'bn' ? 'শুধুমাত্র ফ্রি কোর্স দেখানো হচ্ছে' : 'Showing Free Courses Only'}</span>
+              <button
+                type="button"
+                onClick={() => setPricingFilter('all')}
+                className="hover:underline cursor-pointer ml-1 text-[11px] font-black"
+              >
+                ✕ {lang === 'bn' ? 'মুছুন' : 'Clear'}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Category Pills */}

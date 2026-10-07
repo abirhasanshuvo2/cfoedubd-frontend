@@ -67,6 +67,7 @@ export interface Course {
   video_url?: string | null;
   totalStudents?: number;
   status?: number;
+  apiId?: string | number;
 }
 
 export interface Workshop {
@@ -348,8 +349,9 @@ export function adaptApiCourseToCfoCourse(item: any): Course {
   const levelUpper = rawLevel.toUpperCase();
   const rawCat = String(item.category || '').toLowerCase();
 
-  let categoryKey = 'cse-courses';
-  let categoryLabel = 'সিএসই ও সফটওয়্যার কোর্স';
+  let categoryKey = '';
+  let categoryLabel = item.category || 'Professional Program';
+
   if (rawCat.includes('cfo') || rawCat.includes('finance') || rawCat.includes('chartered')) {
     categoryKey = 'cfo-flagship';
     categoryLabel = 'চার্টার্ড ফাইন্যান্সিয়াল অফিসার (CFO)';
@@ -371,6 +373,15 @@ export function adaptApiCourseToCfoCourse(item: any): Course {
   } else if (rawCat.includes('ifrs') || rawCat.includes('ias') || rawCat.includes('audit')) {
     categoryKey = 'ias-ifrs';
     categoryLabel = 'আইএএস, আইএফআরএস ও অডিট';
+  } else if (rawCat.includes('cse') || rawCat.includes('software') || rawCat.includes('web') || rawCat.includes('flutter') || rawCat.includes('code')) {
+    categoryKey = 'cse-courses';
+    categoryLabel = 'সিএসই ও সফটওয়্যার কোর্স';
+  } else {
+    // Generate clean dynamic slug directly from backend category name
+    categoryKey = item.category
+      ? item.category.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+      : 'professional-track';
+    categoryLabel = item.category || 'প্রফেশনাল কোর্স';
   }
 
   const educatorName = item.educator || item.instructor || item.teacher || 'Senior Faculty Member';
@@ -404,9 +415,18 @@ export function adaptApiCourseToCfoCourse(item: any): Course {
     }
   }
 
+  // Generate SEO-friendly slug from course title (e.g., 'flutter-courses', 'laravel-rest-api-masterclass')
+  const courseSlug = rawName
+    .toLowerCase()
+    .trim()
+    .replace(/[^\p{L}\p{N}\s-]/gu, '')
+    .replace(/[\s\-_]+/g, '-')
+    .replace(/^-+|-+$/g, '') || `course-${courseId}`;
+
   return {
-    id: `api-${courseId}`,
-    slug: rawName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `course-${courseId}`,
+    id: courseSlug,
+    slug: courseSlug,
+    apiId: courseId,
     title: rawName,
     titleEn: rawName,
     category: categoryKey,

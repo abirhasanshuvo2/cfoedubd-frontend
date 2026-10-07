@@ -102,7 +102,7 @@ export default function CourseCard({
       
       {/* 1. Top 16:10 Thumbnail / Poster (Exact Match to Screenshot) */}
       <Link
-        href={`/courses/${course.id}`}
+        href={`/courses/${course.slug || course.id}`}
         onClick={(e) => {
           if (onSelectCourse) {
             e.preventDefault();
@@ -179,7 +179,7 @@ export default function CourseCard({
 
           {/* Course Title */}
           <Link
-            href={`/courses/${course.id}`}
+            href={`/courses/${course.slug || course.id}`}
             onClick={(e) => {
               if (onSelectCourse) {
                 e.preventDefault();
@@ -193,16 +193,11 @@ export default function CourseCard({
             </h3>
           </Link>
 
-          {/* Batch & Seats Left Badges (Exact Gray Rounded Pills from Screenshot) */}
+          {/* Batch Badge (Exact Gray Rounded Pill) */}
           <div className="flex items-center gap-2 mt-2.5 flex-wrap">
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px] text-slate-700 dark:text-slate-300 font-medium">
               <GraduationCap className="w-3.5 h-3.5 text-slate-500 shrink-0" />
               <span>{lang === 'bn' ? `ব্যাচ ${toBn(formatBatchNumber(course.batchNumber))}` : `Batch ${formatBatchNumber(course.batchNumber)}`}</span>
-            </span>
-
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px] text-slate-700 dark:text-slate-300 font-medium">
-              <Users className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-              <span>{toBn(seatsLeft)} {lang === 'bn' ? 'সিট বাকি' : 'seats left'}</span>
             </span>
           </div>
         </div>
@@ -249,7 +244,7 @@ export default function CourseCard({
 
           {/* 3. Full-Width Bottom Dark Button: বিস্তারিত দেখি → */}
           <Link
-            href={`/courses/${course.id}`}
+            href={`/courses/${course.slug || course.id}`}
             onClick={(e) => {
               if (onSelectCourse) {
                 e.preventDefault();

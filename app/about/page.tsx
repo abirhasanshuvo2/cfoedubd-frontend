@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -24,27 +24,71 @@ import {
 
 export default function AboutPage() {
   const { lang, systemInfo, theme } = useCfo();
+  const [aboutApiData, setAboutApiData] = useState<any>(null);
+
+  // Fetch dynamic about data from API endpoint with fallback
+  useEffect(() => {
+    let isMounted = true;
+    fetch('/api/about')
+      .then((res) => res.json())
+      .then((json) => {
+        if (isMounted && json?.data) {
+          setAboutApiData(json.data);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Compute dynamic metrics strictly from systemInfo & /api/about
+  const studentsVal = systemInfo.students
+    ? `${Number(systemInfo.students).toLocaleString()}+`
+    : aboutApiData?.metrics?.[0]?.number || '২,০০০+';
+  const studentsValEn = systemInfo.students
+    ? `${Number(systemInfo.students).toLocaleString()}+`
+    : aboutApiData?.metrics?.[0]?.numberEn || '2,000+';
+
+  const graduatesVal = systemInfo.graduates
+    ? (Number(systemInfo.graduates) <= 100 ? `${systemInfo.graduates}%` : `${Number(systemInfo.graduates).toLocaleString()}+`)
+    : aboutApiData?.metrics?.[1]?.number || '৯৮%';
+  const graduatesValEn = systemInfo.graduates
+    ? (Number(systemInfo.graduates) <= 100 ? `${systemInfo.graduates}%` : `${Number(systemInfo.graduates).toLocaleString()}+`)
+    : aboutApiData?.metrics?.[1]?.numberEn || '98%';
+
+  const classesVal = systemInfo.classes
+    ? `${Number(systemInfo.classes).toLocaleString()}+`
+    : aboutApiData?.metrics?.[2]?.number || '৯০+';
+  const classesValEn = systemInfo.classes
+    ? `${Number(systemInfo.classes).toLocaleString()}+`
+    : aboutApiData?.metrics?.[2]?.numberEn || '90+';
 
   const metrics = [
     { 
-      number: '২,০০০+', 
-      numberEn: '2000+', 
-      label: 'নিবন্ধিত শিক্ষার্থী ও কর্পোরেট এক্সিকিউটিভ', 
-      labelEn: 'Students' 
+      number: studentsVal, 
+      numberEn: studentsValEn, 
+      label: aboutApiData?.metrics?.[0]?.label || 'নিবন্ধিত শিক্ষার্থী ও কর্পোরেট এক্সিকিউটিভ', 
+      labelEn: aboutApiData?.metrics?.[0]?.labelEn || 'Registered Students & Executives' 
     },
     { 
-      number: '৯৮%', 
-      numberEn: '98%', 
-      label: 'সফল গ্র্যাজুয়েট ও ক্যারিয়ার রূপান্তর হার', 
-      labelEn: 'Graduates' 
+      number: graduatesVal, 
+      numberEn: graduatesValEn, 
+      label: aboutApiData?.metrics?.[1]?.label || 'সফল গ্র্যাজুয়েট ও ক্যারিয়ার রূপান্তর হার', 
+      labelEn: aboutApiData?.metrics?.[1]?.labelEn || 'Career Transformation Rate' 
     },
     { 
-      number: '৯০+', 
-      numberEn: '90+', 
-      label: 'বিশেষায়িত প্রফেশনাল ক্লাস ও ল্যাব', 
-      labelEn: 'Specialized Classes' 
+      number: classesVal, 
+      numberEn: classesValEn, 
+      label: aboutApiData?.metrics?.[2]?.label || 'বিশেষায়িত প্রফেশনাল ক্লাস ও ল্যাব', 
+      labelEn: aboutApiData?.metrics?.[2]?.labelEn || 'Specialized Classes & Labs' 
     }
   ];
+
+  // Dynamic video embed resolution
+  const videoId =
+    aboutApiData?.youtubeId ||
+    (systemInfo.about_video ? systemInfo.about_video.replace(/.*v=/, '').split('&')[0] : '-HeZs3qthR8');
 
   return (
     <div
@@ -193,7 +237,7 @@ export default function AboutPage() {
 
           <div className="relative aspect-video max-w-4xl mx-auto rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl">
             <iframe
-              src="https://www.youtube.com/embed/-HeZs3qthR8?start=1&rel=0"
+              src={`https://www.youtube.com/embed/${videoId}?start=1&rel=0`}
               title="Chartered Officer Limited Official Introduction"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen

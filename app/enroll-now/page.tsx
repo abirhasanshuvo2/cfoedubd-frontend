@@ -449,7 +449,7 @@ function EnrollNowContent() {
                 >
                   {allCourses.map((c) => (
                     <option key={c.id} value={c.id}>
-                      {c.title} {c.batchNumber ? `(${c.batchNumber})` : ''}
+                      {c.title}
                     </option>
                   ))}
                 </select>
@@ -827,7 +827,7 @@ function EnrollNowContent() {
                   {currentCourse?.title}
                 </h3>
                 <p className="text-xs text-slate-500 mt-1">
-                  {currentCourse?.batchNumber || 'Cohort Batch 18'}
+                  {currentCourse?.categoryLabel || 'Executive Program'}
                 </p>
               </div>
 

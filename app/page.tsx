@@ -56,9 +56,15 @@ export default function Home() {
   const filteredCourses = useMemo(() => {
     let list = [...(courses && courses.length > 0 ? courses : [])];
 
-    // Filter by Category
+    // Filter by Category (supports dynamic key or label)
     if (selectedCategory !== 'all') {
-      list = list.filter((c) => c.category === selectedCategory);
+      const target = selectedCategory.toLowerCase();
+      list = list.filter(
+        (c) =>
+          c.category.toLowerCase() === target ||
+          c.categoryLabel.toLowerCase() === target ||
+          (c as any).category_slug === target
+      );
     }
 
     // Filter by Search

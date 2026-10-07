@@ -208,7 +208,7 @@ export default function CareerQuizModal({
 
               <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex items-center justify-between">
                 <div className="text-left">
-                  <p className="font-bold text-slate-900">{recommended.batchNumber} • {recommended.duration}</p>
+                  <p className="font-bold text-slate-900">{recommended.categoryLabel} • {recommended.duration}</p>
                   <p className="text-slate-500">{recommended.schedule}</p>
                 </div>
                 <p className="text-base font-black text-slate-950">৳{recommended.price.toLocaleString()}</p>
