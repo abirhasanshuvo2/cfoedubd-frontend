@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateCertificatePdf } from '@/lib/generate-certificate-pdf';
+import { findCertificateBySerial } from '@/lib/certificate-data';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -43,16 +44,18 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    const cert = findCertificateBySerial(serial);
+
     const pdfBytes = await generateCertificatePdf({
       serial_number: serial,
-      student_name: serial.includes('222') ? 'Md Ali Hosen' : 'Chartered Professional',
-      class_name: 'Chartered Financial Officer (CFO)',
-      grade: 'A+',
-      registration_id: serial,
-      session_title: 'Executive Batch 2026',
-      start_date: '01 Jan 2026',
-      end_date: '30 Jun 2026',
-      issued_at: new Date().toLocaleDateString('en-GB'),
+      student_name: cert?.student_name || 'Chartered Professional',
+      class_name: cert?.class_name || 'Chartered Financial Officer (CFO)',
+      grade: cert?.grade || 'A+',
+      registration_id: cert?.registration_id || serial,
+      session_title: cert?.session_title || 'Executive Batch 2026',
+      start_date: cert?.start_date || '01 Jan 2026',
+      end_date: cert?.end_date || '30 Jun 2026',
+      issued_at: cert?.issued_at || new Date().toLocaleDateString('en-GB'),
     });
 
     return new NextResponse(Buffer.from(pdfBytes), {

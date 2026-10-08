@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { findCertificateBySerial } from '@/lib/certificate-data';
 
 export async function GET(
   request: NextRequest,
@@ -35,25 +36,38 @@ export async function GET(
       );
     }
   } catch {
-    // Backend unreachable
+    // Backend unreachable, fallback to mock details
   }
 
-  // Fallback mock details
+  // Fallback: look up in mock dataset
+  const cert = findCertificateBySerial(serial);
+
+  if (cert) {
+    return NextResponse.json({
+      success: true,
+      data: cert,
+      isMockFallback: true,
+    });
+  }
+
+  // Generic fallback if serial not in predefined list
   return NextResponse.json({
     success: true,
     data: {
       serial_number: serial,
       grade: 'A+',
       registration_id: serial,
-      student_name: 'Md Ali Hosen',
-      father_name: 'Mr. Ali Hosen',
-      mother_name: 'Mrs. Ali Hosen',
+      student_name: 'Chartered Professional',
+      father_name: 'Parent Name',
+      mother_name: 'Parent Name',
       class_name: 'Chartered Financial Officer (CFO)',
-      session_title: 'Batch 2026-Q1',
-      start_date: '22 Aug 2026',
-      end_date: '13 Sep 2026',
-      issued_at: '28 Sep 2026',
+      session_title: 'Executive Batch 2026',
+      start_date: '01 Jan 2026',
+      end_date: '30 Jun 2026',
+      issued_at: new Date().toLocaleDateString('en-GB'),
       download_url: `/api/enrollment/certificates/${encodeURIComponent(serial)}/download`,
+      view_url: `/api/enrollment/certificates/${encodeURIComponent(serial)}/view`,
     },
+    isMockFallback: true,
   });
 }
