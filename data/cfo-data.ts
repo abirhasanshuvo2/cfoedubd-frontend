@@ -49,6 +49,10 @@ export interface Course {
   isPopular?: boolean;
   isFeatured?: boolean;
   educator?: string;
+  educatorDesignation?: string | null;
+  educatorAvatar?: string | null;
+  educatorBio?: string | null;
+  educatorRating?: number | null;
   thumbnail?: string;
   image?: string;
   classId?: string;
@@ -374,6 +378,30 @@ export function adaptApiCourseToCfoCourse(item: any): Course {
   }
 
   const educatorName = item.educator || item.instructor || item.teacher || 'Senior Faculty Member';
+  const educatorAvatar =
+    item.educator_avatar ||
+    item.educator_image ||
+    item.instructor_avatar ||
+    item.instructor_image ||
+    item.avatar ||
+    null;
+  const educatorDesignation =
+    item.educator_designation ||
+    item.instructor_designation ||
+    item.designation ||
+    item.educator_title ||
+    null;
+  const educatorBio =
+    item.educator_bio ||
+    item.instructor_bio ||
+    item.bio ||
+    null;
+  const educatorRating =
+    typeof item.educator_rating === 'number'
+      ? item.educator_rating
+      : typeof item.rating === 'number' && item.rating > 0
+      ? item.rating
+      : null;
   const totalStudentsNum = typeof item.total_students === 'number' ? item.total_students : 0;
 
   // Extract video link from backend response (supports video, vide, video_link, video_url, etc.)
@@ -441,6 +469,10 @@ export function adaptApiCourseToCfoCourse(item: any): Course {
       },
     ],
     educator: educatorName,
+    educatorAvatar: educatorAvatar,
+    educatorDesignation: educatorDesignation,
+    educatorBio: educatorBio,
+    educatorRating: educatorRating,
     classId: item.class_id || `CLS-${courseId}`,
     days: days,
     timeSlot: time,
