@@ -306,45 +306,120 @@ function CertificateContent() {
         {/* Certificate Found & Display */}
         {!isLoading && certificates && certificates.length > 0 && activeCert && (
           <div className="space-y-6">
-            {/* Top Selector (when multiple certificates found for same phone/email) */}
+            {/* When multiple certificates found for same Phone/Email, display prominent Certificate List */}
             {certificates.length > 1 && (
-              <div className="p-4 rounded-2xl bg-amber-50 dark:bg-slate-900 border border-amber-200 dark:border-slate-800 print:hidden space-y-2">
-                <div className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                  <Layers className="w-4 h-4 text-amber-600 dark:text-[#FFC000]" />
-                  <span>
-                    {lang === 'bn'
-                      ? `মোট ${certificates.length}টি সনদপত্র পাওয়া গেছে। দেখতে নির্বাচন করুন:`
-                      : `Found ${certificates.length} certificates. Select one to view:`}
+              <div className="p-5 rounded-2xl bg-gradient-to-br from-amber-50/90 to-white dark:from-slate-900 dark:to-slate-900/90 border-2 border-amber-300 dark:border-amber-400/40 shadow-md print:hidden space-y-3.5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1 border-b border-amber-200/70 dark:border-slate-800">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-700 dark:text-[#FFC000] flex items-center justify-center">
+                      <Layers className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-serif font-black text-slate-900 dark:text-white">
+                        {lang === 'bn'
+                          ? `শিক্ষার্থীর অর্জিত সনদপত্রের তালিকা (মোট ${certificates.length}টি)`
+                          : `Enrolled Certificates List (${certificates.length} Found)`}
+                      </h3>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                        {lang === 'bn'
+                          ? 'যে কোনো কোর্সে ক্লিক করে সনদপত্র দেখুন অথবা সরাসরি পিডিএফ ডাউনলোড করুন:'
+                          : 'Click any certificate to preview document below, or download directly:'}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="self-start sm:self-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-700/50">
+                    {certificates[0]?.student_name}
                   </span>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
                   {certificates.map((cert, idx) => {
                     const isSelected = idx === selectedIndex;
                     return (
-                      <button
-                        key={cert.serial_number || idx}
-                        type="button"
+                      <div
+                        key={cert.serial_number || cert.registration_id || idx}
                         onClick={() => setSelectedIndex(idx)}
-                        className={`p-3 rounded-xl text-left border transition-all cursor-pointer flex flex-col justify-between ${
+                        className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2.5 ${
                           isSelected
-                            ? 'bg-[#0A192F] text-white border-amber-400 shadow-md ring-2 ring-amber-400/40'
-                            : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-amber-300'
+                            ? 'bg-[#0A192F] text-white border-amber-400 shadow-md ring-2 ring-amber-400/50'
+                            : 'bg-white dark:bg-slate-800/90 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-amber-400 hover:shadow-sm'
                         }`}
                       >
-                        <div className="flex items-center justify-between text-[11px] mb-1">
-                          <span className="font-mono font-bold">#{cert.registration_id}</span>
-                          <span className="font-bold text-amber-500">
-                            {lang === 'bn' ? `গ্রেড: ${cert.grade}` : `Grade: ${cert.grade}`}
-                          </span>
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="space-y-0.5">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span
+                                className={`font-mono font-bold text-[11px] px-2 py-0.5 rounded ${
+                                  isSelected
+                                    ? 'bg-amber-400/20 text-[#FFC000] border border-amber-400/30'
+                                    : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                                }`}
+                              >
+                                #{cert.registration_id || cert.serial_number}
+                              </span>
+                              <span
+                                className={`text-[11px] font-bold px-2 py-0.5 rounded ${
+                                  isSelected
+                                    ? 'bg-amber-400 text-slate-950 font-black'
+                                    : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-[#FFC000] border border-amber-200 dark:border-amber-800'
+                                }`}
+                              >
+                                {lang === 'bn' ? `গ্রেড: ${cert.grade}` : `Grade: ${cert.grade}`}
+                              </span>
+                            </div>
+                            <h4
+                              className={`text-xs sm:text-sm font-serif font-black line-clamp-1 pt-1 ${
+                                isSelected ? 'text-white' : 'text-slate-900 dark:text-white'
+                              }`}
+                            >
+                              {cert.class_name}
+                            </h4>
+                          </div>
+
+                          <div className="shrink-0 flex items-center gap-1">
+                            {isSelected && (
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 px-1.5 py-0.5 rounded bg-amber-400/10 border border-amber-400/30">
+                                {lang === 'bn' ? 'প্রদর্শিত' : 'Selected'}
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        <div className="text-xs font-serif font-black line-clamp-1">{cert.class_name}</div>
-                        <div className="text-[10px] text-slate-400 mt-1 flex items-center justify-between">
-                          <span>{cert.session_title || (lang === 'bn' ? 'এক্সিকিউটিভ সেশন' : 'Executive Session')}</span>
-                          <span className="font-bold text-[#FFC000]">
-                            {isSelected ? (lang === 'bn' ? 'সক্রিয়' : 'Active') : (lang === 'bn' ? 'দেখুন' : 'View')}
+
+                        <div
+                          className={`text-[11px] flex items-center justify-between gap-2 pt-2 border-t ${
+                            isSelected
+                              ? 'border-slate-700 text-slate-300'
+                              : 'border-slate-100 dark:border-slate-700/60 text-slate-500 dark:text-slate-400'
+                          }`}
+                        >
+                          <span className="truncate">
+                            {cert.session_title || (lang === 'bn' ? 'এক্সিকিউটিভ সেশন' : 'Executive Session')}
                           </span>
+
+                          <div className="flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedIndex(idx)}
+                              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-colors ${
+                                isSelected
+                                  ? 'bg-amber-400 text-slate-950 shadow-sm'
+                                  : 'bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-200'
+                              }`}
+                            >
+                              {lang === 'bn' ? 'প্রিভিউ' : 'Preview'}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDownload(cert)}
+                              className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#FFC000] hover:bg-[#E6AC00] text-slate-950 flex items-center gap-1 shadow-sm"
+                              title={lang === 'bn' ? 'পিডিএফ ডাউনলোড' : 'Download PDF'}
+                            >
+                              <Download className="w-3 h-3 stroke-[2.5]" />
+                              <span>{lang === 'bn' ? 'ডাউনলোড' : 'Download'}</span>
+                            </button>
+                          </div>
                         </div>
-                      </button>
+                      </div>
                     );
                   })}
                 </div>
