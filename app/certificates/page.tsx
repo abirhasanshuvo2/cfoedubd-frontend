@@ -168,17 +168,6 @@ function CertificateDocumentCard({
         </div>
 
         <div className="flex flex-wrap items-center gap-2 shrink-0">
-          <a
-            href={rawDownloadUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-1.5 transition-colors border border-white/15"
-            title={rawDownloadUrl}
-          >
-            <ExternalLink className="w-3.5 h-3.5 text-[#FFC000]" />
-            <span>{lang === 'bn' ? 'নতুন ট্যাবে খুলুন' : 'Open Direct URL'}</span>
-          </a>
-
           <button
             type="button"
             onClick={() => onDownload(cert)}
@@ -221,10 +210,12 @@ function CertificateDocumentCard({
           )
         )}
 
-        {/* Sub-bar showing the exact API download_url */}
+        {/* Sub-bar below viewer */}
         <div className="w-full py-2.5 px-4 sm:px-6 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex flex-wrap items-center justify-between gap-2 print:hidden">
-          <span className="font-mono truncate max-w-xl" title={rawDownloadUrl}>
-            API URL: {rawDownloadUrl}
+          <span>
+            {lang === 'bn'
+              ? 'অফিসিয়াল সনদপত্র প্রদর্শিত হচ্ছে।'
+              : 'Official verified certificate document.'}
           </span>
           <button
             type="button"
@@ -747,25 +738,13 @@ function CertificateContent() {
                         }`}
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <span className="font-mono text-[10px] truncate max-w-[180px]" title={downloadUrl}>
-                          {downloadUrl}
+                        <span className="truncate">
+                          {cert.start_date && cert.end_date
+                            ? `${cert.start_date} – ${cert.end_date}`
+                            : cert.student_name}
                         </span>
 
                         <div className="flex items-center gap-1.5 shrink-0">
-                          <a
-                            href={downloadUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-colors flex items-center gap-1 ${
-                              isFocused
-                                ? 'bg-white/15 text-white hover:bg-white/25'
-                                : 'bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-200'
-                            }`}
-                          >
-                            <ExternalLink className="w-3 h-3" />
-                            <span>{lang === 'bn' ? 'দেখুন' : 'Open'}</span>
-                          </a>
-
                           <button
                             type="button"
                             onClick={() => handleDownload(cert)}

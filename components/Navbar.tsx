@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -11,11 +11,20 @@ import {
   Sun,
   Moon,
   ShieldCheck,
-  User,
-  GraduationCap,
   BookOpen,
+  ChevronDown,
+  ChevronRight,
+  Sparkles,
+  Award,
+  FileText,
+  Cpu,
+  TrendingUp,
+  Truck,
+  Users,
+  Code,
+  Layers,
 } from 'lucide-react';
-import { COURSES, Course } from '@/data/cfo-data';
+import { COURSES, CATEGORIES, Course } from '@/data/cfo-data';
 import { useCfo } from '@/context/CfoContext';
 
 interface NavbarProps {
@@ -28,20 +37,31 @@ interface NavbarProps {
   onSelectCategory?: (catId: string) => void;
 }
 
+interface NavCategoryItem {
+  id: string;
+  label: string;
+  labelEn: string;
+  icon: string;
+  count: number;
+}
+
 export default function Navbar({
   onSelectCourse,
-  onOpenAuth,
   searchQuery: externalSearchQuery,
   setSearchQuery: externalSetSearchQuery,
+  onSelectCategory,
 }: NavbarProps) {
   const router = useRouter();
   const { lang, setLang, courses, theme, toggleTheme } = useCfo();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileCoursesOpen, setIsMobileCoursesOpen] = useState(false);
+  const [isCoursesDropdownOpen, setIsCoursesDropdownOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [internalSearchQuery, setInternalSearchQuery] = useState('');
 
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const coursesDropdownRef = useRef<HTMLDivElement>(null);
 
   const activeSearchQuery =
     externalSearchQuery !== undefined ? externalSearchQuery : internalSearchQuery;
@@ -54,10 +74,109 @@ export default function Navbar({
     }
   };
 
+  // Build dynamic categories from active API courses
+  const navCategories = useMemo<NavCategoryItem[]>(() => {
+    const courseList = Array.isArray(courses) && courses.length > 0 ? courses : COURSES;
+    const categoryCounts = new Map<string, { count: number; label: string; labelEn: string }>();
+
+    courseList.forEach((c) => {
+      const catKey = c.category || 'other';
+      const existing = categoryCounts.get(catKey);
+      if (existing) {
+        existing.count += 1;
+      } else {
+        categoryCounts.set(catKey, {
+          count: 1,
+          label: c.categoryLabel || c.category || 'Other',
+          labelEn: c.categoryLabel || c.category || 'Other',
+        });
+      }
+    });
+
+    const items: NavCategoryItem[] = [];
+
+    categoryCounts.forEach((info, catKey) => {
+      const known = CATEGORIES.find((item) => item.id === catKey);
+      if (known) {
+        items.push({
+          id: known.id,
+          label: known.label,
+          labelEn: known.labelEn,
+          icon: known.icon,
+          count: info.count,
+        });
+      } else {
+        let iconName = 'BookOpen';
+        const lowerKey = `${catKey} ${info.label}`.toLowerCase();
+        if (lowerKey.includes('cfo') || lowerKey.includes('finance') || lowerKey.includes('executive')) {
+          iconName = 'Award';
+        } else if (lowerKey.includes('tax') || lowerKey.includes('vat') || lowerKey.includes('customs')) {
+          iconName = 'FileText';
+        } else if (lowerKey.includes('sap') || lowerKey.includes('erp') || lowerKey.includes('fintech')) {
+          iconName = 'Cpu';
+        } else if (lowerKey.includes('valuation') || lowerKey.includes('fp&a') || lowerKey.includes('market')) {
+          iconName = 'TrendingUp';
+        } else if (lowerKey.includes('supply') || lowerKey.includes('scm') || lowerKey.includes('logistics')) {
+          iconName = 'Truck';
+        } else if (lowerKey.includes('hrm') || lowerKey.includes('people') || lowerKey.includes('law')) {
+          iconName = 'Users';
+        } else if (lowerKey.includes('audit') || lowerKey.includes('ifrs') || lowerKey.includes('compliance')) {
+          iconName = 'ShieldCheck';
+        } else if (lowerKey.includes('code') || lowerKey.includes('cse') || lowerKey.includes('software') || lowerKey.includes('dev')) {
+          iconName = 'Code';
+        }
+
+        items.push({
+          id: catKey,
+          label: info.label,
+          labelEn: info.labelEn,
+          icon: iconName,
+          count: info.count,
+        });
+      }
+    });
+
+    return items;
+  }, [courses]);
+
+  const totalCoursesCount = useMemo(() => {
+    const courseList = Array.isArray(courses) && courses.length > 0 ? courses : COURSES;
+    return courseList.length;
+  }, [courses]);
+
+  const getCategoryIcon = (iconName: string) => {
+    const cls = 'w-4 h-4 text-amber-600 dark:text-[#FFC000]';
+    switch (iconName) {
+      case 'Award':
+        return <Award className={cls} />;
+      case 'FileText':
+        return <FileText className={cls} />;
+      case 'Cpu':
+        return <Cpu className={cls} />;
+      case 'TrendingUp':
+        return <TrendingUp className={cls} />;
+      case 'Truck':
+        return <Truck className={cls} />;
+      case 'Users':
+        return <Users className={cls} />;
+      case 'ShieldCheck':
+        return <ShieldCheck className={cls} />;
+      case 'Code':
+        return <Code className={cls} />;
+      case 'Layers':
+        return <Layers className={cls} />;
+      default:
+        return <BookOpen className={cls} />;
+    }
+  };
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
         setIsSearchOpen(false);
+      }
+      if (coursesDropdownRef.current && !coursesDropdownRef.current.contains(event.target as Node)) {
+        setIsCoursesDropdownOpen(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -65,37 +184,43 @@ export default function Navbar({
   }, []);
 
   const filteredSearchResults = activeSearchQuery.trim()
-    ? (courses && courses.length > 0 ? courses : COURSES).filter(
-        (c) =>
-          c.title.toLowerCase().includes(activeSearchQuery.toLowerCase()) ||
-          c.titleEn.toLowerCase().includes(activeSearchQuery.toLowerCase()) ||
-          c.categoryLabel.toLowerCase().includes(activeSearchQuery.toLowerCase()) ||
-          c.tags.some((t) => t.toLowerCase().includes(activeSearchQuery.toLowerCase()))
-      ).slice(0, 5)
+    ? (courses && courses.length > 0 ? courses : COURSES)
+        .filter(
+          (c) =>
+            c.title.toLowerCase().includes(activeSearchQuery.toLowerCase()) ||
+            c.titleEn.toLowerCase().includes(activeSearchQuery.toLowerCase()) ||
+            c.categoryLabel.toLowerCase().includes(activeSearchQuery.toLowerCase()) ||
+            c.tags.some((t) => t.toLowerCase().includes(activeSearchQuery.toLowerCase()))
+        )
+        .slice(0, 5)
     : [];
 
   const handleCourseClick = (course: Course) => {
     setIsSearchOpen(false);
     setIsMobileMenuOpen(false);
+    setIsCoursesDropdownOpen(false);
     if (onSelectCourse) {
       onSelectCourse(course);
     }
     router.push(`/courses/${course.slug || course.id}`);
   };
 
-  const handleAuthTrigger = () => {
-    if (onOpenAuth) {
-      onOpenAuth();
-    } else {
-      router.push('/login');
-    }
+  const handleCategoryNavigate = (categoryId: string) => {
+    setIsCoursesDropdownOpen(false);
     setIsMobileMenuOpen(false);
+    if (onSelectCategory) {
+      onSelectCategory(categoryId);
+    }
+    if (categoryId === 'all') {
+      router.push('/courses');
+    } else {
+      router.push(`/courses?category=${encodeURIComponent(categoryId)}`);
+    }
   };
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/90 dark:border-slate-800 shadow-xs transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-        
         {/* Left: Brand Logo (COL - Bold and Big) */}
         <div className="flex items-center gap-3 sm:gap-4 shrink-0">
           <Link href="/" className="inline-flex items-center gap-2.5 group whitespace-nowrap">
@@ -116,15 +241,92 @@ export default function Navbar({
           </Link>
         </div>
 
-        {/* Center: Clean Nav Links (With Courses, Certificates, Media, About, Contact) */}
+        {/* Center: Nav Links with Courses Category Dropdown */}
         <nav className="hidden md:flex items-center gap-5 xl:gap-7 text-xs font-bold text-slate-700 dark:text-slate-200">
-          <Link
-            href="/courses"
-            className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors whitespace-nowrap flex items-center gap-1.5"
+          {/* Courses Dropdown by Category */}
+          <div
+            ref={coursesDropdownRef}
+            className="relative"
+            onMouseEnter={() => setIsCoursesDropdownOpen(true)}
+            onMouseLeave={() => setIsCoursesDropdownOpen(false)}
           >
-            <BookOpen className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-            <span>{lang === 'bn' ? 'কোর্সসমূহ' : 'Courses'}</span>
-          </Link>
+            <button
+              type="button"
+              onClick={() => setIsCoursesDropdownOpen((prev) => !prev)}
+              className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors whitespace-nowrap flex items-center gap-1.5 py-2 cursor-pointer"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+              <span>{lang === 'bn' ? 'কোর্সসমূহ' : 'Courses'}</span>
+              <ChevronDown
+                className={`w-3.5 h-3.5 transition-transform duration-150 ${
+                  isCoursesDropdownOpen ? 'rotate-180 text-amber-600 dark:text-amber-400' : ''
+                }`}
+              />
+            </button>
+
+            {/* Category Dropdown Panel */}
+            {isCoursesDropdownOpen && (
+              <div className="absolute left-0 top-full pt-1 w-72 sm:w-80 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+                <div className="rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200 dark:border-slate-800 p-2.5 space-y-1">
+                  <div className="px-3 py-1.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                      {lang === 'bn' ? 'ক্যাটাগরি অনুযায়ী কোর্স' : 'Browse by Category'}
+                    </span>
+                    <span className="text-[10px] font-mono font-bold text-amber-600 dark:text-[#FFC000]">
+                      {navCategories.length} {lang === 'bn' ? 'টি ক্যাটাগরি' : 'Categories'}
+                    </span>
+                  </div>
+
+                  <div className="max-h-72 overflow-y-auto space-y-1 py-1">
+                    {navCategories.map((cat) => (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() => handleCategoryNavigate(cat.id)}
+                        className="w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl hover:bg-amber-50/80 dark:hover:bg-slate-800 text-left transition-colors group cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 group-hover:bg-amber-100 dark:group-hover:bg-slate-700 flex items-center justify-center shrink-0 border border-slate-200/70 dark:border-slate-700 transition-colors">
+                            {getCategoryIcon(cat.icon)}
+                          </div>
+                          <div className="truncate">
+                            <p className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-amber-700 dark:group-hover:text-[#FFC000] truncate">
+                              {lang === 'bn' ? cat.label : cat.labelEn}
+                            </p>
+                            <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                              {cat.count} {lang === 'bn' ? 'টি কোর্স' : cat.count === 1 ? 'Course' : 'Courses'}
+                            </p>
+                          </div>
+                        </div>
+
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-amber-600 dark:group-hover:text-[#FFC000] group-hover:translate-x-0.5 transition-all shrink-0" />
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* View All Courses Footer Link */}
+                  <div className="pt-1 border-t border-slate-100 dark:border-slate-800">
+                    <button
+                      type="button"
+                      onClick={() => handleCategoryNavigate('all')}
+                      className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white text-xs font-bold transition-colors cursor-pointer"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-[#FFC000]" />
+                        <span>
+                          {lang === 'bn'
+                            ? `সব কোর্স দেখুন (${totalCoursesCount})`
+                            : `View All Courses (${totalCoursesCount})`}
+                        </span>
+                      </span>
+                      <ArrowRight className="w-3.5 h-3.5 text-[#FFC000]" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
           <Link
             href="/certificates"
             className="inline-flex items-center gap-1 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors whitespace-nowrap text-emerald-700 dark:text-emerald-400 font-semibold"
@@ -152,9 +354,8 @@ export default function Navbar({
           </Link>
         </nav>
 
-        {/* Right: Search, Language, Theme, Login, and CTA */}
+        {/* Right: Search, Language, Theme, and CTA */}
         <div className="flex items-center gap-2 sm:gap-2.5 shrink-0 whitespace-nowrap">
-          
           {/* Search Trigger */}
           <div className="relative" ref={searchContainerRef}>
             <button
@@ -259,15 +460,12 @@ export default function Navbar({
           >
             {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
-
         </div>
-
       </div>
 
-      {/* Mobile Drawer (Matching cfoedubd.com) */}
+      {/* Mobile Drawer */}
       {isMobileMenuOpen && (
         <div className="md:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-4 shadow-xl animate-in slide-in-from-top-2 duration-150 max-h-[85vh] overflow-y-auto">
-          
           {/* Mobile Search Input */}
           <div className="relative">
             <input
@@ -297,13 +495,51 @@ export default function Navbar({
             >
               {lang === 'bn' ? 'হোম' : 'Home'}
             </Link>
-            <Link
-              href="/courses"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block px-3 py-2.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-amber-600 dark:text-amber-400"
-            >
-              {lang === 'bn' ? '📚 কোর্সসমূহ' : '📚 Courses'}
-            </Link>
+
+            {/* Expandable Courses by Category in Mobile Menu */}
+            <div className="space-y-1">
+              <button
+                type="button"
+                onClick={() => setIsMobileCoursesOpen((prev) => !prev)}
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-amber-600 dark:text-amber-400 cursor-pointer"
+              >
+                <span>{lang === 'bn' ? '📚 কোর্সসমূহ (ক্যাটাগরি)' : '📚 Courses (By Category)'}</span>
+                <ChevronDown
+                  className={`w-4 h-4 transition-transform ${isMobileCoursesOpen ? 'rotate-180' : ''}`}
+                />
+              </button>
+
+              {isMobileCoursesOpen && (
+                <div className="pl-3 pr-1 py-1.5 space-y-1 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200/70 dark:border-slate-800">
+                  {navCategories.map((cat) => (
+                    <button
+                      key={`mob-${cat.id}`}
+                      type="button"
+                      onClick={() => handleCategoryNavigate(cat.id)}
+                      className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-left text-xs text-slate-800 dark:text-slate-200 cursor-pointer"
+                    >
+                      <span className="truncate">{lang === 'bn' ? cat.label : cat.labelEn}</span>
+                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-[#FFC000]">
+                        {cat.count}
+                      </span>
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => handleCategoryNavigate('all')}
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-amber-500/15 text-amber-800 dark:text-[#FFC000] text-xs font-black cursor-pointer"
+                  >
+                    <span>
+                      {lang === 'bn'
+                        ? `সব কোর্স দেখুন (${totalCoursesCount})`
+                        : `All Courses (${totalCoursesCount})`}
+                    </span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
+            </div>
+
             <Link
               href="/certificates"
               onClick={() => setIsMobileMenuOpen(false)}
@@ -340,8 +576,20 @@ export default function Navbar({
               onClick={toggleTheme}
               className="w-full py-2.5 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              {theme === 'dark' ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-slate-700" />}
-              <span>{theme === 'dark' ? (lang === 'bn' ? 'লাইট মোড' : 'Light Mode') : (lang === 'bn' ? 'ডার্ক মোড' : 'Dark Mode')}</span>
+              {theme === 'dark' ? (
+                <Sun className="w-3.5 h-3.5 text-amber-400" />
+              ) : (
+                <Moon className="w-3.5 h-3.5 text-slate-700" />
+              )}
+              <span>
+                {theme === 'dark'
+                  ? lang === 'bn'
+                    ? 'লাইট মোড'
+                    : 'Light Mode'
+                  : lang === 'bn'
+                  ? 'ডার্ক মোড'
+                  : 'Dark Mode'}
+              </span>
             </button>
           </div>
 
@@ -358,7 +606,6 @@ export default function Navbar({
           </div>
         </div>
       )}
-
     </header>
   );
 }

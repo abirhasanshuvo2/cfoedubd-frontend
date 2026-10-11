@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, Suspense } from 'react';
+import React, { useState, useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
@@ -40,6 +40,13 @@ function CoursesContent() {
   const [pricingFilter, setPricingFilter] = useState<'all' | 'free' | 'paid'>(initialIsFree ? 'free' : 'all');
   const [searchQuery, setSearchQuery] = useState<string>(urlSearch);
   const [sortBy, setSortBy] = useState<'featured' | 'rating' | 'price-asc' | 'price-desc'>('featured');
+
+  useEffect(() => {
+    setSelectedCategory(urlCategory === 'free' ? 'all' : urlCategory);
+    if (urlCategory.toLowerCase() === 'free' || urlFilter.toLowerCase() === 'free') {
+      setPricingFilter('free');
+    }
+  }, [urlCategory, urlFilter]);
 
   const filteredCourses = useMemo(() => {
     let list = [...(courses && courses.length > 0 ? courses : [])];
