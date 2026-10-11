@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, Suspense, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, Suspense, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useCfo } from '@/context/CfoContext';
@@ -12,54 +11,40 @@ import {
   CheckCircle2,
   Award,
   Calendar,
-  User,
-  GraduationCap,
   Download,
-  Share2,
   AlertCircle,
-  ExternalLink,
-  Eye,
-  FileCheck,
-  Check,
-  Phone,
-  Mail,
-  Hash,
-  RefreshCw,
   Printer,
-  Sparkles,
   X,
-  FileText,
-  Maximize2,
+  FileCheck,
   Layers,
-  FileDown,
-  Info,
+  GraduationCap,
+  Hash,
+  User,
+  Clock,
+  ExternalLink,
 } from 'lucide-react';
 
-export interface CertificateItem {
-  id?: number | string;
-  serial_number: number | string;
+export interface CertificateData {
+  serial_number: string | number;
   grade: string;
-  registration_id: string;
+  registration_id: string | null;
   student_name: string;
-  father_name?: string;
-  mother_name?: string;
+  father_name?: string | null;
+  mother_name?: string | null;
   class_name: string;
-  session_title: string | null;
+  session_title?: string | null;
   start_date?: string | null;
   end_date?: string | null;
-  issued_at: string | null;
+  issued_at?: string | null;
+  download_url?: string;
   view_url?: string;
-  download_url: string;
 }
 
-type SearchMode = 'auto' | 'phone' | 'email' | 'id';
-
-function CertificateVerificationContent() {
+function CertificateContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { lang, systemInfo, theme } = useCfo();
+  const { lang, theme } = useCfo();
 
-  // Extract initial query from identifier, email, phone, registration_id, or id
   const initialQuery =
     searchParams.get('identifier') ||
     searchParams.get('email') ||
@@ -68,130 +53,139 @@ function CertificateVerificationContent() {
     searchParams.get('id') ||
     '';
 
-  const [inputVal, setInputVal] = useState<string>(initialQuery);
-  const [activeMode, setActiveMode] = useState<SearchMode>('auto');
-  const [certificates, setCertificates] = useState<CertificateItem[] | null>(null);
-  const [selectedCertIndex, setSelectedCertIndex] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [hasSearched, setHasSearched] = useState<boolean>(false);
-  const [lastSearchedQuery, setLastSearchedQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>(initialQuery);
+  const [certificates, setCertificates] = useState<CertificateData[] | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [copySuccess, setCopySuccess] = useState<boolean>(false);
-  const [previewModalCert, setPreviewModalCert] = useState<CertificateItem | null>(null);
-  const [extendedDetails, setExtendedDetails] = useState<Record<string, any>>({});
-  const [loadingExtended, setLoadingExtended] = useState<boolean>(false);
+  const [hasSearched, setHasSearched] = useState<boolean>(false);
+  const [downloading, setDownloading] = useState<boolean>(false);
 
-  // Auto-detect input type
-  const detectedType = useMemo(() => {
-    const val = inputVal.trim();
-    if (!val) return null;
-    if (val.includes('@')) return 'email';
-    const digits = val.replace(/\D/g, '');
-    if (digits.length >= 10 && (digits.startsWith('01') || digits.startsWith('8801') || val.startsWith('+880'))) {
-      return 'phone';
-    }
-    return 'id';
-  }, [inputVal]);
+  // Search API
+  const handleSearch = useCallback(
+    async (queryToSearch: string) => {
+      const q = queryToSearch.trim();
+      if (!q) return;
 
-  const fetchCertificate = useCallback(
-    async (query: string) => {
-      const trimmed = query.trim();
-      if (!trimmed) return;
-
-      setLoading(true);
-      setHasSearched(true);
-      setLastSearchedQuery(trimmed);
+      setIsLoading(true);
       setErrorMessage(null);
+      setHasSearched(true);
 
       try {
-        const proxyRes = await fetch(
-          `/api/enrollment/certificates/lookup?identifier=${encodeURIComponent(trimmed)}`
-        );
-        const json = await proxyRes.json();
+        let matchedData: CertificateData[] | null = null;
 
-        if (proxyRes.ok && json.success && Array.isArray(json.data) && json.data.length > 0) {
-          setCertificates(json.data);
-          setSelectedCertIndex(0);
-          setErrorMessage(null);
-        } else {
-          setCertificates([]);
-          const msg =
-            json.message ||
-            (lang === 'bn'
-              ? `"${trimmed}" এর বিপরীতে কোনো সনদপত্র পাওয়া যায়নি। ফোন নম্বর, ইমেইল অথবা রেজিস্ট্রেশন আইডি সঠিক কিনা নিশ্চিত করুন।`
-              : `No certificate found for "${trimmed}". Please verify your phone number, email, or registration ID.`);
-          setErrorMessage(msg);
+        // 1. Try direct call to local backend first (if running on user's machine)
+        try {
+          const paramKey = q.includes('@') ? 'email=' : 'identifier=';
+          const directUrl = `http://127.0.0.1:8000/api/enrollment/certificates/lookup?${paramKey}${encodeURIComponent(
+            q
+          )}`;
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 1200);
+          const directRes = await fetch(directUrl, {
+            signal: controller.signal,
+            headers: { Accept: 'application/json' },
+          });
+          clearTimeout(timeout);
+          if (directRes.ok) {
+            const directJson = await directRes.json();
+            if (
+              directJson.success &&
+              Array.isArray(directJson.data) &&
+              directJson.data.length > 0
+            ) {
+              matchedData = directJson.data;
+            }
+          }
+        } catch {
+          // Direct fetch failed or CORS, continue to server proxy
         }
+
+        // 2. Query Next.js API endpoint
+        if (!matchedData) {
+          const res = await fetch(
+            `/api/enrollment/certificates/lookup?identifier=${encodeURIComponent(q)}`
+          );
+          const json = await res.json();
+
+          if (res.ok && json.success && Array.isArray(json.data) && json.data.length > 0) {
+            matchedData = json.data;
+          } else {
+            setCertificates([]);
+            setErrorMessage(
+              json.message ||
+                (lang === 'bn'
+                  ? `"${q}" এর বিপরীতে কোনো সনদপত্র পাওয়া যায়নি। ফোন নম্বর, ইমেইল বা আইডি সঠিকভাবে লিখুন।`
+                  : `No certificate found for "${q}". Please check your phone number, email, or registration ID.`)
+            );
+            return;
+          }
+        }
+
+        setCertificates(matchedData);
+        setSelectedIndex(0);
+        setErrorMessage(null);
       } catch {
         setCertificates([]);
         setErrorMessage(
           lang === 'bn'
-            ? 'সার্ভারের সাথে সংযোগে সাময়িক সমস্যা হয়েছে। অনুগ্রহ করে পুনরায় চেষ্টা করুন।'
-            : 'Connection error while checking certificate. Please try again.'
+            ? 'সার্ভারে সংযোগে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।'
+            : 'Unable to connect to certificate service. Please try again.'
         );
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     },
     [lang]
   );
 
-  // Auto-fetch if query was in URL on initial render
+  // Auto-search on initial load if query in URL
   useEffect(() => {
     if (!initialQuery) return;
     const timer = setTimeout(() => {
-      fetchCertificate(initialQuery);
+      handleSearch(initialQuery);
     }, 0);
     return () => clearTimeout(timer);
-  }, [initialQuery, fetchCertificate]);
+  }, [initialQuery, handleSearch]);
 
-  const handleSearchSubmit = (e?: React.FormEvent) => {
+  const onSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    const trimmed = inputVal.trim();
-    if (!trimmed) return;
-
-    // Push new query into browser history
-    router.push(`/certificates?identifier=${encodeURIComponent(trimmed)}`);
-    fetchCertificate(trimmed);
+    const q = searchQuery.trim();
+    if (!q) return;
+    router.push(`/certificates?identifier=${encodeURIComponent(q)}`);
+    handleSearch(q);
   };
 
-  const handleCopyLink = (identifier: string) => {
-    if (typeof window !== 'undefined') {
-      const url = `${window.location.origin}/certificates?identifier=${encodeURIComponent(identifier)}`;
-      navigator.clipboard.writeText(url);
-      setCopySuccess(true);
-      setTimeout(() => setCopySuccess(false), 2500);
-    }
-  };
+  const activeCert =
+    certificates && certificates.length > 0 ? certificates[selectedIndex] || certificates[0] : null;
 
-  const loadFullDetails = async (serial: string | number) => {
-    const sStr = String(serial);
-    if (extendedDetails[sStr]) return;
+  // Trigger PDF download directly as-is from API
+  const handleDownload = (cert: CertificateData) => {
+    const serial = String(cert.serial_number || cert.registration_id || 'certificate');
+    const targetUrl =
+      cert.download_url || `/api/enrollment/certificates/${encodeURIComponent(serial)}/download`;
 
-    setLoadingExtended(true);
+    setDownloading(true);
     try {
-      const res = await fetch(`/api/enrollment/certificates/${encodeURIComponent(sStr)}`);
-      if (res.ok) {
-        const json = await res.json();
-        if (json.success && json.data) {
-          setExtendedDetails((prev) => ({ ...prev, [sStr]: json.data }));
-        }
-      }
+      const link = document.createElement('a');
+      link.href = targetUrl;
+      link.download = `certificate-${cert.registration_id || serial}.pdf`;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     } catch {
-      // Ignore
+      window.open(targetUrl, '_blank');
     } finally {
-      setLoadingExtended(false);
+      setTimeout(() => setDownloading(false), 800);
     }
   };
 
-  const getPdfViewUrl = (cert: CertificateItem) => {
-    const serial = cert.serial_number || cert.registration_id;
-    return `/api/enrollment/certificates/${encodeURIComponent(String(serial))}/view`;
-  };
-
-  const getPdfDownloadUrl = (cert: CertificateItem) => {
-    const serial = cert.serial_number || cert.registration_id;
-    return `/api/enrollment/certificates/${encodeURIComponent(String(serial))}/download`;
+  const handlePrint = () => {
+    if (typeof window !== 'undefined') {
+      window.print();
+    }
   };
 
   return (
@@ -203,677 +197,421 @@ function CertificateVerificationContent() {
     >
       <Navbar />
 
-      {/* Verification Hero Banner */}
-      <section className="relative bg-gradient-to-b from-amber-50/90 via-slate-50 to-white dark:from-[#0A192F] dark:via-[#0D254C] dark:to-[#0A192F] dark:bg-[#0A192F] text-slate-900 dark:text-white pt-10 pb-14 px-4 overflow-hidden border-b border-slate-200 dark:border-[#1E3A8A] transition-colors">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(200,150,62,0.22),rgba(10,25,47,0))]" />
-
-        <div className="max-w-4xl mx-auto relative z-10 text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 dark:bg-[#1E3A8A]/60 border border-amber-300 dark:border-amber-400/50 text-xs font-bold text-amber-950 dark:text-[#FFC000] shadow-2xs">
+      {/* Hero Header & Search Section */}
+      <section className="bg-gradient-to-b from-amber-50/80 via-slate-50 to-white dark:from-[#0A192F] dark:via-[#0D254C] dark:to-[#0A192F] text-slate-900 dark:text-white pt-10 pb-10 px-4 border-b border-slate-200 dark:border-[#1E3A8A] print:hidden">
+        <div className="max-w-3xl mx-auto text-center space-y-4">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 dark:bg-[#1E3A8A]/80 border border-amber-300 dark:border-amber-400/50 text-xs font-bold text-amber-950 dark:text-[#FFC000]">
             <ShieldCheck className="w-4 h-4 text-amber-700 dark:text-[#FFC000]" />
             <span>
               {lang === 'bn'
-                ? 'অনলাইন সার্টিফিকেট যাচাই ও ডাউনলোড সিস্টেম'
-                : 'Official Certificate Verification & Download Portal'}
+                ? 'অনলাইন সার্টিফিকেট অনুসন্ধান ও ডাউনলোড'
+                : 'Online Certificate Verification & Download'}
             </span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black text-slate-950 dark:text-white tracking-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black tracking-tight text-slate-950 dark:text-white">
             {lang === 'bn' ? (
               <>
-                ফোন নম্বর, ইমেইল বা আইডি দিয়ে{' '}
-                <span className="text-amber-800 dark:text-[#FFC000]">
-                  সনদপত্র অনুসন্ধান ও ডাউনলোড
-                </span>
+                সনদপত্র <span className="text-amber-800 dark:text-[#FFC000]">যাচাই ও ডাউনলোড</span>
               </>
             ) : (
               <>
-                Look Up &amp; Download Certificates by{' '}
-                <span className="text-amber-800 dark:text-[#FFC000]">
-                  Phone, Email or ID
-                </span>
+                Find &amp; Download <span className="text-amber-800 dark:text-[#FFC000]">Your Certificate</span>
               </>
             )}
           </h1>
 
-          <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed font-medium">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-xl mx-auto">
             {lang === 'bn'
-              ? 'শিক্ষার্থী বা নিয়োগকারী প্রতিষ্ঠান যেকোনো সময় মোবাইল নম্বর, ইমেইল বা রেজিস্ট্রেশন আইডি দিয়ে চার্টার্ড অফিসার কর্তৃক ইস্যুকৃত মূল পিডিএফ সনদপত্র দেখতে ও সরাসরি ডাউনলোড করতে পারেন।'
-              : 'Students, employers, and verifying authorities can instantly search using Phone Number, Email Address, or Registration ID to view authentic PDF certificates and download high-resolution copies.'}
+              ? 'আপনার ফোন নম্বর, ইমেইল অথবা রেজিস্ট্রেশন আইডি লিখে সরাসরি সনদপত্র দেখুন এবং মূল পিডিএফ ডাউনলোড করুন।'
+              : 'Enter your Phone Number, Email, or Registration ID to view and download your official certificate.'}
           </p>
 
-          {/* Search Box Card */}
-          <div className="max-w-2xl mx-auto pt-2">
-            {/* Search Mode Filter Tabs */}
-            <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-2.5 flex-wrap">
-              <button
-                type="button"
-                onClick={() => setActiveMode('auto')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                  activeMode === 'auto'
-                    ? 'bg-[#0A192F] text-[#FFC000] shadow-sm border border-amber-400'
-                    : 'bg-white/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 border border-slate-200 dark:border-slate-700'
-                }`}
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>{lang === 'bn' ? 'স্মার্ট লুকআপ' : 'Smart Search'}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveMode('phone')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                  activeMode === 'phone'
-                    ? 'bg-[#0A192F] text-[#FFC000] shadow-sm border border-amber-400'
-                    : 'bg-white/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 border border-slate-200 dark:border-slate-700'
-                }`}
-              >
-                <Phone className="w-3.5 h-3.5" />
-                <span>{lang === 'bn' ? 'ফোন নম্বর' : 'Phone'}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveMode('email')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                  activeMode === 'email'
-                    ? 'bg-[#0A192F] text-[#FFC000] shadow-sm border border-amber-400'
-                    : 'bg-white/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 border border-slate-200 dark:border-slate-700'
-                }`}
-              >
-                <Mail className="w-3.5 h-3.5" />
-                <span>{lang === 'bn' ? 'ইমেইল' : 'Email'}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveMode('id')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                  activeMode === 'id'
-                    ? 'bg-[#0A192F] text-[#FFC000] shadow-sm border border-amber-400'
-                    : 'bg-white/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 border border-slate-200 dark:border-slate-700'
-                }`}
-              >
-                <Hash className="w-3.5 h-3.5" />
-                <span>{lang === 'bn' ? 'রেজিস্ট্রেশন আইডি' : 'Reg ID / Serial'}</span>
-              </button>
+          {/* Clean Search Form */}
+          <form
+            onSubmit={onSubmit}
+            className="pt-2 max-w-2xl mx-auto flex flex-col sm:flex-row gap-2 bg-white dark:bg-slate-900 p-2 rounded-2xl border-2 border-amber-300 dark:border-amber-400/60 shadow-lg"
+          >
+            <div className="relative flex-1 flex items-center">
+              <div className="pl-3.5 pr-2 text-amber-600 dark:text-[#FFC000] shrink-0">
+                <Search className="w-4 h-4" />
+              </div>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={
+                  lang === 'bn'
+                    ? 'ফোন নম্বর, ইমেইল অথবা আইডি দিন (যেমন: 017..., alihose@..., 222)'
+                    : 'Enter Phone Number, Email, or Reg ID (e.g. 017..., alihose@..., 222)'
+                }
+                className="w-full py-3 pr-3 bg-transparent text-slate-900 dark:text-white font-medium text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="p-1.5 mr-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                  title={lang === 'bn' ? 'মুছুন' : 'Clear'}
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
             </div>
 
-            {/* Input Form */}
-            <form
-              onSubmit={handleSearchSubmit}
-              className="flex flex-col sm:flex-row gap-2 bg-white dark:bg-slate-900/95 p-2 rounded-2xl border-2 border-amber-300 dark:border-amber-400/60 shadow-lg backdrop-blur-xs"
+            <button
+              type="submit"
+              disabled={isLoading || !searchQuery.trim()}
+              className="px-6 py-3 bg-[#FFC000] hover:bg-[#E6AC00] text-slate-950 font-serif font-black text-xs sm:text-sm rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 shrink-0 shadow-md disabled:opacity-50 border border-amber-400"
             >
-              <div className="relative flex-1 flex items-center">
-                <div className="pl-3.5 pr-1.5 text-amber-700 dark:text-[#FFC000] shrink-0">
-                  {detectedType === 'phone' || activeMode === 'phone' ? (
-                    <Phone className="w-4 h-4" />
-                  ) : detectedType === 'email' || activeMode === 'email' ? (
-                    <Mail className="w-4 h-4" />
-                  ) : detectedType === 'id' || activeMode === 'id' ? (
-                    <Hash className="w-4 h-4" />
-                  ) : (
-                    <Search className="w-4 h-4" />
-                  )}
-                </div>
-
-                <input
-                  type="text"
-                  value={inputVal}
-                  onChange={(e) => setInputVal(e.target.value)}
-                  placeholder={
-                    activeMode === 'phone'
-                      ? lang === 'bn'
-                        ? 'ফোন নম্বর দিন (যেমন: 01712345678)'
-                        : 'Enter Phone Number (e.g. 01712345678)'
-                      : activeMode === 'email'
-                      ? lang === 'bn'
-                        ? 'ইমেইল ঠিকানা দিন (যেমন: ali@gmail.com)'
-                        : 'Enter Email Address (e.g. ali@gmail.com)'
-                      : activeMode === 'id'
-                      ? lang === 'bn'
-                        ? 'রেজিস্ট্রেশন বা সিরিয়াল আইডি দিন (যেমন: 222, REG12345)'
-                        : 'Enter Reg ID / Serial (e.g. 222, REG12345)'
-                      : lang === 'bn'
-                      ? 'ফোন নম্বর, ইমেইল অথবা আইডি দিন (যেমন: 01712345678, ali@gmail.com, 222)'
-                      : 'Enter Phone, Email, or Reg ID (e.g. 01712345678, ali@gmail.com, 222)'
-                  }
-                  className="w-full py-3 pr-3 bg-transparent text-slate-900 dark:text-white font-medium text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none"
-                />
-
-                {inputVal && (
-                  <button
-                    type="button"
-                    onClick={() => setInputVal('')}
-                    className="p-1.5 mr-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-                    title="Clear"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading || !inputVal.trim()}
-                className="px-6 py-3 bg-[#FFC000] hover:bg-[#E6AC00] text-slate-950 font-serif font-black text-xs sm:text-sm rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0 shadow-md disabled:opacity-50 border border-amber-400"
-              >
-                {loading ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 animate-spin text-slate-950" />
-                    <span>{lang === 'bn' ? 'অনুসন্ধান হচ্ছে...' : 'Searching...'}</span>
-                  </>
-                ) : (
-                  <>
-                    <ShieldCheck className="w-4 h-4 text-slate-950 stroke-[2.5]" />
-                    <span>{lang === 'bn' ? 'সনদ খুঁজুন ও ডাউনলোড' : 'Find & Download PDF'}</span>
-                  </>
-                )}
-              </button>
-            </form>
-          </div>
+              {isLoading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                  <span>{lang === 'bn' ? 'অনুসন্ধান হচ্ছে...' : 'Searching...'}</span>
+                </>
+              ) : (
+                <>
+                  <ShieldCheck className="w-4 h-4 text-slate-950" />
+                  <span>{lang === 'bn' ? 'সনদপত্র খুঁজুন' : 'Search Certificate'}</span>
+                </>
+              )}
+            </button>
+          </form>
         </div>
       </section>
 
-      {/* Main Results Container */}
-      <main className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
-        {/* Loading Spinner */}
-        {loading && (
-          <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-3">
+      {/* Main Content Area */}
+      <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 py-8 w-full space-y-6">
+        {/* Loading Indicator */}
+        {isLoading && (
+          <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-3">
             <div className="w-10 h-10 border-3 border-[#C8963E] border-t-transparent rounded-full animate-spin mx-auto" />
             <p className="text-sm font-bold text-slate-800 dark:text-slate-200">
-              {lang === 'bn'
-                ? 'ডাটাবেজ হতে সার্টিফিকেট অনুসন্ধান ও লোড করা হচ্ছে...'
-                : 'Retrieving official certificate records and PDF...'}
+              {lang === 'bn' ? 'সনদপত্রের তথ্য লোড হচ্ছে...' : 'Loading certificate details from API...'}
             </p>
-            <p className="text-xs text-slate-500 font-mono">Identifier: &quot;{inputVal}&quot;</p>
           </div>
         )}
 
-        {/* Error / Not Found Message */}
-        {!loading && errorMessage && (
-          <div className="max-w-2xl mx-auto p-8 rounded-2xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/50 text-center space-y-4 shadow-xs">
-            <AlertCircle className="w-12 h-12 text-rose-600 dark:text-rose-400 mx-auto" />
-            <div className="space-y-1">
-              <h3 className="text-lg font-serif font-bold text-rose-950 dark:text-rose-200">
-                {lang === 'bn' ? 'কোনো সনদপত্র পাওয়া যায়নি' : 'No Certificate Record Found'}
-              </h3>
-              <p className="text-xs sm:text-sm text-rose-700 dark:text-rose-300 max-w-md mx-auto leading-relaxed">
-                {errorMessage}
-              </p>
-            </div>
-
-            <div className="pt-2 text-xs text-slate-600 dark:text-slate-400 flex flex-col sm:flex-row items-center justify-center gap-3">
-              <span className="text-slate-500">
-                {lang === 'bn'
-                  ? 'সহায়তার জন্য অ্যাডমিশন অফিসে যোগাযোগ করুন:'
-                  : 'For certificate assistance, contact COL office:'}
-              </span>
-              <a
-                href={`tel:${(systemInfo.mobile || systemInfo.phone || '+8801713378787').replace(/\s+/g, '')}`}
-                className="font-mono font-bold text-[#0A192F] dark:text-[#FFC000] hover:text-[#C8963E] inline-flex items-center gap-1"
-              >
-                <Phone className="w-3.5 h-3.5 text-[#C8963E]" />
-                <span>{systemInfo.phone || '+880 1713378787'}</span>
-              </a>
-            </div>
+        {/* Not Found / Error Banner */}
+        {!isLoading && errorMessage && (
+          <div className="max-w-xl mx-auto p-6 rounded-2xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900 text-center space-y-3">
+            <AlertCircle className="w-10 h-10 text-rose-600 dark:text-rose-400 mx-auto" />
+            <h3 className="text-base font-serif font-bold text-rose-950 dark:text-rose-200">
+              {lang === 'bn' ? 'সনদপত্র পাওয়া যায়নি' : 'No Certificate Found'}
+            </h3>
+            <p className="text-xs sm:text-sm text-rose-700 dark:text-rose-300">{errorMessage}</p>
           </div>
         )}
 
-        {/* Success Results State */}
-        {!loading && certificates && certificates.length > 0 && (
-          <div className="space-y-8">
-            {/* Top Summary & Share Bar */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-emerald-950 dark:text-emerald-200 shadow-2xs">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm">
-                  <CheckCircle2 className="w-6 h-6" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-serif font-bold text-emerald-950 dark:text-emerald-100 flex items-center gap-2 flex-wrap">
-                    <span>
-                      {lang === 'bn'
-                        ? `মোট ${certificates.length}টি সনদপত্র পাওয়া গেছে`
-                        : `Found ${certificates.length} Verified Certificate${certificates.length > 1 ? 's' : ''}`}
-                    </span>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-200 dark:bg-emerald-800 text-emerald-900 dark:text-emerald-100 border border-emerald-300 dark:border-emerald-700">
-                      Live Verified
-                    </span>
-                  </h4>
-                  <p className="text-xs text-emerald-800 dark:text-emerald-300">
-                    {lang === 'bn'
-                      ? `অনুসন্ধান: "${lastSearchedQuery}" এর বিপরীতে ডাটাবেজে সংরক্ষিত রেকর্ড প্রদর্শন করা হচ্ছে।`
-                      : `Displaying authentic certificates matching query "${lastSearchedQuery}".`}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleCopyLink(lastSearchedQuery)}
-                  className="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 border border-emerald-300 dark:border-emerald-700 hover:bg-emerald-100 dark:hover:bg-slate-700 text-emerald-900 dark:text-emerald-200 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <Share2 className="w-3.5 h-3.5" />
-                  <span>
-                    {copySuccess
-                      ? lang === 'bn'
-                        ? 'লিংক কপি হয়েছে!'
-                        : 'Copied!'
-                      : lang === 'bn'
-                      ? 'লিংক শেয়ার'
-                      : 'Share Link'}
-                  </span>
-                </button>
-              </div>
-            </div>
-
-            {/* Multiple Certificates Tab Selector (if user has enrolled in multiple programs) */}
+        {/* Certificate Found & Display */}
+        {!isLoading && certificates && certificates.length > 0 && activeCert && (
+          <div className="space-y-6">
+            {/* Top Selector (when multiple certificates found for same phone/email) */}
             {certificates.length > 1 && (
-              <div className="space-y-2">
-                <div className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <div className="p-4 rounded-2xl bg-amber-50 dark:bg-slate-900 border border-amber-200 dark:border-slate-800 print:hidden space-y-2">
+                <div className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
                   <Layers className="w-4 h-4 text-amber-600 dark:text-[#FFC000]" />
                   <span>
                     {lang === 'bn'
-                      ? 'একাধিক কোর্সের সনদ রয়েছে — সিলেক্ট করে দেখুন:'
-                      : 'Multiple Course Certificates Available — Select to view:'}
+                      ? `মোট ${certificates.length}টি সনদপত্র পাওয়া গেছে। দেখতে নির্বাচন করুন:`
+                      : `Found ${certificates.length} certificates. Select one to view:`}
                   </span>
                 </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                  {certificates.map((c, idx) => (
-                    <button
-                      key={c.serial_number || idx}
-                      type="button"
-                      onClick={() => setSelectedCertIndex(idx)}
-                      className={`p-3.5 rounded-2xl text-left border transition-all cursor-pointer flex flex-col justify-between ${
-                        selectedCertIndex === idx
-                          ? 'bg-[#0A192F] text-white border-amber-400 shadow-md ring-2 ring-amber-400/40'
-                          : 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-amber-300'
-                      }`}
-                    >
-                      <div className="space-y-1">
-                        <div className="flex items-center justify-between">
-                          <span
-                            className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
-                              selectedCertIndex === idx
-                                ? 'bg-[#FFC000] text-slate-950'
-                                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-                            }`}
-                          >
-                            #{c.registration_id}
-                          </span>
-                          <span
-                            className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
-                              selectedCertIndex === idx
-                                ? 'bg-emerald-500/20 text-emerald-300'
-                                : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400'
-                            }`}
-                          >
-                            Grade: {c.grade}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                  {certificates.map((cert, idx) => {
+                    const isSelected = idx === selectedIndex;
+                    return (
+                      <button
+                        key={cert.serial_number || idx}
+                        type="button"
+                        onClick={() => setSelectedIndex(idx)}
+                        className={`p-3 rounded-xl text-left border transition-all cursor-pointer flex flex-col justify-between ${
+                          isSelected
+                            ? 'bg-[#0A192F] text-white border-amber-400 shadow-md ring-2 ring-amber-400/40'
+                            : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-amber-300'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between text-[11px] mb-1">
+                          <span className="font-mono font-bold">#{cert.registration_id}</span>
+                          <span className="font-bold text-amber-500">
+                            {lang === 'bn' ? `গ্রেড: ${cert.grade}` : `Grade: ${cert.grade}`}
                           </span>
                         </div>
-                        <h4 className="text-xs font-serif font-black line-clamp-1">{c.class_name}</h4>
-                        <p className="text-[11px] text-slate-400 line-clamp-1">
-                          {c.session_title || 'Executive Session'}
-                        </p>
-                      </div>
-
-                      <div className="pt-2 text-[10px] text-slate-400 flex items-center justify-between border-t border-slate-700/40 mt-2">
-                        <span>Issued: {c.issued_at}</span>
-                        <span className="font-bold text-[#FFC000]">
-                          {selectedCertIndex === idx ? 'Viewing' : 'Select'}
-                        </span>
-                      </div>
-                    </button>
-                  ))}
+                        <div className="text-xs font-serif font-black line-clamp-1">{cert.class_name}</div>
+                        <div className="text-[10px] text-slate-400 mt-1 flex items-center justify-between">
+                          <span>{cert.session_title || (lang === 'bn' ? 'এক্সিকিউটিভ সেশন' : 'Executive Session')}</span>
+                          <span className="font-bold text-[#FFC000]">
+                            {isSelected ? (lang === 'bn' ? 'সক্রিয়' : 'Active') : (lang === 'bn' ? 'দেখুন' : 'View')}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
 
-            {/* Display Certificates: Primary Selected or List */}
-            {certificates.map((cert, index) => {
-              // If multiple, highlight selected; still render others cleanly
-              const isSelected = certificates.length === 1 || selectedCertIndex === index;
-              if (!isSelected && certificates.length > 1) return null;
-
-              const pdfViewUrl = getPdfViewUrl(cert);
-              const pdfDownloadUrl = getPdfDownloadUrl(cert);
-              const fullInfo = extendedDetails[String(cert.serial_number)];
-
-              return (
-                <div
-                  key={cert.serial_number || cert.registration_id}
-                  className="bg-white dark:bg-slate-900 rounded-3xl border-2 border-[#C8963E]/40 shadow-xl overflow-hidden space-y-6"
-                >
-                  {/* Top Details & Action Bar */}
-                  <div className="bg-[#0A192F] text-white p-5 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-[#1E3A8A]">
-                    <div className="space-y-1.5">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="px-2.5 py-0.5 rounded-md text-[11px] font-mono font-bold bg-[#FFC000] text-slate-950">
-                          ID: #{cert.registration_id}
-                        </span>
-                        <span className="text-xs text-slate-300 font-mono">
-                          Serial: #{cert.serial_number}
-                        </span>
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                          Grade: {cert.grade}
-                        </span>
-                      </div>
-
-                      <h2 className="text-xl sm:text-2xl md:text-3xl font-serif font-black text-white">
-                        {cert.student_name}
-                      </h2>
-
-                      <p className="text-xs sm:text-sm text-[#FFC000] font-semibold flex items-center gap-1.5">
-                        <Award className="w-4 h-4 text-[#FFC000]" />
-                        <span>
-                          {cert.class_name} {cert.session_title ? `(${cert.session_title})` : ''}
-                        </span>
-                      </p>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
-                      {/* 1. Main Direct PDF Download */}
-                      <a
-                        href={pdfDownloadUrl}
-                        download={`Certificate_${cert.student_name.replace(/[^a-zA-Z0-9]/g, '_')}_${cert.registration_id || cert.serial_number}.pdf`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 md:flex-initial px-5 py-2.5 rounded-xl bg-[#FFC000] hover:bg-[#E6AC00] text-slate-950 font-black text-xs flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all cursor-pointer border border-amber-300"
-                      >
-                        <Download className="w-4 h-4 text-slate-950 stroke-[2.5]" />
-                        <span>{lang === 'bn' ? 'পিডিএফ ডাউনলোড' : 'Download PDF'}</span>
-                      </a>
-
-                      {/* 2. Fullscreen Viewer Trigger */}
-                      <button
-                        type="button"
-                        onClick={() => setPreviewModalCert(cert)}
-                        className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer border border-white/25 shadow-xs"
-                      >
-                        <Maximize2 className="w-3.5 h-3.5 text-[#FFC000]" />
-                        <span>{lang === 'bn' ? 'ফুলস্ক্রিন' : 'Fullscreen'}</span>
-                      </button>
-
-                      {/* 3. Open in New Tab */}
-                      <a
-                        href={pdfViewUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer border border-white/25 shadow-xs"
-                        title="Open PDF in new tab"
-                      >
-                        <ExternalLink className="w-3.5 h-3.5 text-[#FFC000]" />
-                        <span>{lang === 'bn' ? 'নতুন উইন্ডো' : 'New Tab'}</span>
-                      </a>
-
-                      {/* 4. Complete Verification Details Toggle */}
-                      <button
-                        type="button"
-                        onClick={() => loadFullDetails(cert.serial_number)}
-                        className="px-3.5 py-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-[#FFC000] font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer border border-amber-400/30 shadow-xs"
-                      >
-                        <Info className="w-3.5 h-3.5" />
-                        <span>{lang === 'bn' ? 'রেকর্ড বিবরণ' : 'Full Record'}</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Summary Attributes Strip */}
-                  <div className="px-6 py-3 bg-amber-50/70 dark:bg-slate-800/80 border-b border-amber-100 dark:border-slate-800 flex flex-wrap items-center justify-between text-xs text-slate-700 dark:text-slate-300 gap-3">
-                    <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-                      {cert.start_date && cert.end_date && (
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3.5 h-3.5 text-amber-600 dark:text-[#FFC000]" />
-                          <strong className="text-slate-900 dark:text-white">Period:</strong>{' '}
-                          {cert.start_date} – {cert.end_date}
-                        </span>
-                      )}
-                      {cert.issued_at && (
-                        <span className="flex items-center gap-1">
-                          <FileCheck className="w-3.5 h-3.5 text-emerald-600" />
-                          <strong className="text-slate-900 dark:text-white">Issued:</strong>{' '}
-                          {cert.issued_at}
-                        </span>
-                      )}
-                      {fullInfo?.father_name && (
-                        <span>
-                          <strong className="text-slate-900 dark:text-white">Father:</strong>{' '}
-                          {fullInfo.father_name}
-                        </span>
-                      )}
-                      {fullInfo?.mother_name && (
-                        <span>
-                          <strong className="text-slate-900 dark:text-white">Mother:</strong>{' '}
-                          {fullInfo.mother_name}
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
-                      API Serial:{' '}
-                      <span className="text-slate-800 dark:text-slate-200 font-bold">
-                        #{cert.serial_number}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* EMBEDDED REAL PDF VIEWER CONTAINER */}
-                  <div className="p-4 sm:p-6">
-                    <div className="w-full bg-slate-900 rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-800 shadow-inner flex flex-col">
-                      {/* Viewer Toolbar */}
-                      <div className="bg-slate-950 text-slate-300 px-4 py-2.5 text-xs flex items-center justify-between border-b border-slate-800">
-                        <div className="flex items-center gap-2">
-                          <FileText className="w-4 h-4 text-[#FFC000]" />
-                          <span className="font-semibold text-white">
-                            {cert.student_name} — {cert.class_name}.pdf
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-3 text-[11px]">
-                          <span className="text-emerald-400 hidden sm:inline">
-                            ● Authenticated PDF Document
-                          </span>
-                          <a
-                            href={pdfDownloadUrl}
-                            download
-                            className="text-[#FFC000] hover:underline font-bold inline-flex items-center gap-1"
-                          >
-                            <Download className="w-3 h-3" />
-                            Direct Download
-                          </a>
-                        </div>
-                      </div>
-
-                      {/* Embedded PDF Frame */}
-                      <div className="relative w-full h-[650px] sm:h-[750px] md:h-[820px] bg-slate-100 dark:bg-slate-950">
-                        <object
-                          data={`${pdfViewUrl}#toolbar=1&navpanes=0`}
-                          type="application/pdf"
-                          className="w-full h-full"
-                        >
-                          <iframe
-                            src={`${pdfViewUrl}#toolbar=1&navpanes=0`}
-                            title={`Certificate PDF - ${cert.student_name}`}
-                            className="w-full h-full border-0"
-                          >
-                            {/* Fallback if browser blocks iframe PDF embedding */}
-                            <div className="flex flex-col items-center justify-center h-full p-8 text-center bg-slate-900 text-white space-y-4">
-                              <FileCheck className="w-16 h-16 text-[#FFC000]" />
-                              <div>
-                                <h3 className="text-lg font-bold text-white">Official Certificate PDF</h3>
-                                <p className="text-xs text-slate-400 max-w-md mx-auto mt-1">
-                                  Your browser does not support inline PDF previews. You can view or download the file directly below.
-                                </p>
-                              </div>
-                              <div className="flex gap-3">
-                                <a
-                                  href={pdfDownloadUrl}
-                                  download
-                                  className="px-6 py-2.5 rounded-xl bg-[#FFC000] text-slate-950 font-bold text-xs flex items-center gap-2 shadow-md"
-                                >
-                                  <Download className="w-4 h-4" />
-                                  Download Certificate
-                                </a>
-                                <a
-                                  href={pdfViewUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="px-5 py-2.5 rounded-xl bg-slate-800 text-white font-bold text-xs flex items-center gap-2"
-                                >
-                                  <ExternalLink className="w-4 h-4" />
-                                  Open in New Window
-                                </a>
-                              </div>
-                            </div>
-                          </iframe>
-                        </object>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Informational Guidelines when no search performed yet */}
-        {!hasSearched && !loading && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
-            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-2 text-center">
-              <div className="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-[#FFC000] flex items-center justify-center mx-auto border border-amber-300 dark:border-amber-800">
-                <Phone className="w-6 h-6 text-amber-700 dark:text-[#FFC000]" />
-              </div>
-              <h3 className="text-sm font-serif font-black text-slate-950 dark:text-white">
-                {lang === 'bn' ? 'মোবাইল বা ফোন নম্বর' : 'Phone Number Lookup'}
-              </h3>
-              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
-                {lang === 'bn'
-                  ? 'আপনার ভর্তিকৃত ফোন নম্বর (যেমন: 01712345678, +88017...) দিয়ে সার্চ করলেই সনদপত্র পেয়ে যাবেন।'
-                  : 'Enter the registered mobile phone number used during enrollment to find all matching certificates.'}
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-2 text-center">
-              <div className="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-400 flex items-center justify-center mx-auto border border-emerald-300 dark:border-emerald-800">
-                <Mail className="w-6 h-6 text-emerald-700 dark:text-emerald-400" />
-              </div>
-              <h3 className="text-sm font-serif font-black text-slate-950 dark:text-white">
-                {lang === 'bn' ? 'ইমেইল ঠিকানা' : 'Email Address Lookup'}
-              </h3>
-              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
-                {lang === 'bn'
-                  ? 'ভর্তির সময় ব্যবহৃত ইমেইল ঠিকানা দিয়ে আপনার সকল কোর্সের সার্টিফিকেট একত্রে অনুসন্ধান করতে পারবেন।'
-                  : 'Look up certificates using the student email address registered in the COL portal.'}
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-2 text-center">
-              <div className="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-400 flex items-center justify-center mx-auto border border-blue-300 dark:border-blue-800">
-                <Download className="w-6 h-6 text-blue-700 dark:text-blue-400" />
-              </div>
-              <h3 className="text-sm font-serif font-black text-slate-950 dark:text-white">
-                {lang === 'bn' ? 'আসল পিডিএফ ডাউনলোড' : 'Direct PDF Download'}
-              </h3>
-              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
-                {lang === 'bn'
-                  ? 'সার্ভার হতে সরাসরি উচ্চমানের A4 ল্যান্ডস্কেপ ফরম্যাটে অফিশিয়াল সার্টিফিকেট ডাউনলোড ও প্রিন্ট করুন।'
-                  : 'Download or print the authentic high-resolution A4 landscape certificate directly from the server.'}
-              </p>
-            </div>
-          </div>
-        )}
-      </main>
-
-      {/* Certificate Fullscreen Modal (Embeds real PDF) */}
-      {previewModalCert && (
-        <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-xs flex items-center justify-center p-2 sm:p-6 overflow-hidden">
-          <div className="relative w-full max-w-6xl h-[92vh] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-700 overflow-hidden flex flex-col">
-            {/* Modal Header */}
-            <div className="bg-[#0A192F] text-white px-5 py-3.5 flex items-center justify-between border-b border-[#1E3A8A] shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-[#FFC000] text-slate-950 font-bold flex items-center justify-center text-xs">
-                  PDF
+            {/* Top Action Bar */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-2xl bg-slate-900 text-white shadow-md print:hidden">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                  <CheckCircle2 className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-serif font-bold text-white">
-                    {previewModalCert.student_name} — Certificate PDF
-                  </h3>
-                  <p className="text-[11px] text-slate-300 font-mono">
-                    ID: #{previewModalCert.registration_id} • Serial: #{previewModalCert.serial_number}
-                  </p>
+                  <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                    <span>{activeCert.student_name}</span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-400 text-slate-950 font-bold">
+                      {lang === 'bn' ? `গ্রেড: ${activeCert.grade}` : `Grade: ${activeCert.grade}`}
+                    </span>
+                  </h4>
+                  <p className="text-xs text-slate-300">{activeCert.class_name}</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <a
-                  href={getPdfDownloadUrl(previewModalCert)}
-                  download={`Certificate_${previewModalCert.student_name.replace(/[^a-zA-Z0-9]/g, '_')}_${previewModalCert.registration_id || previewModalCert.serial_number}.pdf`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-4 py-2 rounded-xl bg-[#FFC000] hover:bg-[#E6AC00] text-slate-950 font-black text-xs flex items-center gap-1.5 cursor-pointer shadow-md border border-amber-300"
-                >
-                  <Download className="w-3.5 h-3.5 stroke-[2.5]" />
-                  <span>{lang === 'bn' ? 'ডাউনলোড' : 'Download PDF'}</span>
-                </a>
-
-                <a
-                  href={getPdfViewUrl(previewModalCert)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer border border-white/25 shadow-xs"
-                  title="Open in new window"
-                >
-                  <ExternalLink className="w-3.5 h-3.5 text-[#FFC000]" />
-                  <span>{lang === 'bn' ? 'নতুন উইন্ডো' : 'New Window'}</span>
-                </a>
-
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                {/* PRIMARY DOWNLOAD BUTTON */}
                 <button
                   type="button"
-                  onClick={() => setPreviewModalCert(null)}
-                  className="p-2 rounded-xl bg-white/10 hover:bg-rose-600 text-white transition-colors cursor-pointer border border-white/20"
+                  onClick={() => handleDownload(activeCert)}
+                  disabled={downloading}
+                  className="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl bg-[#FFC000] hover:bg-[#E6AC00] text-slate-950 font-serif font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer border border-amber-300"
                 >
-                  <X className="w-4 h-4" />
+                  <Download className="w-4 h-4 stroke-[2.5]" />
+                  <span>
+                    {downloading
+                      ? lang === 'bn'
+                        ? 'ডাউনলোড হচ্ছে...'
+                        : 'Downloading...'
+                      : lang === 'bn'
+                      ? 'পিডিএফ ডাউনলোড করুন'
+                      : 'Download Certificate (PDF)'}
+                  </span>
+                </button>
+
+                {/* PRINT BUTTON */}
+                <button
+                  type="button"
+                  onClick={handlePrint}
+                  className="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer border border-white/20"
+                  title={lang === 'bn' ? 'সনদপত্র প্রিন্ট করুন' : 'Print Certificate'}
+                >
+                  <Printer className="w-4 h-4 text-[#FFC000]" />
+                  <span>{lang === 'bn' ? 'প্রিন্ট' : 'Print'}</span>
                 </button>
               </div>
             </div>
 
-            {/* Modal Body: Embedded Real PDF Frame */}
-            <div className="flex-1 bg-slate-950 relative w-full h-full overflow-hidden">
-              <object
-                data={`${getPdfViewUrl(previewModalCert)}#toolbar=1`}
-                type="application/pdf"
-                className="w-full h-full"
-              >
+            {/* THE ACTUAL CERTIFICATE SHOWCASE (EMBEDDED DOCUMENT AS IT IS) */}
+            <div className="w-full bg-white dark:bg-slate-900 rounded-2xl border-2 border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden print:shadow-none print:border-0">
+              {/* Top Document Header Bar */}
+              <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3.5 bg-slate-900 text-white border-b border-slate-800 print:hidden">
+                <div className="flex items-center gap-2.5">
+                  <Award className="w-5 h-5 text-[#FFC000]" />
+                  <div>
+                    <h3 className="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                      <span>{lang === 'bn' ? 'অফিসিয়াল মূল সনদপত্র' : 'Official Certificate Document'}</span>
+                      <span className="font-mono text-[10px] text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800/60">
+                        #{activeCert.registration_id || activeCert.serial_number}
+                      </span>
+                    </h3>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <a
+                    href={
+                      activeCert.download_url ||
+                      `/api/enrollment/certificates/${encodeURIComponent(
+                        String(activeCert.serial_number || activeCert.registration_id)
+                      )}/download`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-1.5 transition-colors"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5 text-[#FFC000]" />
+                    <span>{lang === 'bn' ? 'নতুন ট্যাবে খুলুন' : 'Open in New Window'}</span>
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => handleDownload(activeCert)}
+                    className="px-3.5 py-1.5 rounded-lg bg-[#FFC000] hover:bg-[#E6AC00] text-slate-950 text-xs font-serif font-black flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>{lang === 'bn' ? 'ডাউনলোড' : 'Download'}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* PDF Document Viewer Frame */}
+              <div className="w-full relative min-h-[520px] sm:min-h-[720px] bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-center">
                 <iframe
-                  src={`${getPdfViewUrl(previewModalCert)}#toolbar=1`}
-                  title={`Certificate Fullscreen - ${previewModalCert.student_name}`}
-                  className="w-full h-full border-0"
+                  src={
+                    activeCert.download_url
+                      ? activeCert.download_url
+                      : `/api/enrollment/certificates/${encodeURIComponent(
+                          String(activeCert.serial_number || activeCert.registration_id)
+                        )}/view`
+                  }
+                  title={lang === 'bn' ? 'সনদপত্র প্রদর্শন' : 'Official Certificate'}
+                  className="w-full h-[520px] sm:h-[720px] border-0 bg-white"
                 />
-              </object>
+
+                {/* Sub-bar below viewer */}
+                <div className="w-full py-2.5 px-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex flex-wrap items-center justify-between gap-2 print:hidden">
+                  <span>
+                    {lang === 'bn'
+                      ? 'সনদপত্রটি সরাসরি অফিসিয়াল এপিআই থেকে প্রদর্শিত হচ্ছে।'
+                      : 'Certificate is streamed directly from official API.'}
+                  </span>
+                  <a
+                    href={
+                      activeCert.download_url ||
+                      `/api/enrollment/certificates/${encodeURIComponent(
+                        String(activeCert.serial_number || activeCert.registration_id)
+                      )}/download`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-amber-600 dark:text-amber-400 font-bold hover:underline inline-flex items-center gap-1"
+                  >
+                    <span>{lang === 'bn' ? 'সরাসরি ফাইল লিংক' : 'Direct file link'}</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Official Information Details Grid */}
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-4 print:hidden">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                <h3 className="text-sm font-serif font-black text-slate-900 dark:text-white flex items-center gap-2">
+                  <FileCheck className="w-4 h-4 text-emerald-600" />
+                  <span>
+                    {lang === 'bn' ? 'সনদপত্রের অফিসিয়াল বিবরণ' : 'Official Certificate Information'}
+                  </span>
+                </h3>
+                <span className="text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
+                  {lang === 'bn' ? 'যাচাইকৃত রেকর্ড' : 'Verified Record'}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-xs">
+                <div className="space-y-0.5">
+                  <span className="text-slate-500 text-[11px]">
+                    {lang === 'bn' ? 'শিক্ষার্থীর নাম:' : 'Student Name:'}
+                  </span>
+                  <p className="font-bold text-slate-900 dark:text-white text-sm">{activeCert.student_name}</p>
+                </div>
+
+                <div className="space-y-0.5">
+                  <span className="text-slate-500 text-[11px]">
+                    {lang === 'bn' ? 'কোর্স / প্রোগ্রাম:' : 'Program / Class:'}
+                  </span>
+                  <p className="font-bold text-slate-900 dark:text-white">{activeCert.class_name}</p>
+                </div>
+
+                <div className="space-y-0.5">
+                  <span className="text-slate-500 text-[11px]">
+                    {lang === 'bn' ? 'অর্জিত গ্রেড:' : 'Achieved Grade:'}
+                  </span>
+                  <p className="font-bold text-amber-600 dark:text-[#FFC000]">{activeCert.grade}</p>
+                </div>
+
+                <div className="space-y-0.5">
+                  <span className="text-slate-500 text-[11px]">
+                    {lang === 'bn' ? 'রেজিস্ট্রেশন নম্বর:' : 'Registration ID:'}
+                  </span>
+                  <p className="font-mono font-bold text-slate-900 dark:text-white">#{activeCert.registration_id}</p>
+                </div>
+
+                <div className="space-y-0.5">
+                  <span className="text-slate-500 text-[11px]">
+                    {lang === 'bn' ? 'সনদপত্র সিরিয়াল:' : 'Certificate Serial:'}
+                  </span>
+                  <p className="font-mono font-bold text-slate-900 dark:text-white">#{activeCert.serial_number}</p>
+                </div>
+
+                <div className="space-y-0.5">
+                  <span className="text-slate-500 text-[11px]">
+                    {lang === 'bn' ? 'ইস্যুর তারিখ:' : 'Issued Date:'}
+                  </span>
+                  <p className="font-bold text-slate-900 dark:text-white">
+                    {activeCert.issued_at || (lang === 'bn' ? 'অফিসিয়াল রেকর্ড' : 'Official Record')}
+                  </p>
+                </div>
+
+                {activeCert.session_title && (
+                  <div className="space-y-0.5">
+                    <span className="text-slate-500 text-[11px]">
+                      {lang === 'bn' ? 'সেশন / ব্যাচ:' : 'Session / Batch:'}
+                    </span>
+                    <p className="font-bold text-slate-900 dark:text-white">{activeCert.session_title}</p>
+                  </div>
+                )}
+
+                {activeCert.start_date && activeCert.end_date && (
+                  <div className="space-y-0.5">
+                    <span className="text-slate-500 text-[11px]">
+                      {lang === 'bn' ? 'কোর্সের সময়সীমা:' : 'Course Period:'}
+                    </span>
+                    <p className="font-bold text-slate-900 dark:text-white">
+                      {activeCert.start_date} – {activeCert.end_date}
+                    </p>
+                  </div>
+                )}
+
+                {activeCert.father_name && (
+                  <div className="space-y-0.5">
+                    <span className="text-slate-500 text-[11px]">
+                      {lang === 'bn' ? 'পিতার নাম:' : "Father's Name:"}
+                    </span>
+                    <p className="font-bold text-slate-900 dark:text-white">{activeCert.father_name}</p>
+                  </div>
+                )}
+
+                {activeCert.mother_name && (
+                  <div className="space-y-0.5">
+                    <span className="text-slate-500 text-[11px]">
+                      {lang === 'bn' ? 'মাতার নাম:' : "Mother's Name:"}
+                    </span>
+                    <p className="font-bold text-slate-900 dark:text-white">{activeCert.mother_name}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Bottom Quick Download CTA */}
+              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => handleDownload(activeCert)}
+                  disabled={downloading}
+                  className="px-4 py-2 rounded-xl bg-[#FFC000] hover:bg-[#E6AC00] text-slate-950 font-serif font-black text-xs flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5 stroke-[2.5]" />
+                  <span>{lang === 'bn' ? 'পিডিএফ ফাইল ডাউনলোড করুন' : 'Download PDF Certificate'}</span>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </main>
 
       <Footer />
     </div>
   );
 }
 
-export default function CertificatesPage() {
+export default function CertificatePage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#0A192F] flex items-center justify-center text-white">
-          <div className="text-center space-y-3">
-            <div className="w-8 h-8 border-3 border-[#C8963E] border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-sm font-bold">Loading Verification &amp; Download Portal...</p>
-          </div>
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+          <div className="w-10 h-10 border-3 border-[#C8963E] border-t-transparent rounded-full animate-spin" />
         </div>
       }
     >
-      <CertificateVerificationContent />
+      <CertificateContent />
     </Suspense>
   );
 }

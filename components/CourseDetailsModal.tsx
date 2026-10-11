@@ -74,7 +74,9 @@ export default function CourseDetailsModal({
           <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-slate-800 text-xs">
             <div>
               <p className="text-slate-400 font-medium">{lang === 'bn' ? 'ক্লাস সংখ্যা' : 'Total Classes'}</p>
-              <p className="text-slate-100 font-bold text-sm mt-0.5">{course.totalClasses}+ লাইভ সেশন</p>
+              <p className="text-slate-100 font-bold text-sm mt-0.5">
+                {course.totalClasses}+ {lang === 'bn' ? 'লাইভ সেশন' : 'Live Sessions'}
+              </p>
             </div>
             <div>
               <p className="text-slate-400 font-medium">{lang === 'bn' ? 'কোর্স সময়কাল' : 'Duration'}</p>
@@ -227,7 +229,7 @@ export default function CourseDetailsModal({
 
             <div>
               <h4 className="font-bold text-slate-900 text-sm mb-2.5">
-                {lang === 'bn' ? 'পূর্বশর্ত (Prerequisites)' : 'Prerequisites'}
+                {lang === 'bn' ? 'পূর্বশর্ত' : 'Prerequisites'}
               </h4>
               <ul className="space-y-1 text-xs text-slate-600">
                 {course.prerequisites.map((req, i) => (

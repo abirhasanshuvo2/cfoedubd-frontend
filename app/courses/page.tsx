@@ -178,8 +178,8 @@ function CoursesContent() {
               onChange={(e) => setSortBy(e.target.value as any)}
               className="text-xs font-semibold py-2 px-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 outline-none shadow-2xs cursor-pointer hover:border-[#C8963E]"
             >
-              <option value="featured">{lang === 'bn' ? 'ফিচার্ড (Featured)' : 'Featured'}</option>
-              <option value="rating">{lang === 'bn' ? 'টপ রেটেড (Top Rated)' : 'Top Rated'}</option>
+              <option value="featured">{lang === 'bn' ? 'ফিচার্ড' : 'Featured'}</option>
+              <option value="rating">{lang === 'bn' ? 'টপ রেটেড' : 'Top Rated'}</option>
               <option value="price-asc">{lang === 'bn' ? 'কোর্স ফি: কম থেকে বেশি' : 'Fee: Low to High'}</option>
               <option value="price-desc">{lang === 'bn' ? 'কোর্স ফি: বেশি থেকে কম' : 'Fee: High to Low'}</option>
             </select>

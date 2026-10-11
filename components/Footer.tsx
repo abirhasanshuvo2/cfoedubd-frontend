@@ -148,7 +148,7 @@ export default function Footer({ lang: propLang }: FooterProps = {}) {
               </li>
               <li>
                 <Link href="/certificates" className="hover:text-[#C8963E] transition-colors block">
-                  {lang === 'bn' ? 'সনদ যাচাই (Certificates)' : 'Verify Certificate'}
+                  {lang === 'bn' ? 'সনদ যাচাই' : 'Verify Certificate'}
                 </Link>
               </li>
             </ul>
@@ -233,7 +233,7 @@ export default function Footer({ lang: propLang }: FooterProps = {}) {
         <div className="pt-6 border-t border-slate-200/90 dark:border-slate-800 space-y-5">
           <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
             <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 mr-1 shrink-0">
-              Pay With
+              {lang === 'bn' ? 'পেমেন্ট মাধ্যম' : 'Pay With'}
             </span>
 
             {/* 1. VISA */}

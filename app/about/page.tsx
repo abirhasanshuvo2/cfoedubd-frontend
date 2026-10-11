@@ -191,7 +191,7 @@ export default function AboutPage() {
           <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 shadow-xs space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800 text-xs font-bold">
               <Compass className="w-3.5 h-3.5 text-blue-600" />
-              <span>{lang === 'bn' ? 'আমাদের ভিশন (Our Vision)' : 'Our Vision'}</span>
+              <span>{lang === 'bn' ? 'আমাদের ভিশন' : 'Our Vision'}</span>
             </div>
             <h3 className="text-xl font-serif font-bold text-slate-950 dark:text-white">
               {lang === 'bn' ? 'ইনোভেশন ও প্রায়োগিক ফাইন্যান্স শিক্ষায় শীর্ষস্থান' : 'Top Institute for Finance & FinTech Education'}
@@ -206,7 +206,7 @@ export default function AboutPage() {
           <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 shadow-xs space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border border-amber-200 dark:border-amber-800 text-xs font-bold">
               <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
-              <span>{lang === 'bn' ? 'আমাদের মিশন (Our Mission)' : 'Our Mission'}</span>
+              <span>{lang === 'bn' ? 'আমাদের মিশন' : 'Our Mission'}</span>
             </div>
             <h3 className="text-xl font-serif font-bold text-slate-950 dark:text-white">
               {lang === 'bn' ? 'অপারেশনাল শ্রেষ্ঠত্ব ও গ্লোবাল প্রতিযোগিতা সক্ষমতা' : 'Operational Excellence & Competitive Edge'}

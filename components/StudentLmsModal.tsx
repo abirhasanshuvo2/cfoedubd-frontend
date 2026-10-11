@@ -48,10 +48,10 @@ export default function StudentLmsModal({
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-lg font-bold text-white">
-                  {lang === 'bn' ? 'আমার ক্লাসরুম (Student LMS Dashboard)' : 'My Student Classroom'}
+                  {lang === 'bn' ? 'আমার ক্লাসরুম' : 'My Student Classroom'}
                 </h3>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                  Active Student
+                  {lang === 'bn' ? 'সক্রিয় শিক্ষার্থী' : 'Active Student'}
                 </span>
               </div>
               <p className="text-xs text-slate-400">
@@ -317,7 +317,7 @@ export default function StudentLmsModal({
                   className="px-5 py-2.5 rounded-xl bg-[#0A192F] hover:bg-[#1E3A8A] text-white font-bold text-xs transition-colors inline-flex items-center gap-2 cursor-pointer shadow-sm"
                 >
                   <Download className="w-4 h-4 text-[#FFC000]" />
-                  <span>{lang === 'bn' ? 'সার্টিফিকেট ডাউনলোড করুন (PDF)' : 'Download Verified PDF Certificate'}</span>
+                  <span>{lang === 'bn' ? 'সনদপত্র ডাউনলোড করুন' : 'Download Verified PDF Certificate'}</span>
                 </a>
 
                 <Link
