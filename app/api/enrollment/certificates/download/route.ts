@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateCertificatePdf } from '@/lib/generate-certificate-pdf';
-import { findCertificateBySerial } from '@/lib/certificate-data';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -11,6 +9,7 @@ export async function GET(request: NextRequest) {
     searchParams.get('identifier') ||
     searchParams.get('id') ||
     '222';
+  const customUrl = searchParams.get('url');
 
   const backendBase = (
     process.env.BACKEND_API_URL ||
@@ -19,11 +18,15 @@ export async function GET(request: NextRequest) {
   ).replace(/\/$/, '');
 
   // Backend Laravel route: GET /api/enrollment/certificates/{serial}/download
-  const backendUrl = `${backendBase}/api/enrollment/certificates/${encodeURIComponent(serial)}/download`;
+  const backendUrl =
+    customUrl && customUrl.startsWith('http')
+      ? customUrl
+      : `${backendBase}/api/enrollment/certificates/${encodeURIComponent(serial)}/download`;
 
   try {
     const res = await fetch(backendUrl, {
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(8000),
+      cache: 'no-store',
     });
 
     if (res.ok) {
@@ -40,33 +43,8 @@ export async function GET(request: NextRequest) {
       });
     }
   } catch {
-    // If backend is unreachable, fallback to verified generated PDF
+    // Redirect client directly to backend download URL
   }
 
-  try {
-    const cert = findCertificateBySerial(serial);
-
-    const pdfBytes = await generateCertificatePdf({
-      serial_number: serial,
-      student_name: cert?.student_name || 'Chartered Professional',
-      class_name: cert?.class_name || 'Chartered Financial Officer (CFO)',
-      grade: cert?.grade || 'A+',
-      registration_id: cert?.registration_id || serial,
-      session_title: cert?.session_title || 'Executive Batch 2026',
-      start_date: cert?.start_date || '01 Jan 2026',
-      end_date: cert?.end_date || '30 Jun 2026',
-      issued_at: cert?.issued_at || new Date().toLocaleDateString('en-GB'),
-    });
-
-    return new NextResponse(Buffer.from(pdfBytes), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="certificate-${serial}.pdf"`,
-        'Cache-Control': 'no-cache',
-      },
-    });
-  } catch {
-    return NextResponse.redirect(backendUrl);
-  }
+  return NextResponse.redirect(backendUrl);
 }

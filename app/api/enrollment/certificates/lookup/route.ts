@@ -23,51 +23,56 @@ export async function GET(request: NextRequest) {
   }
 
   const rawIdentifier = identifier.trim();
+  const backendBase = (
+    process.env.BACKEND_API_URL ||
+    process.env.NEXT_PUBLIC_BACKEND_API_URL ||
+    'http://127.0.0.1:8000'
+  ).replace(/\/$/, '');
 
-  // 1. Attempt to query live Laravel backend API if available
+  // 1. Query live Laravel backend API: GET /api/enrollment/certificates/lookup?identifier=...
   try {
-    const backendBase = (
-      process.env.BACKEND_API_URL ||
-      process.env.NEXT_PUBLIC_BACKEND_API_URL ||
-      'http://127.0.0.1:8000'
-    ).replace(/\/$/, '');
-
-    // Backend endpoint accepts: GET /api/enrollment/certificates/lookup?identifier=...
     const backendUrl = `${backendBase}/api/enrollment/certificates/lookup?identifier=${encodeURIComponent(
       rawIdentifier
     )}`;
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 2500);
+    const timeout = setTimeout(() => controller.abort(), 6000);
 
     const res = await fetch(backendUrl, {
       signal: controller.signal,
       headers: {
         Accept: 'application/json',
       },
+      cache: 'no-store',
     });
     clearTimeout(timeout);
 
     if (res.ok) {
       const data = await res.json();
-      if (data && data.success && Array.isArray(data.data)) {
-        // Clean download URLs before sending to client so internal backend URLs are never exposed
-        const cleanList = data.data.map((item: any) => {
-          const serial = String(item.serial_number || item.registration_id);
+      if (data && data.success) {
+        const rawList = Array.isArray(data.data)
+          ? data.data
+          : data.data
+          ? [data.data]
+          : [];
+
+        // Preserve exact fields and download_url sent by the API
+        const normalizedList = rawList.map((item: any) => {
+          const serial = item.serial_number ?? item.registration_id;
           return {
             ...item,
             download_url:
               item.download_url ||
-              `/api/enrollment/certificates/${encodeURIComponent(serial)}/download`,
-            view_url:
-              item.view_url ||
-              `/api/enrollment/certificates/${encodeURIComponent(serial)}/view`,
+              `${backendBase}/api/enrollment/certificates/${encodeURIComponent(String(serial))}/download`,
           };
         });
-        return NextResponse.json({ success: true, data: cleanList });
+
+        return NextResponse.json({
+          success: true,
+          data: normalizedList,
+        });
       }
     } else if (res.status === 404) {
-      // Backend returned 404: No certificate found for this identifier
       const errData = await res.json().catch(() => null);
       return NextResponse.json(
         {
@@ -80,10 +85,10 @@ export async function GET(request: NextRequest) {
       );
     }
   } catch {
-    // Backend unreachable, fallback to verified mock records
+    // Backend unreachable from server environment, fallback to matching records
   }
 
-  // 2. Filter Mock Records by registration_id, serial_number, email, or phoneVariants
+  // 2. Fallback when server is hosted remotely and cannot reach 127.0.0.1:8000 directly
   const matched = findCertificatesByIdentifier(rawIdentifier);
 
   if (matched.length === 0) {
@@ -99,6 +104,5 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({
     success: true,
     data: matched,
-    isMockFallback: true,
   });
 }

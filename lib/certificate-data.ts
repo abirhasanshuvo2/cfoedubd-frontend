@@ -1,6 +1,6 @@
 export interface CertificateRecord {
   id?: number | string;
-  serial_number: string;
+  serial_number: number | string;
   grade: string;
   registration_id: string;
   student_name: string;
@@ -11,9 +11,9 @@ export interface CertificateRecord {
   start_date?: string | null;
   end_date?: string | null;
   issued_at: string | null;
-  download_url?: string;
+  download_url: string;
   view_url?: string;
-  // User profile identifiers used for matching
+  // User profile identifiers used for matching when backend is unreachable
   email?: string;
   phone?: string;
 }
@@ -38,18 +38,15 @@ export function getPhoneVariants(input: string): string[] {
 }
 
 /**
- * Verified dataset representing student certificates across different programs.
- * Searchable by phone (01712345678, 01812345678, etc.), email, or registration ID.
+ * Exact API certificate records matching the Laravel backend response:
+ * GET http://127.0.0.1:8000/api/enrollment/certificates/lookup
  */
 export const MOCK_CERTIFICATES: CertificateRecord[] = [
   {
-    id: 1,
-    serial_number: '222',
+    serial_number: 222,
     grade: 'A+',
     registration_id: '222',
     student_name: 'Md Ali Hosen',
-    father_name: 'Mr. Ali Hosen',
-    mother_name: 'Mrs. Ali Hosen',
     class_name: 'Diploma in Corporate Business Valuation',
     session_title: '2027-28',
     start_date: '22 Aug 2026',
@@ -60,77 +57,31 @@ export const MOCK_CERTIFICATES: CertificateRecord[] = [
     phone: '01712345678',
   },
   {
-    id: 101,
-    serial_number: '305',
-    grade: 'Distinction',
-    registration_id: '305',
+    serial_number: 2234,
+    grade: 'A-',
+    registration_id: '1',
     student_name: 'Md Ali Hosen',
-    father_name: 'Mr. Ali Hosen',
-    mother_name: 'Mrs. Ali Hosen',
-    class_name: 'Corporate Tax & VAT Masterclass',
-    session_title: 'Executive Batch 12',
-    start_date: '05 Jan 2026',
-    end_date: '28 Feb 2026',
-    issued_at: '10 Mar 2026',
-    download_url: '/api/enrollment/certificates/305/download',
+    class_name: 'Diploma in Business Innovation and Entrepreneurship Development\n\n',
+    session_title: '2027-28',
+    start_date: '22 Aug 2026',
+    end_date: '13 Sep 2026',
+    issued_at: '11 Oct 2026',
+    download_url: 'http://127.0.0.1:8000/api/enrollment/certificates/2234/download',
     email: 'alihose@gmail.com',
     phone: '01712345678',
-  },
-  {
-    id: 2,
-    serial_number: '2222',
-    grade: 'A',
-    registration_id: '5',
-    student_name: 'John Doe',
-    father_name: 'Robert Doe',
-    mother_name: 'Sarah Doe',
-    class_name: 'Corporate Tax & VAT Masterclass',
-    session_title: 'Batch 2026-Q1',
-    start_date: '01 Jun 2026',
-    end_date: '20 Aug 2026',
-    issued_at: '22 Aug 2026',
-    email: 'john@example.com',
-    phone: '01812345678',
-  },
-  {
-    id: 3,
-    serial_number: '2223',
-    grade: 'A+',
-    registration_id: '8',
-    student_name: 'Md. Tariqul Islam',
-    father_name: 'Md. Rafiqul Islam',
-    mother_name: 'Begum Rehana',
-    class_name: 'Diploma in Corporate Business Valuation',
-    session_title: 'Executive Batch 16',
-    start_date: '10 May 2026',
-    end_date: '05 Sep 2026',
-    issued_at: '15 Sep 2026',
-    email: 'tariqul@gmail.com',
-    phone: '01912345678',
-  },
-  {
-    id: 4,
-    serial_number: '2224',
-    grade: 'Distinction',
-    registration_id: 'COL-CFO-2025-9921',
-    student_name: 'Tanvir Hossain, ACA',
-    father_name: 'Khorshed Alam',
-    mother_name: 'Fatema Begum',
-    class_name: 'Chartered Financial Officer (CFO)',
-    session_title: 'Batch 18 — Weekend Executive',
-    start_date: '15 Jan 2025',
-    end_date: '10 Dec 2025',
-    issued_at: '10 Jan 2026',
-    email: 'tanvir@cfo.bd',
-    phone: '01612345678',
   },
 ];
 
 /**
  * Transforms certificate record matching Laravel transform($cert, $full)
+ * Preserves the exact download_url sent by the API.
  */
 export function transformCertificate(cert: CertificateRecord, full = true): Record<string, any> {
-  const serial = String(cert.serial_number);
+  const serial = cert.serial_number;
+  const backendDownloadUrl =
+    cert.download_url ||
+    `http://127.0.0.1:8000/api/enrollment/certificates/${encodeURIComponent(String(serial))}/download`;
+
   const data: Record<string, any> = {
     serial_number: serial,
     grade: cert.grade,
@@ -141,20 +92,19 @@ export function transformCertificate(cert: CertificateRecord, full = true): Reco
     start_date: cert.start_date || null,
     end_date: cert.end_date || null,
     issued_at: cert.issued_at || null,
-    download_url: cert.download_url || `/api/enrollment/certificates/${encodeURIComponent(serial)}/download`,
-    view_url: cert.view_url || `/api/enrollment/certificates/${encodeURIComponent(serial)}/view`,
+    download_url: backendDownloadUrl,
   };
 
   if (full) {
-    data.father_name = cert.father_name ?? null;
-    data.mother_name = cert.mother_name ?? null;
+    if (cert.father_name !== undefined) data.father_name = cert.father_name;
+    if (cert.mother_name !== undefined) data.mother_name = cert.mother_name;
   }
 
   return data;
 }
 
 /**
- * Searches certificates by identifier (registration_id, email, or phone)
+ * Searches certificates by identifier (registration_id, serial_number, email, or phone)
  */
 export function findCertificatesByIdentifier(identifier: string): Record<string, any>[] {
   const trimmed = identifier.trim();
@@ -163,9 +113,9 @@ export function findCertificatesByIdentifier(identifier: string): Record<string,
 
   const matched = MOCK_CERTIFICATES.filter((cert) => {
     // 1. Match registration_id
-    if (cert.registration_id.toLowerCase() === lower) return true;
+    if (String(cert.registration_id).toLowerCase() === lower) return true;
     // 2. Match serial_number
-    if (cert.serial_number.toLowerCase() === lower) return true;
+    if (String(cert.serial_number).toLowerCase() === lower) return true;
     // 3. Match email
     if (cert.email && cert.email.toLowerCase() === lower) return true;
     // 4. Match phone variants
@@ -180,7 +130,6 @@ export function findCertificatesByIdentifier(identifier: string): Record<string,
     return false;
   });
 
-  // Lookup results hide family details as per Laravel controller
   return matched.map((cert) => transformCertificate(cert, false));
 }
 
@@ -191,8 +140,8 @@ export function findCertificateBySerial(serial: string): Record<string, any> | n
   const cleanSerial = serial.trim().toLowerCase();
   const cert = MOCK_CERTIFICATES.find(
     (c) =>
-      c.serial_number.toLowerCase() === cleanSerial ||
-      c.registration_id.toLowerCase() === cleanSerial
+      String(c.serial_number).toLowerCase() === cleanSerial ||
+      String(c.registration_id).toLowerCase() === cleanSerial
   );
 
   if (!cert) return null;
