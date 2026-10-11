@@ -64,7 +64,10 @@ export async function GET(
         'Cache-Control': 'no-cache',
       },
     });
-  } catch {
-    return NextResponse.redirect(backendUrl);
+  } catch (err: any) {
+    return new NextResponse('Certificate could not be loaded for viewing.', {
+      status: 500,
+      headers: { 'Content-Type': 'text/plain' },
+    });
   }
 }

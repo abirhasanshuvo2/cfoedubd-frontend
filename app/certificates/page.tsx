@@ -419,18 +419,15 @@ function CertificateContent() {
 
                 <div className="flex items-center gap-2">
                   <a
-                    href={
-                      activeCert.download_url ||
-                      `/api/enrollment/certificates/${encodeURIComponent(
-                        String(activeCert.serial_number || activeCert.registration_id)
-                      )}/download`
-                    }
+                    href={`/api/enrollment/certificates/${encodeURIComponent(
+                      String(activeCert.serial_number || activeCert.registration_id)
+                    )}/view`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-1.5 transition-colors"
                   >
                     <ExternalLink className="w-3.5 h-3.5 text-[#FFC000]" />
-                    <span>{lang === 'bn' ? 'নতুন ট্যাবে খুলুন' : 'Open in New Window'}</span>
+                    <span>{lang === 'bn' ? 'নতুন ট্যাবে খুলুন' : 'Open in New Tab'}</span>
                   </a>
                   <button
                     type="button"
@@ -443,16 +440,12 @@ function CertificateContent() {
                 </div>
               </div>
 
-              {/* PDF Document Viewer Frame */}
+              {/* PDF Document Viewer Frame (inline display - NEVER auto-downloads) */}
               <div className="w-full relative min-h-[520px] sm:min-h-[720px] bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-center">
                 <iframe
-                  src={
-                    activeCert.download_url
-                      ? activeCert.download_url
-                      : `/api/enrollment/certificates/${encodeURIComponent(
-                          String(activeCert.serial_number || activeCert.registration_id)
-                        )}/view`
-                  }
+                  src={`/api/enrollment/certificates/${encodeURIComponent(
+                    String(activeCert.serial_number || activeCert.registration_id)
+                  )}/view`}
                   title={lang === 'bn' ? 'সনদপত্র প্রদর্শন' : 'Official Certificate'}
                   className="w-full h-[520px] sm:h-[720px] border-0 bg-white"
                 />
@@ -464,20 +457,14 @@ function CertificateContent() {
                       ? 'সনদপত্রটি সরাসরি অফিসিয়াল এপিআই থেকে প্রদর্শিত হচ্ছে।'
                       : 'Certificate is streamed directly from official API.'}
                   </span>
-                  <a
-                    href={
-                      activeCert.download_url ||
-                      `/api/enrollment/certificates/${encodeURIComponent(
-                        String(activeCert.serial_number || activeCert.registration_id)
-                      )}/download`
-                    }
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-amber-600 dark:text-amber-400 font-bold hover:underline inline-flex items-center gap-1"
+                  <button
+                    type="button"
+                    onClick={() => handleDownload(activeCert)}
+                    className="text-amber-600 dark:text-amber-400 font-bold hover:underline inline-flex items-center gap-1 cursor-pointer"
                   >
-                    <span>{lang === 'bn' ? 'সরাসরি ফাইল লিংক' : 'Direct file link'}</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
+                    <span>{lang === 'bn' ? 'সরাসরি মূল পিডিএফ ডাউনলোড' : 'Download Original PDF'}</span>
+                    <Download className="w-3 h-3" />
+                  </button>
                 </div>
               </div>
             </div>
