@@ -195,8 +195,8 @@ function CertificateDocumentCard({
             <div className="w-9 h-9 border-3 border-[#C8963E] border-t-transparent rounded-full animate-spin mx-auto" />
             <p className="text-xs font-bold text-slate-600 dark:text-slate-300">
               {lang === 'bn'
-                ? 'অফিসিয়াল এপিআই থেকে সনদপত্র লোড হচ্ছে...'
-                : 'Loading official certificate from API...'}
+                ? 'অফিসিয়াল সনদপত্র লোড হচ্ছে...'
+                : 'Loading official certificate...'}
             </p>
           </div>
         ) : (
@@ -228,7 +228,7 @@ function CertificateDocumentCard({
         </div>
       </div>
 
-      {/* Exact API Metadata Grid */}
+      {/* Certificate Metadata Grid */}
       <div className="p-5 sm:p-6 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 space-y-4 print:hidden">
         <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
           <h4 className="text-xs sm:text-sm font-serif font-black text-slate-900 dark:text-white flex items-center gap-2">
@@ -236,46 +236,46 @@ function CertificateDocumentCard({
             <span>
               {lang === 'bn'
                 ? `সনদপত্র #${cert.serial_number} এর অফিসিয়াল বিবরণ`
-                : `Official API Record — Serial #${cert.serial_number}`}
+                : `Official Certificate Record — Serial #${cert.serial_number}`}
             </span>
           </h4>
           <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
-            {lang === 'bn' ? 'যাচাইকৃত রেকর্ড' : 'Verified API Record'}
+            {lang === 'bn' ? 'যাচাইকৃত রেকর্ড' : 'Verified Record'}
           </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
           <div className="space-y-0.5">
             <span className="text-slate-500 text-[11px]">
-              {lang === 'bn' ? 'শিক্ষার্থীর নাম (student_name):' : 'Student Name:'}
+              {lang === 'bn' ? 'শিক্ষার্থীর নাম:' : 'Student Name:'}
             </span>
             <p className="font-bold text-slate-900 dark:text-white text-sm">{cert.student_name}</p>
           </div>
 
           <div className="space-y-0.5 sm:col-span-2">
             <span className="text-slate-500 text-[11px]">
-              {lang === 'bn' ? 'কোর্স / প্রোগ্রাম (class_name):' : 'Course / Class Name:'}
+              {lang === 'bn' ? 'কোর্স / প্রোগ্রাম:' : 'Course / Class Name:'}
             </span>
             <p className="font-bold text-slate-900 dark:text-white">{cleanClassName}</p>
           </div>
 
           <div className="space-y-0.5">
             <span className="text-slate-500 text-[11px]">
-              {lang === 'bn' ? 'অর্জিত গ্রেড (grade):' : 'Grade:'}
+              {lang === 'bn' ? 'অর্জিত গ্রেড:' : 'Grade:'}
             </span>
             <p className="font-bold text-amber-600 dark:text-[#FFC000] text-sm">{cert.grade}</p>
           </div>
 
           <div className="space-y-0.5">
             <span className="text-slate-500 text-[11px]">
-              {lang === 'bn' ? 'সিরিয়াল নম্বর (serial_number):' : 'Serial Number:'}
+              {lang === 'bn' ? 'সিরিয়াল নম্বর:' : 'Serial Number:'}
             </span>
             <p className="font-mono font-bold text-slate-900 dark:text-white">#{cert.serial_number}</p>
           </div>
 
           <div className="space-y-0.5">
             <span className="text-slate-500 text-[11px]">
-              {lang === 'bn' ? 'রেজিস্ট্রেশন আইডি (registration_id):' : 'Registration ID:'}
+              {lang === 'bn' ? 'রেজিস্ট্রেশন আইডি:' : 'Registration ID:'}
             </span>
             <p className="font-mono font-bold text-slate-900 dark:text-white">
               #{cert.registration_id ?? 'N/A'}
@@ -284,7 +284,7 @@ function CertificateDocumentCard({
 
           <div className="space-y-0.5">
             <span className="text-slate-500 text-[11px]">
-              {lang === 'bn' ? 'সেশন (session_title):' : 'Session Title:'}
+              {lang === 'bn' ? 'সেশন:' : 'Session Title:'}
             </span>
             <p className="font-bold text-slate-900 dark:text-white">
               {cert.session_title || 'N/A'}
@@ -293,7 +293,7 @@ function CertificateDocumentCard({
 
           <div className="space-y-0.5">
             <span className="text-slate-500 text-[11px]">
-              {lang === 'bn' ? 'ইস্যুর তারিখ (issued_at):' : 'Issued Date:'}
+              {lang === 'bn' ? 'ইস্যুর তারিখ:' : 'Issued Date:'}
             </span>
             <p className="font-bold text-slate-900 dark:text-white">
               {cert.issued_at || 'N/A'}
@@ -303,7 +303,7 @@ function CertificateDocumentCard({
           {(cert.start_date || cert.end_date) && (
             <div className="space-y-0.5 sm:col-span-2">
               <span className="text-slate-500 text-[11px]">
-                {lang === 'bn' ? 'কোর্সের মেয়াদ (start_date – end_date):' : 'Course Duration:'}
+                {lang === 'bn' ? 'কোর্সের মেয়াদ:' : 'Course Duration:'}
               </span>
               <p className="font-bold text-slate-900 dark:text-white">
                 {cert.start_date || '—'} – {cert.end_date || '—'}
@@ -598,7 +598,7 @@ function CertificateContent() {
           <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-3">
             <div className="w-10 h-10 border-3 border-[#C8963E] border-t-transparent rounded-full animate-spin mx-auto" />
             <p className="text-sm font-bold text-slate-800 dark:text-slate-200">
-              {lang === 'bn' ? 'সনদপত্রের তথ্য লোড হচ্ছে...' : 'Loading certificate details from API...'}
+              {lang === 'bn' ? 'সনদপত্রের তথ্য লোড হচ্ছে...' : 'Loading certificate details...'}
             </p>
           </div>
         )}
@@ -635,7 +635,7 @@ function CertificateContent() {
                     <p className="text-xs text-slate-600 dark:text-slate-400">
                       {lang === 'bn'
                         ? 'নিচে আপনার অর্জিত সকল সনদপত্র প্রদর্শিত হচ্ছে। প্রতিটি সনদপত্র আলাদাভাবে বা একসাথে ডাউনলোড করতে পারবেন।'
-                        : 'All certificates returned by the API are displayed below with direct PDF download.'}
+                        : 'All your verified certificates are displayed below with direct PDF download.'}
                     </p>
                   </div>
                 </div>

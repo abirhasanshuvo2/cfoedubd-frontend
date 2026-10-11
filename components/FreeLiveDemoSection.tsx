@@ -95,7 +95,7 @@ export default function FreeLiveDemoSection({ lang }: FreeLiveDemoSectionProps) 
 
           <p className="text-xs sm:text-sm text-slate-300 max-w-2xl mx-auto leading-relaxed">
             {lang === 'bn'
-              ? 'কোর্স এপিআই থেকে সরাসরি লাইভ ও ফ্রি কোর্সসমূহে অংশ নিন।'
+              ? 'সরাসরি আমাদের লাইভ ও ফ্রি কোর্সসমূহে অংশ নিন।'
               : 'Join live interactive free courses loaded directly from the course catalog.'}
           </p>
         </div>
