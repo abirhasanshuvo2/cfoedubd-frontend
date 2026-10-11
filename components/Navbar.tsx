@@ -302,14 +302,14 @@ export default function Navbar({
               onClick={() => setIsMobileMenuOpen(false)}
               className="block px-3 py-2.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-amber-600 dark:text-amber-400"
             >
-              {lang === 'bn' ? '📚 কোর্সসমূহ (Courses)' : '📚 Courses'}
+              {lang === 'bn' ? '📚 কোর্সসমূহ' : '📚 Courses'}
             </Link>
             <Link
               href="/certificates"
               onClick={() => setIsMobileMenuOpen(false)}
               className="block px-3 py-2.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-emerald-700 dark:text-emerald-400"
             >
-              {lang === 'bn' ? '🛡️ সনদ যাচাই (Verify Certificate)' : '🛡️ Verify Certificate'}
+              {lang === 'bn' ? '🛡️ সনদ যাচাই' : '🛡️ Verify Certificate'}
             </Link>
             <Link
               href="/media-news"
@@ -341,7 +341,7 @@ export default function Navbar({
               className="w-full py-2.5 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer"
             >
               {theme === 'dark' ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-slate-700" />}
-              <span>{theme === 'dark' ? 'Light Theme' : 'Dark Theme'}</span>
+              <span>{theme === 'dark' ? (lang === 'bn' ? 'লাইট মোড' : 'Light Mode') : (lang === 'bn' ? 'ডার্ক মোড' : 'Dark Mode')}</span>
             </button>
           </div>
 

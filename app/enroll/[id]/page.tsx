@@ -249,7 +249,7 @@ export default function EnrollmentCheckoutPage({ params }: PageProps) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-slate-700 mb-1">
-                      {lang === 'bn' ? 'মোবাইল নম্বর (হোয়াটসঅ্যাপ যুক্ত)*' : 'Mobile (WhatsApp Enabled)*'}
+                      {lang === 'bn' ? 'মোবাইল নম্বর*' : 'Mobile Number*'}
                     </label>
                     <input
                       type="tel"
@@ -279,7 +279,7 @@ export default function EnrollmentCheckoutPage({ params }: PageProps) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-slate-700 mb-1">
-                      {lang === 'bn' ? 'বর্তমান পদবী (Designation)' : 'Designation'}
+                      {lang === 'bn' ? 'বর্তমান পদবী' : 'Designation'}
                     </label>
                     <input
                       type="text"
@@ -292,7 +292,7 @@ export default function EnrollmentCheckoutPage({ params }: PageProps) {
 
                   <div>
                     <label className="block text-xs font-bold text-slate-700 mb-1">
-                      {lang === 'bn' ? 'প্রতিষ্ঠান বা কোম্পানি (Organization)' : 'Organization'}
+                      {lang === 'bn' ? 'প্রতিষ্ঠান বা কোম্পানি' : 'Organization'}
                     </label>
                     <input
                       type="text"

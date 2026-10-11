@@ -122,7 +122,7 @@ export default function FreeWorkshops({ lang }: FreeWorkshopsProps) {
                     {isRegistered ? (
                       <>
                         <CheckCircle2 className="w-4 h-4" />
-                        <span>{lang === 'bn' ? 'রেজিস্ট্রেশন সফল (সিট বুকড)' : 'Seat Confirmed'}</span>
+                        <span>{lang === 'bn' ? 'রেজিস্ট্রেশন সফল' : 'Seat Confirmed'}</span>
                       </>
                     ) : (
                       <>

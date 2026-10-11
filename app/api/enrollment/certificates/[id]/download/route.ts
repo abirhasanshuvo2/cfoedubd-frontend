@@ -22,7 +22,7 @@ export async function GET(
 
   try {
     const res = await fetch(backendUrl, {
-      signal: AbortSignal.timeout(3000),
+      signal: AbortSignal.timeout(1200),
     });
 
     if (res.ok) {

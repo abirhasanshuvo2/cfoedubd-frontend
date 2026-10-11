@@ -56,8 +56,12 @@ export async function GET(request: NextRequest) {
           const serial = String(item.serial_number || item.registration_id);
           return {
             ...item,
-            download_url: `/api/enrollment/certificates/${encodeURIComponent(serial)}/download`,
-            view_url: `/api/enrollment/certificates/${encodeURIComponent(serial)}/view`,
+            download_url:
+              item.download_url ||
+              `/api/enrollment/certificates/${encodeURIComponent(serial)}/download`,
+            view_url:
+              item.view_url ||
+              `/api/enrollment/certificates/${encodeURIComponent(serial)}/view`,
           };
         });
         return NextResponse.json({ success: true, data: cleanList });

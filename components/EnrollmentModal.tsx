@@ -178,7 +178,7 @@ export default function EnrollmentModal({
 
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  {lang === 'bn' ? 'মোবাইল নম্বর (হোয়াটসঅ্যাপ সাপোর্ট পাবে)' : 'Phone Number (For WhatsApp Group)'}
+                  {lang === 'bn' ? 'মোবাইল নম্বর' : 'Phone Number'}
                 </label>
                 <div className="relative">
                   <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -195,7 +195,7 @@ export default function EnrollmentModal({
 
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  {lang === 'bn' ? 'ইমেইল অ্যাড্রেস (LMS লগইন credentials যাবে)' : 'Email Address (For LMS Credentials)'}
+                  {lang === 'bn' ? 'ইমেইল ঠিকানা' : 'Email Address'}
                 </label>
                 <div className="relative">
                   <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -214,7 +214,7 @@ export default function EnrollmentModal({
             {/* Promo Code Input */}
             <div className="pt-2">
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                {lang === 'bn' ? 'প্রোমোকোড বা কুপন (Coupon)' : 'Promo Code'}
+                {lang === 'bn' ? 'প্রোমোকোড বা কুপন' : 'Promo Code'}
               </label>
               <div className="flex gap-2">
                 <div className="relative flex-1">
@@ -511,7 +511,7 @@ export default function EnrollmentModal({
               onClick={resetAndClose}
               className="w-full py-3 rounded-xl bg-[#FFC000] hover:bg-[#ffb000] text-slate-950 font-black text-sm shadow-md transition-all cursor-pointer"
             >
-              {lang === 'bn' ? 'আমার ক্লাসরুমে যান (Go to My Classroom)' : 'Go to My Classroom'}
+              {lang === 'bn' ? 'আমার ক্লাসরুমে যান' : 'Go to My Classroom'}
             </button>
           </div>
         )}

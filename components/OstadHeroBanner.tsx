@@ -106,7 +106,7 @@ export default function OstadHeroBanner({ onStartLearning }: OstadHeroBannerProp
             <div className="pt-2 border-t border-slate-200/80 dark:border-slate-800/80">
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
                 <span className="text-[10px] sm:text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider shrink-0">
-                  {lang === 'bn' ? 'সহযোগিতায় (In Association with):' : 'In Association with:'}
+                  {lang === 'bn' ? 'সহযোগিতায়:' : 'In Association with:'}
                 </span>
 
                 <div className="flex flex-wrap items-center gap-2">

@@ -132,24 +132,24 @@ function EnrollNowContent() {
 
     // Strict validation: every single field required by the API must be provided
     const requiredCheck: { key: keyof typeof formData; label: string }[] = [
-      { key: 'name', label: lang === 'bn' ? 'প্রথম নাম (First Name)' : 'First Name' },
-      { key: 'last_name', label: lang === 'bn' ? 'শেষ নাম (Last Name)' : 'Last Name' },
-      { key: 'email', label: lang === 'bn' ? 'ইমেইল (Email)' : 'Email' },
-      { key: 'phone', label: lang === 'bn' ? 'মোবাইল নম্বর (Phone)' : 'Phone' },
-      { key: 'gender', label: lang === 'bn' ? 'লিঙ্গ (Gender)' : 'Gender' },
-      { key: 'birth_date', label: lang === 'bn' ? 'জন্মতারিখ (Birth Date)' : 'Birth Date' },
-      { key: 'fathers_name', label: lang === 'bn' ? 'পিতার নাম (Father\'s Name)' : "Father's Name" },
-      { key: 'fathers_occupation', label: lang === 'bn' ? 'পিতার পেশা (Father\'s Occupation)' : "Father's Occupation" },
-      { key: 'fathers_phone', label: lang === 'bn' ? 'পিতার ফোন (Father\'s Phone)' : "Father's Phone" },
-      { key: 'fathers_email', label: lang === 'bn' ? 'পিতার ইমেইল (Father\'s Email)' : "Father's Email" },
-      { key: 'mothers_name', label: lang === 'bn' ? 'মাতার নাম (Mother\'s Name)' : "Mother's Name" },
-      { key: 'mothers_occupation', label: lang === 'bn' ? 'মাতার পেশা (Mother\'s Occupation)' : "Mother's Occupation" },
-      { key: 'mothers_phone', label: lang === 'bn' ? 'মাতার ফোন (Mother\'s Phone)' : "Mother's Phone" },
-      { key: 'mothers_email', label: lang === 'bn' ? 'মাতার ইমেইল (Mother\'s Email)' : "Mother's Email" },
-      { key: 'subject', label: lang === 'bn' ? 'কোর্সের বিষয় (Subject)' : 'Subject' },
-      { key: 'address', label: lang === 'bn' ? 'বর্তমান ঠিকানা (Present Address)' : 'Present Address' },
-      { key: 'permanent_address', label: lang === 'bn' ? 'স্থায়ী ঠিকানা (Permanent Address)' : 'Permanent Address' },
-      { key: 'remarks', label: lang === 'bn' ? 'মন্তব্য (Remarks)' : 'Remarks' },
+      { key: 'name', label: lang === 'bn' ? 'প্রথম নাম' : 'First Name' },
+      { key: 'last_name', label: lang === 'bn' ? 'শেষ নাম' : 'Last Name' },
+      { key: 'email', label: lang === 'bn' ? 'ইমেইল' : 'Email' },
+      { key: 'phone', label: lang === 'bn' ? 'মোবাইল নম্বর' : 'Phone' },
+      { key: 'gender', label: lang === 'bn' ? 'লিঙ্গ' : 'Gender' },
+      { key: 'birth_date', label: lang === 'bn' ? 'জন্মতারিখ' : 'Birth Date' },
+      { key: 'fathers_name', label: lang === 'bn' ? 'পিতার নাম' : "Father's Name" },
+      { key: 'fathers_occupation', label: lang === 'bn' ? 'পিতার পেশা' : "Father's Occupation" },
+      { key: 'fathers_phone', label: lang === 'bn' ? 'পিতার ফোন' : "Father's Phone" },
+      { key: 'fathers_email', label: lang === 'bn' ? 'পিতার ইমেইল' : "Father's Email" },
+      { key: 'mothers_name', label: lang === 'bn' ? 'মাতার নাম' : "Mother's Name" },
+      { key: 'mothers_occupation', label: lang === 'bn' ? 'মাতার পেশা' : "Mother's Occupation" },
+      { key: 'mothers_phone', label: lang === 'bn' ? 'মাতার ফোন' : "Mother's Phone" },
+      { key: 'mothers_email', label: lang === 'bn' ? 'মাতার ইমেইল' : "Mother's Email" },
+      { key: 'subject', label: lang === 'bn' ? 'কোর্সের বিষয়' : 'Subject' },
+      { key: 'address', label: lang === 'bn' ? 'বর্তমান ঠিকানা' : 'Present Address' },
+      { key: 'permanent_address', label: lang === 'bn' ? 'স্থায়ী ঠিকানা' : 'Permanent Address' },
+      { key: 'remarks', label: lang === 'bn' ? 'মন্তব্য' : 'Remarks' },
     ];
 
     const missingKeys: string[] = [];
@@ -284,7 +284,7 @@ function EnrollNowContent() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
-                  <span className="text-slate-500 block">{lang === 'bn' ? 'নাম (Name):' : 'Full Name:'}</span>
+                  <span className="text-slate-500 block">{lang === 'bn' ? 'পূর্ণ নাম:' : 'Full Name:'}</span>
                   <span className="font-bold text-slate-900">
                     {submissionResult.name} {submissionResult.last_name}
                   </span>
@@ -294,7 +294,7 @@ function EnrollNowContent() {
                   <span className="font-mono text-slate-800">{submissionResult.email}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">{lang === 'bn' ? 'ফোন (Phone):' : 'Phone / WhatsApp:'}</span>
+                  <span className="text-slate-500 block">{lang === 'bn' ? 'মোবাইল নম্বর:' : 'Phone / WhatsApp:'}</span>
                   <span className="font-mono font-semibold text-slate-800">{submissionResult.phone}</span>
                 </div>
                 <div>
@@ -310,7 +310,7 @@ function EnrollNowContent() {
                   <span className="font-semibold text-slate-800">{submissionResult.mothers_name}</span>
                 </div>
                 <div className="sm:col-span-2">
-                  <span className="text-slate-500 block">{lang === 'bn' ? 'কোর্স বিষয় (Subject):' : 'Course Subject:'}</span>
+                  <span className="text-slate-500 block">{lang === 'bn' ? 'কোর্স বিষয়:' : 'Course Subject:'}</span>
                   <span className="font-bold text-[#C8963E] block">{submissionResult.subject}</span>
                 </div>
                 <div>
@@ -325,7 +325,7 @@ function EnrollNowContent() {
 
               {submissionResult.remarks && (
                 <div className="pt-2 border-t border-slate-200 text-xs">
-                  <span className="text-slate-500 block mb-0.5">{lang === 'bn' ? 'মন্তব্য (Remarks):' : 'Remarks:'}</span>
+                  <span className="text-slate-500 block mb-0.5">{lang === 'bn' ? 'মন্তব্য:' : 'Remarks:'}</span>
                   <span className="text-slate-800 italic">{submissionResult.remarks}</span>
                 </div>
               )}
@@ -393,7 +393,7 @@ function EnrollNowContent() {
           <h1 className="text-2xl sm:text-4xl font-serif font-black tracking-tight text-slate-900 dark:text-white">
             {lang === 'bn' ? (
               <>
-                কোর্স ভর্তি ও পরামর্শ অনুসন্ধান <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#966718] dark:from-[#FFDF79] dark:via-[#E5A93C] dark:to-[#C8963E]">(Enquiry Form)</span>
+                কোর্স ভর্তি ও পরামর্শ অনুসন্ধান <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#966718] dark:from-[#FFDF79] dark:via-[#E5A93C] dark:to-[#C8963E]">ফরম</span>
               </>
             ) : (
               <>
@@ -429,7 +429,7 @@ function EnrollNowContent() {
                 <div className="flex items-center gap-2">
                   <Award className="w-4 h-4 text-[#C8963E]" />
                   <h2 className="text-base font-serif font-bold text-[#0A192F]">
-                    {lang === 'bn' ? '১. কোর্স / বিষয় নির্বাচন (Subject) *' : '1. Course / Subject Selection *'}
+                    {lang === 'bn' ? '১. কোর্স / বিষয় নির্বাচন *' : '1. Course / Subject Selection *'}
                   </h2>
                 </div>
                 <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold">
@@ -456,7 +456,7 @@ function EnrollNowContent() {
 
                 <div className="space-y-1">
                   <label className="block text-[11px] font-bold text-slate-600">
-                    {lang === 'bn' ? 'কোর্সের সুনির্দিষ্ট বিষয় / নাম (subject) *' : 'Exact Subject Title (API Field: subject) *'}
+                    {lang === 'bn' ? 'কোর্সের সুনির্দিষ্ট বিষয় / নাম *' : 'Exact Subject Title *'}
                   </label>
                   <input
                     type="text"
@@ -486,7 +486,7 @@ function EnrollNowContent() {
                 {/* First Name */}
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-700">
-                    {lang === 'bn' ? 'প্রথম নাম (First Name) *' : 'First Name (name) *'}
+                    {lang === 'bn' ? 'প্রথম নাম *' : 'First Name *'}
                   </label>
                   <input
                     type="text"
@@ -504,7 +504,7 @@ function EnrollNowContent() {
                 {/* Last Name */}
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-700">
-                    {lang === 'bn' ? 'শেষ নাম (Last Name) *' : 'Last Name (last_name) *'}
+                    {lang === 'bn' ? 'শেষ নাম *' : 'Last Name *'}
                   </label>
                   <input
                     type="text"
@@ -523,7 +523,7 @@ function EnrollNowContent() {
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-700 flex items-center gap-1">
                     <Mail className="w-3.5 h-3.5 text-[#C8963E]" />
-                    <span>{lang === 'bn' ? 'ইমেইল ঠিকানা (Email) *' : 'Email Address (email) *'}</span>
+                    <span>{lang === 'bn' ? 'ইমেইল ঠিকানা *' : 'Email Address *'}</span>
                   </label>
                   <input
                     type="email"
@@ -542,7 +542,7 @@ function EnrollNowContent() {
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-700 flex items-center gap-1">
                     <Phone className="w-3.5 h-3.5 text-[#C8963E]" />
-                    <span>{lang === 'bn' ? 'মোবাইল নম্বর (Phone) *' : 'Phone Number (phone) *'}</span>
+                    <span>{lang === 'bn' ? 'মোবাইল নম্বর *' : 'Phone Number *'}</span>
                   </label>
                   <input
                     type="tel"
@@ -560,7 +560,7 @@ function EnrollNowContent() {
                 {/* Gender */}
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-700">
-                    {lang === 'bn' ? 'লিঙ্গ (Gender) *' : 'Gender (gender) *'}
+                    {lang === 'bn' ? 'লিঙ্গ *' : 'Gender *'}
                   </label>
                   <select
                     name="gender"
@@ -572,9 +572,9 @@ function EnrollNowContent() {
                     }`}
                   >
                     <option value="">{lang === 'bn' ? '-- লিঙ্গ নির্বাচন করুন --' : '-- Select Gender --'}</option>
-                    <option value="1">1 - {lang === 'bn' ? 'পুরুষ (Male)' : 'Male'}</option>
-                    <option value="2">2 - {lang === 'bn' ? 'নারী (Female)' : 'Female'}</option>
-                    <option value="3">3 - {lang === 'bn' ? 'অন্যান্য (Other)' : 'Other'}</option>
+                    <option value="1">{lang === 'bn' ? 'পুরুষ' : 'Male'}</option>
+                    <option value="2">{lang === 'bn' ? 'নারী' : 'Female'}</option>
+                    <option value="3">{lang === 'bn' ? 'অন্যান্য' : 'Other'}</option>
                   </select>
                 </div>
 
@@ -582,7 +582,7 @@ function EnrollNowContent() {
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-700 flex items-center gap-1">
                     <Calendar className="w-3.5 h-3.5 text-[#C8963E]" />
-                    <span>{lang === 'bn' ? 'জন্মতারিখ (Birth Date) *' : 'Birth Date (birth_date) *'}</span>
+                    <span>{lang === 'bn' ? 'জন্মতারিখ *' : 'Birth Date *'}</span>
                   </label>
                   <input
                     type="date"
@@ -600,7 +600,7 @@ function EnrollNowContent() {
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-700 flex items-center gap-1">
                     <MapPin className="w-3.5 h-3.5 text-[#C8963E]" />
-                    <span>{lang === 'bn' ? 'বর্তমান ঠিকানা (Present Address) *' : 'Present Address (address) *'}</span>
+                    <span>{lang === 'bn' ? 'বর্তমান ঠিকানা *' : 'Present Address *'}</span>
                   </label>
                   <input
                     type="text"
@@ -619,7 +619,7 @@ function EnrollNowContent() {
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-700 flex items-center gap-1">
                     <MapPin className="w-3.5 h-3.5 text-[#C8963E]" />
-                    <span>{lang === 'bn' ? 'স্থায়ী ঠিকানা (Permanent Address) *' : 'Permanent Address (permanent_address) *'}</span>
+                    <span>{lang === 'bn' ? 'স্থায়ী ঠিকানা *' : 'Permanent Address *'}</span>
                   </label>
                   <input
                     type="text"
@@ -641,19 +641,19 @@ function EnrollNowContent() {
               <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
                 <Heart className="w-4 h-4 text-[#C8963E]" />
                 <h2 className="text-base font-serif font-bold text-[#0A192F]">
-                  {lang === 'bn' ? '৩. পিতামাতার তথ্য (Parents / Guardian Details) *' : '3. Parents / Guardian Details *'}
+                  {lang === 'bn' ? '৩. পিতা-মাতার তথ্য *' : '3. Parents / Guardian Details *'}
                 </h2>
               </div>
 
               {/* Father's Info */}
               <div className="space-y-3">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 bg-slate-100 px-3 py-1.5 rounded-lg inline-block">
-                  {lang === 'bn' ? 'পিতার বিবরণ (Father Details)' : "Father's Information"}
+                  {lang === 'bn' ? 'পিতার বিবরণ' : "Father's Information"}
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="block text-xs font-semibold text-slate-700">
-                      {lang === 'bn' ? 'পিতার নাম (Father\'s Name) *' : "Father's Name (fathers_name) *"}
+                      {lang === 'bn' ? 'পিতার নাম *' : "Father's Name *"}
                     </label>
                     <input
                       type="text"
@@ -669,7 +669,7 @@ function EnrollNowContent() {
                   </div>
                   <div className="space-y-1">
                     <label className="block text-xs font-semibold text-slate-700">
-                      {lang === 'bn' ? 'পিতার পেশা (Occupation) *' : "Father's Occupation (fathers_occupation) *"}
+                      {lang === 'bn' ? 'পিতার পেশা *' : "Father's Occupation *"}
                     </label>
                     <input
                       type="text"
@@ -685,7 +685,7 @@ function EnrollNowContent() {
                   </div>
                   <div className="space-y-1">
                     <label className="block text-xs font-semibold text-slate-700">
-                      {lang === 'bn' ? 'পিতার ফোন (Phone) *' : "Father's Phone (fathers_phone) *"}
+                      {lang === 'bn' ? 'পিতার ফোন নম্বর *' : "Father's Phone *"}
                     </label>
                     <input
                       type="tel"
@@ -701,7 +701,7 @@ function EnrollNowContent() {
                   </div>
                   <div className="space-y-1">
                     <label className="block text-xs font-semibold text-slate-700">
-                      {lang === 'bn' ? 'পিতার ইমেইল (Email) *' : "Father's Email (fathers_email) *"}
+                      {lang === 'bn' ? 'পিতার ইমেইল *' : "Father's Email *"}
                     </label>
                     <input
                       type="email"
@@ -721,12 +721,12 @@ function EnrollNowContent() {
               {/* Mother's Info */}
               <div className="space-y-3 pt-3 border-t border-slate-100">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 bg-slate-100 px-3 py-1.5 rounded-lg inline-block">
-                  {lang === 'bn' ? 'মাতার বিবরণ (Mother Details)' : "Mother's Information"}
+                  {lang === 'bn' ? 'মাতার বিবরণ' : "Mother's Information"}
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="block text-xs font-semibold text-slate-700">
-                      {lang === 'bn' ? 'মাতার নাম (Mother\'s Name) *' : "Mother's Name (mothers_name) *"}
+                      {lang === 'bn' ? 'মাতার নাম *' : "Mother's Name *"}
                     </label>
                     <input
                       type="text"
@@ -742,7 +742,7 @@ function EnrollNowContent() {
                   </div>
                   <div className="space-y-1">
                     <label className="block text-xs font-semibold text-slate-700">
-                      {lang === 'bn' ? 'মাতার পেশা (Occupation) *' : "Mother's Occupation (mothers_occupation) *"}
+                      {lang === 'bn' ? 'মাতার পেশা *' : "Mother's Occupation *"}
                     </label>
                     <input
                       type="text"
@@ -758,7 +758,7 @@ function EnrollNowContent() {
                   </div>
                   <div className="space-y-1">
                     <label className="block text-xs font-semibold text-slate-700">
-                      {lang === 'bn' ? 'মাতার ফোন (Phone) *' : "Mother's Phone (mothers_phone) *"}
+                      {lang === 'bn' ? 'মাতার ফোন নম্বর *' : "Mother's Phone *"}
                     </label>
                     <input
                       type="tel"
@@ -774,7 +774,7 @@ function EnrollNowContent() {
                   </div>
                   <div className="space-y-1">
                     <label className="block text-xs font-semibold text-slate-700">
-                      {lang === 'bn' ? 'মাতার ইমেইল (Email) *' : "Mother's Email (mothers_email) *"}
+                      {lang === 'bn' ? 'মাতার ইমেইল *' : "Mother's Email *"}
                     </label>
                     <input
                       type="email"
@@ -797,7 +797,7 @@ function EnrollNowContent() {
               <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
                 <FileText className="w-4 h-4 text-[#C8963E]" />
                 <h2 className="text-base font-serif font-bold text-[#0A192F]">
-                  {lang === 'bn' ? '৪. মন্তব্য ও শিডিউল অগ্রাধিকার (Remarks) *' : '4. Remarks & Preferred Schedule (remarks) *'}
+                  {lang === 'bn' ? '৪. মন্তব্য ও শিডিউল অগ্রাধিকার *' : '4. Remarks & Preferred Schedule *'}
                 </h2>
               </div>
 

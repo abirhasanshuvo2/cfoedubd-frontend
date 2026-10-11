@@ -236,7 +236,7 @@ export default function CourseCard({
               </span>
             ) : isFree ? (
               <span className="px-2 py-0.5 rounded-md bg-emerald-400 text-slate-950 font-black text-xs shrink-0 shadow-2xs">
-                ১০০% {lang === 'bn' ? 'ফ্রি' : 'FREE'}
+                {lang === 'bn' ? '১০০% ফ্রি' : '100% FREE'}
               </span>
             ) : null}
           </div>

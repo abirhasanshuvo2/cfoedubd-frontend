@@ -50,12 +50,13 @@ export const MOCK_CERTIFICATES: CertificateRecord[] = [
     student_name: 'Md Ali Hosen',
     father_name: 'Mr. Ali Hosen',
     mother_name: 'Mrs. Ali Hosen',
-    class_name: 'Chartered Financial Officer (CFO)',
-    session_title: 'Batch 2026-Q1',
+    class_name: 'Diploma in Corporate Business Valuation',
+    session_title: '2027-28',
     start_date: '22 Aug 2026',
     end_date: '13 Sep 2026',
     issued_at: '28 Sep 2026',
-    email: 'ali@gmail.com',
+    download_url: 'http://127.0.0.1:8000/api/enrollment/certificates/222/download',
+    email: 'alihose@gmail.com',
     phone: '01712345678',
   },
   {
@@ -139,8 +140,8 @@ export function transformCertificate(cert: CertificateRecord, full = true): Reco
     start_date: cert.start_date || null,
     end_date: cert.end_date || null,
     issued_at: cert.issued_at || null,
-    download_url: `/api/enrollment/certificates/${encodeURIComponent(serial)}/download`,
-    view_url: `/api/enrollment/certificates/${encodeURIComponent(serial)}/view`,
+    download_url: cert.download_url || `/api/enrollment/certificates/${encodeURIComponent(serial)}/download`,
+    view_url: cert.view_url || `/api/enrollment/certificates/${encodeURIComponent(serial)}/view`,
   };
 
   if (full) {
