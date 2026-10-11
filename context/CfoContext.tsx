@@ -36,7 +36,22 @@ export interface CfoContextType {
 const CfoContext = createContext<CfoContextType | undefined>(undefined);
 
 // Generate initial dynamic courses matching backend API catalog
-const INITIAL_DYNAMIC_COURSES: Course[] = INITIAL_API_COURSES.map(adaptApiCourseToCfoCourse);
+function deduplicateCourses(courseList: Course[]): Course[] {
+  const seen = new Set<string>();
+  const result: Course[] = [];
+  for (const c of courseList) {
+    const key = c.id;
+    if (!seen.has(key)) {
+      seen.add(key);
+      result.push(c);
+    }
+  }
+  return result;
+}
+
+const INITIAL_DYNAMIC_COURSES: Course[] = deduplicateCourses(
+  INITIAL_API_COURSES.map(adaptApiCourseToCfoCourse)
+);
 
 export function CfoProvider({ children }: { children: React.ReactNode }) {
   const [systemInfo, setSystemInfo] = useState<SystemInformation>(DEFAULT_SYSTEM_INFO);
@@ -162,7 +177,7 @@ export function CfoProvider({ children }: { children: React.ReactNode }) {
         const rawList = extractCoursesArray(json);
         if (rawList.length > 0 && json.isLive) {
           setApiCourses(rawList);
-          const adapted = rawList.map(adaptApiCourseToCfoCourse);
+          const adapted = deduplicateCourses(rawList.map(adaptApiCourseToCfoCourse));
           setCourses(adapted);
           setIsLiveApiConnected(true);
           setCoursesLoading(false);
@@ -184,7 +199,7 @@ export function CfoProvider({ children }: { children: React.ReactNode }) {
             const directList = extractCoursesArray(directJson);
             if (directList.length > 0) {
               setApiCourses(directList);
-              setCourses(directList.map(adaptApiCourseToCfoCourse));
+              setCourses(deduplicateCourses(directList.map(adaptApiCourseToCfoCourse)));
               setIsLiveApiConnected(true);
               setCoursesLoading(false);
               return;
@@ -196,7 +211,7 @@ export function CfoProvider({ children }: { children: React.ReactNode }) {
 
         if (rawList.length > 0) {
           setApiCourses(rawList);
-          const adapted = rawList.map(adaptApiCourseToCfoCourse);
+          const adapted = deduplicateCourses(rawList.map(adaptApiCourseToCfoCourse));
           setCourses(adapted);
         }
       }

@@ -193,9 +193,9 @@ export default function Navbar({
                 {activeSearchQuery.trim() && (
                   <div className="mt-2 space-y-1 max-h-56 overflow-y-auto">
                     {filteredSearchResults.length > 0 ? (
-                      filteredSearchResults.map((course) => (
+                      filteredSearchResults.map((course, idx) => (
                         <button
-                          key={course.id}
+                          key={`${course.id}-${idx}`}
                           onClick={() => handleCourseClick(course)}
                           className="w-full text-left p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between transition-colors cursor-pointer text-xs"
                         >

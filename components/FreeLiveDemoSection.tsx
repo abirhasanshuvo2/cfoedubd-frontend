@@ -138,7 +138,7 @@ export default function FreeLiveDemoSection({ lang }: FreeLiveDemoSectionProps) 
 
         {/* Grid of Free Live Demo Class Cards (Exact match to screenshot) */}
         <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredCourses.map((course) => {
+          {filteredCourses.map((course, idx) => {
             const courseTitle = lang === 'bn' ? course.title : course.titleEn || course.title;
             const educatorName = course.educator || course.mentors?.[0]?.name || 'Course Instructor';
             const courseImage = course.image || course.thumbnail || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&auto=format&fit=crop&q=80';
@@ -146,7 +146,7 @@ export default function FreeLiveDemoSection({ lang }: FreeLiveDemoSectionProps) 
 
             return (
               <div
-                key={course.id}
+                key={`${course.id}-${idx}`}
                 className="bg-white rounded-2xl overflow-hidden shadow-xl border border-slate-200/80 flex flex-col justify-between hover:-translate-y-1.5 transition-all duration-300 group"
               >
                 {/* Card Artwork / Thumbnail */}

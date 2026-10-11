@@ -444,16 +444,24 @@ export function adaptApiCourseToCfoCourse(item: any): Course {
   }
 
   // Generate SEO-friendly slug from course title (e.g., 'flutter-courses', 'laravel-rest-api-masterclass')
-  const courseSlug = rawName
-    .toLowerCase()
-    .trim()
-    .replace(/[^\p{L}\p{N}\s-]/gu, '')
-    .replace(/[\s\-_]+/g, '-')
-    .replace(/^-+|-+$/g, '') || `course-${courseId}`;
+  const baseSlug =
+    rawName
+      .toLowerCase()
+      .trim()
+      .replace(/[^\p{L}\p{N}\s-]/gu, '')
+      .replace(/[\s\-_]+/g, '-')
+      .replace(/^-+|-+$/g, '') || `course-${courseId}`;
+
+  // Ensure unique ID even if multiple courses share the exact same title or slug
+  const uniqueId = item.id
+    ? `${baseSlug}-${item.id}`
+    : item.class_id
+    ? `${baseSlug}-${item.class_id}`
+    : baseSlug;
 
   return {
-    id: courseSlug,
-    slug: courseSlug,
+    id: uniqueId,
+    slug: baseSlug,
     apiId: courseId,
     title: rawName,
     titleEn: rawName,
