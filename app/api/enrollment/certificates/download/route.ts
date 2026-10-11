@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const res = await fetch(backendUrl, {
-      signal: AbortSignal.timeout(3000),
+      signal: AbortSignal.timeout(5000),
     });
 
     if (res.ok) {

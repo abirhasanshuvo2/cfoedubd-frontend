@@ -20,7 +20,7 @@ export async function GET(
 
   try {
     const res = await fetch(backendUrl, {
-      signal: AbortSignal.timeout(1200),
+      signal: AbortSignal.timeout(5000),
     });
 
     if (res.ok) {

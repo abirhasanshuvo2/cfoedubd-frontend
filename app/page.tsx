@@ -88,6 +88,15 @@ export default function Home() {
       list.sort((a, b) => b.rating - a.rating);
     }
 
+    // Deduplicate by unique course ID or slug
+    const seen = new Set<string>();
+    list = list.filter((c) => {
+      const key = c.id || c.slug;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
     return list;
   }, [selectedCategory, searchQuery, sortBy, courses]);
 

@@ -339,8 +339,14 @@ export const INITIAL_API_COURSES: ApiCourse[] = [
   }
 ];
 
-export function adaptApiCourseToCfoCourse(item: any): Course {
-  const courseId = item.id ? String(item.id) : String(Math.floor(Math.random() * 1000));
+export function adaptApiCourseToCfoCourse(item: any, index?: number): Course {
+  const courseId = item.id
+    ? String(item.id)
+    : item.class_id
+    ? String(item.class_id)
+    : index !== undefined
+    ? String(index + 1)
+    : String(Math.floor(Math.random() * 10000));
   const rawName = item.name || item.title || item.course_name || 'Professional Certification Course';
   const parsedPrice = typeof item.price === 'number' ? item.price : parseInt(item.price, 10) || 0;
   const isFree = parsedPrice === 0;
@@ -457,7 +463,7 @@ export function adaptApiCourseToCfoCourse(item: any): Course {
     ? `${baseSlug}-${item.id}`
     : item.class_id
     ? `${baseSlug}-${item.class_id}`
-    : baseSlug;
+    : `${baseSlug}-${courseId}`;
 
   return {
     id: uniqueId,

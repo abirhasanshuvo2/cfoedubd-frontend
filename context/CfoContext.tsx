@@ -50,7 +50,7 @@ function deduplicateCourses(courseList: Course[]): Course[] {
 }
 
 const INITIAL_DYNAMIC_COURSES: Course[] = deduplicateCourses(
-  INITIAL_API_COURSES.map(adaptApiCourseToCfoCourse)
+  INITIAL_API_COURSES.map((item, idx) => adaptApiCourseToCfoCourse(item, idx))
 );
 
 export function CfoProvider({ children }: { children: React.ReactNode }) {
@@ -177,7 +177,7 @@ export function CfoProvider({ children }: { children: React.ReactNode }) {
         const rawList = extractCoursesArray(json);
         if (rawList.length > 0 && json.isLive) {
           setApiCourses(rawList);
-          const adapted = deduplicateCourses(rawList.map(adaptApiCourseToCfoCourse));
+          const adapted = deduplicateCourses(rawList.map((item, idx) => adaptApiCourseToCfoCourse(item, idx)));
           setCourses(adapted);
           setIsLiveApiConnected(true);
           setCoursesLoading(false);
@@ -199,7 +199,7 @@ export function CfoProvider({ children }: { children: React.ReactNode }) {
             const directList = extractCoursesArray(directJson);
             if (directList.length > 0) {
               setApiCourses(directList);
-              setCourses(deduplicateCourses(directList.map(adaptApiCourseToCfoCourse)));
+              setCourses(deduplicateCourses(directList.map((item, idx) => adaptApiCourseToCfoCourse(item, idx))));
               setIsLiveApiConnected(true);
               setCoursesLoading(false);
               return;
@@ -211,7 +211,7 @@ export function CfoProvider({ children }: { children: React.ReactNode }) {
 
         if (rawList.length > 0) {
           setApiCourses(rawList);
-          const adapted = deduplicateCourses(rawList.map(adaptApiCourseToCfoCourse));
+          const adapted = deduplicateCourses(rawList.map((item, idx) => adaptApiCourseToCfoCourse(item, idx)));
           setCourses(adapted);
         }
       }
