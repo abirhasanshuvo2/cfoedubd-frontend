@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Trophy,
   Sparkles,
@@ -19,6 +19,7 @@ import {
   Mail,
   Phone,
   Briefcase,
+  ChevronLeft,
   ChevronRight,
   ExternalLink,
   MessageSquare
@@ -30,10 +31,21 @@ interface SuccessStoriesSectionProps {
   lang: 'bn' | 'en';
 }
 
+// Curated high quality background textures for the coverflow cards
+const STORY_BACKGROUNDS = [
+  'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop', // Modern architecture
+  'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1200&auto=format&fit=crop', // Executive boardroom
+  'https://images.unsplash.com/photo-1554469384-e58fac16e23a?q=80&w=1200&auto=format&fit=crop', // Glass corporate building
+  'https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=1200&auto=format&fit=crop', // Business professional
+  'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1200&auto=format&fit=crop', // Team collaboration
+  'https://images.unsplash.com/photo-1450133064473-71024230f91b?q=80&w=1200&auto=format&fit=crop', // Law and finance
+];
+
 export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionProps) {
   const { theme } = useCfo();
   const [stories, setStories] = useState<SuccessStoryItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [activeIndex, setActiveIndex] = useState<number>(0);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState<boolean>(false);
   const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
   const [selectedStory, setSelectedStory] = useState<SuccessStoryItem | null>(null);
@@ -68,9 +80,15 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
           });
           if (directRes.ok) {
             const directJson = await directRes.json();
-            if (directJson && directJson.success && Array.isArray(directJson.data) && directJson.data.length > 0) {
+            if (
+              directJson &&
+              directJson.success &&
+              Array.isArray(directJson.data) &&
+              directJson.data.length > 0
+            ) {
               if (isMounted) {
                 setStories(directJson.data);
+                setActiveIndex(0);
                 setIsLoading(false);
                 return;
               }
@@ -87,11 +105,12 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
           if (json && json.success && Array.isArray(json.data) && json.data.length > 0) {
             if (isMounted) {
               setStories(json.data);
+              setActiveIndex(0);
             }
           }
         }
       } catch {
-        // Keep empty if API returns nothing or is offline
+        // Keep empty if API returns nothing
       } finally {
         if (isMounted) {
           setIsLoading(false);
@@ -105,6 +124,29 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
       isMounted = false;
     };
   }, []);
+
+  const totalStories = stories.length;
+
+  const handlePrev = () => {
+    if (totalStories === 0) return;
+    setActiveIndex((prev) => (prev > 0 ? prev - 1 : totalStories - 1));
+  };
+
+  const handleNext = () => {
+    if (totalStories === 0) return;
+    setActiveIndex((prev) => (prev < totalStories - 1 ? prev + 1 : 0));
+  };
+
+  // Keyboard arrow navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isSubmitModalOpen || selectedStory || activeVideoUrl) return;
+      if (e.key === 'ArrowLeft') handlePrev();
+      if (e.key === 'ArrowRight') handleNext();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [totalStories, isSubmitModalOpen, selectedStory, activeVideoUrl]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -223,292 +265,271 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
     return clean;
   };
 
-  const apexStory = stories[0] || null;
-  const midStories = stories.slice(1, 3);
-  const baseStories = stories.slice(3);
-
   return (
     <section
       id="success-stories"
-      className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-slate-50 dark:bg-black text-slate-900 dark:text-slate-100 transition-colors"
+      className="relative py-16 sm:py-24 px-4 sm:px-6 lg:px-8 overflow-hidden bg-slate-950 dark:bg-black text-white transition-colors"
     >
-      {/* Background Ambient Accents adapted for light and pure dark */}
+      {/* Background glow & subtle cinematic lighting */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-gradient-to-b from-amber-400/15 via-amber-300/5 to-transparent dark:from-amber-500/10 dark:via-amber-400/5 dark:to-transparent blur-3xl rounded-full" />
-        <div className="absolute top-1/3 -left-40 w-96 h-96 bg-blue-500/5 dark:bg-blue-600/10 blur-[120px] rounded-full" />
-        <div className="absolute bottom-10 -right-40 w-96 h-96 bg-amber-400/10 dark:bg-amber-500/10 blur-[120px] rounded-full" />
-        {/* Subtle grid pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gradient-to-b from-[#C8963E]/10 via-[#FFC000]/5 to-transparent blur-[140px] rounded-full" />
+        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black via-black/40 to-transparent" />
       </div>
 
-      <div className="relative max-w-7xl mx-auto space-y-12">
-        {/* Header & Call To Action */}
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-6 pb-4 border-b border-slate-200 dark:border-slate-800">
-          <div className="text-center lg:text-left space-y-3 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-400/40 text-xs font-bold text-amber-950 dark:text-[#FFC000]">
-              <Trophy className="w-4 h-4 text-amber-600 dark:text-[#FFC000]" />
+      <div className="relative max-w-7xl mx-auto space-y-10 sm:space-y-14">
+        {/* Section Top Header & Navigation Arrows (Exact Meteor Lighting / Hero Style) */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-2">
+          <div className="space-y-3 max-w-2xl">
+            {/* Pill Tag */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 dark:bg-white/5 border border-white/15 text-[11px] font-mono tracking-widest uppercase text-[#FFC000]">
+              <Trophy className="w-3.5 h-3.5 text-[#FFC000]" />
               <span>
-                {lang === 'bn' ? 'অ্যালামনাই ও শিক্ষার্থীদের সাফল্যের গল্প' : 'Student & Alumni Success Stories'}
+                {lang === 'bn' ? 'অ্যালামনাই সাফল্যের গল্প' : 'FEATURED SUCCESS STORIES'}
               </span>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight text-slate-950 dark:text-white">
+            {/* Headline */}
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight text-white leading-tight">
               {lang === 'bn' ? (
                 <>
                   আমাদের শিক্ষার্থীদের{' '}
-                  <span className="text-amber-600 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-[#FFE58F] dark:via-[#FFC000] dark:to-[#E6AC00]">
-                    সাফল্যের গল্প
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFE58F] via-[#FFC000] to-[#E6AC00]">
+                    বাস্তব সাফল্য ও অর্জন
                   </span>
                 </>
               ) : (
                 <>
-                  Inspiring{' '}
-                  <span className="text-amber-600 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-[#FFE58F] dark:via-[#FFC000] dark:to-[#E6AC00]">
-                    Success Stories
+                  Proven Career Growth for{' '}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFE58F] via-[#FFC000] to-[#E6AC00]">
+                    Executive Leaders
                   </span>
                 </>
               )}
             </h2>
 
-            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed">
               {lang === 'bn'
-                ? 'সিএফও এডুকেশন বিডি থেকে প্রশিক্ষণ নিয়ে শীর্ষস্থানীয় কর্পোরেট কোম্পানি ও পেশাগত জীবনে শিক্ষার্থীদের অসাধারণ অর্জন।'
+                ? 'সিএফও এডুকেশন বিডি থেকে প্রশিক্ষণ সম্পন্ন করে শীর্ষস্থানীয় প্রতিষ্ঠানে কর্মরত পেশাদারদের অনুপ্রেরণাদায়ী অভিজ্ঞতা।'
                 : 'Real achievements and transformative career advancements of our graduates across leading corporate enterprises.'}
             </p>
           </div>
 
-          {/* Submit Story Action Button */}
+          {/* Right Action: Previous / Next Round Arrows + Share Story CTA */}
           <div className="flex items-center gap-3 shrink-0">
             <button
               type="button"
               onClick={() => setIsSubmitModalOpen(true)}
-              className="group relative inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-[#FFC000] hover:bg-[#E6AC00] text-slate-950 font-serif font-black text-sm shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 cursor-pointer border border-amber-400"
+              className="px-4 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 hover:border-amber-400"
             >
-              <PlusCircle className="w-4 h-4 text-slate-950 transition-transform group-hover:rotate-90 duration-300" />
-              <span>
-                {lang === 'bn' ? 'আপনার সাফল্যের গল্প লিখুন' : 'Share Your Success Story'}
-              </span>
-              <Sparkles className="w-4 h-4 text-slate-950 opacity-75 group-hover:opacity-100" />
+              <PlusCircle className="w-4 h-4 text-[#FFC000]" />
+              <span>{lang === 'bn' ? 'গল্প লিখুন' : 'Share Story'}</span>
             </button>
+
+            {totalStories > 1 && (
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handlePrev}
+                  aria-label="Previous story"
+                  className="w-11 h-11 rounded-full bg-white/10 hover:bg-[#FFC000] text-white hover:text-slate-950 border border-white/20 hover:border-[#FFC000] flex items-center justify-center transition-all cursor-pointer shadow-md"
+                >
+                  <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  aria-label="Next story"
+                  className="w-11 h-11 rounded-full bg-white/10 hover:bg-[#FFC000] text-white hover:text-slate-950 border border-white/20 hover:border-[#FFC000] flex items-center justify-center transition-all cursor-pointer shadow-md"
+                >
+                  <ChevronRight className="w-5 h-5 stroke-[2.5]" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Loading State */}
         {isLoading && (
-          <div className="py-20 text-center space-y-4">
-            <div className="w-12 h-12 border-3 border-amber-500 dark:border-amber-400 border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-sm font-bold text-slate-600 dark:text-slate-300">
+          <div className="py-24 text-center space-y-4">
+            <div className="w-12 h-12 border-3 border-amber-400 border-t-transparent rounded-full animate-spin mx-auto" />
+            <p className="text-sm font-bold text-slate-300">
               {lang === 'bn' ? 'সাফল্যের গল্পগুলো লোড হচ্ছে...' : 'Loading success stories from API...'}
             </p>
           </div>
         )}
 
-        {/* FUTURISTIC PYRAMID ARCHITECTURE */}
-        {!isLoading && stories.length > 0 && (
-          <div className="space-y-6 pt-4">
-            {/* 1. APEX OF THE PYRAMID (The Prime Featured Story) */}
-            {apexStory && (
-              <div className="max-w-4xl mx-auto">
-                <div className="relative group rounded-3xl bg-white dark:bg-zinc-950 p-6 sm:p-8 border-2 border-amber-300 dark:border-amber-400/50 shadow-xl dark:shadow-[0_0_40px_rgba(255,192,0,0.12)] transition-all">
-                  {/* Glowing Top Crown */}
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-amber-500 via-[#FFC000] to-amber-500 text-slate-950 text-[11px] font-black uppercase tracking-wider flex items-center gap-1.5 shadow-md">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>{lang === 'bn' ? 'শীর্ষ সাফল্যের গল্প' : 'Featured Highlight'}</span>
-                  </div>
+        {/* METEOR-STYLE 3D COVERFLOW PYRAMID CAROUSEL */}
+        {!isLoading && totalStories > 0 && (
+          <div className="relative w-full py-4 select-none">
+            {/* The Stage */}
+            <div className="relative h-[480px] sm:h-[540px] md:h-[580px] w-full flex items-center justify-center overflow-visible">
+              {stories.map((story, idx) => {
+                // Calculate circular relative offset from activeIndex
+                let offset = idx - activeIndex;
+                if (offset < -Math.floor(totalStories / 2)) offset += totalStories;
+                if (offset > Math.floor(totalStories / 2)) offset -= totalStories;
 
-                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pt-2">
-                    <div className="flex items-center gap-4">
-                      {/* Avatar */}
-                      <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-700 p-[2px] shrink-0 shadow-md">
-                        <div className="w-full h-full rounded-2xl bg-slate-100 dark:bg-black flex items-center justify-center overflow-hidden">
-                          {apexStory.photo ? (
-                            <img
-                              src={apexStory.photo}
-                              alt={apexStory.name}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-amber-50 dark:bg-zinc-900 flex items-center justify-center text-amber-800 dark:text-amber-300 font-serif font-black text-2xl">
-                              {apexStory.name.charAt(0)}
-                            </div>
-                          )}
-                        </div>
-                        <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#FFC000] text-slate-950 flex items-center justify-center text-xs font-black shadow-md">
-                          ★
-                        </div>
-                      </div>
+                const isCenter = offset === 0;
+                const isLeft1 = offset === -1;
+                const isRight1 = offset === 1;
+                const isLeft2 = offset === -2;
+                const isRight2 = offset === 2;
+                const isHidden = Math.abs(offset) > 2;
 
-                      <div className="space-y-1">
-                        <h3 className="text-xl sm:text-2xl font-serif font-black text-slate-950 dark:text-white flex items-center gap-2">
-                          <span>{apexStory.name}</span>
-                        </h3>
-                        <div className="flex flex-wrap items-center gap-2 text-xs text-amber-700 dark:text-amber-300 font-bold">
-                          {apexStory.designation && <span>{apexStory.designation}</span>}
-                          {apexStory.company && (
-                            <span className="flex items-center gap-1 text-slate-600 dark:text-slate-300">
-                              <Building2 className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                              {apexStory.company}
-                            </span>
-                          )}
-                          {apexStory.batch && (
-                            <span className="px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-[#FFC000] border border-amber-300 dark:border-amber-400/30 text-[10px] font-mono font-bold">
-                              {apexStory.batch}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
+                if (isHidden) return null;
 
-                    {/* Video Action Button if available */}
-                    {apexStory.video_url && (
-                      <button
-                        type="button"
-                        onClick={() => setActiveVideoUrl(apexStory.video_url || null)}
-                        className="px-4 py-2 rounded-xl bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-500/40 text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-sm shrink-0 group/vid"
-                      >
-                        <div className="w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center group-hover/vid:scale-110 transition-transform">
-                          <Play className="w-3 h-3 fill-white ml-0.5" />
-                        </div>
-                        <span>{lang === 'bn' ? 'ভিডিও সাক্ষাৎকার দেখুন' : 'Watch Video Story'}</span>
-                      </button>
-                    )}
-                  </div>
+                // 3D CSS transform matching the Meteor lighting screenshot:
+                // Center card: scale(1.0), translateY(0), zIndex 30
+                // Flanking cards: scale(0.85), shifted left/right, opacity 0.65, zIndex 20
+                // Outer cards: scale(0.72), shifted further, opacity 0.35, zIndex 10
+                let transformClass = 'translate-x-0 scale-100 z-30 opacity-100';
+                let cursorClass = 'cursor-default';
 
-                  {/* Story Text Box */}
-                  <div className="relative mt-6 pt-5 border-t border-slate-200 dark:border-slate-800">
-                    <Quote className="absolute -top-3 left-4 w-7 h-7 text-amber-400/40 rotate-180" />
-                    <p className="text-sm sm:text-base text-slate-700 dark:text-slate-200 leading-relaxed font-sans pl-6 italic">
-                      "{apexStory.story}"
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
+                if (isLeft1) {
+                  transformClass = '-translate-x-[55%] sm:-translate-x-[62%] scale-[0.84] z-20 opacity-60 hover:opacity-85 brightness-75 hover:brightness-100';
+                  cursorClass = 'cursor-pointer';
+                } else if (isRight1) {
+                  transformClass = 'translate-x-[55%] sm:translate-x-[62%] scale-[0.84] z-20 opacity-60 hover:opacity-85 brightness-75 hover:brightness-100';
+                  cursorClass = 'cursor-pointer';
+                } else if (isLeft2) {
+                  transformClass = '-translate-x-[95%] sm:-translate-x-[110%] scale-[0.70] z-10 opacity-30 hover:opacity-60 brightness-50';
+                  cursorClass = 'cursor-pointer';
+                } else if (isRight2) {
+                  transformClass = 'translate-x-[95%] sm:translate-x-[110%] scale-[0.70] z-10 opacity-30 hover:opacity-60 brightness-50';
+                  cursorClass = 'cursor-pointer';
+                }
 
-            {/* 2. MID-TIER OF THE PYRAMID (2-Column Pillars) */}
-            {midStories.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-                {midStories.map((story) => (
+                const bgImage = story.photo || STORY_BACKGROUNDS[idx % STORY_BACKGROUNDS.length];
+
+                return (
                   <div
                     key={story.id}
-                    className="relative rounded-2xl bg-white dark:bg-zinc-950 p-6 border border-slate-200 dark:border-slate-800 hover:border-amber-400 dark:hover:border-amber-400/60 shadow-md hover:shadow-xl transition-all flex flex-col justify-between gap-4 group"
+                    onClick={() => {
+                      if (!isCenter) setActiveIndex(idx);
+                    }}
+                    style={{
+                      transition: 'transform 0.55s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.55s ease, filter 0.55s ease',
+                    }}
+                    className={`absolute w-[86%] sm:w-[540px] md:w-[620px] lg:w-[680px] h-[460px] sm:h-[510px] md:h-[540px] rounded-3xl overflow-hidden shadow-2xl ${transformClass} ${cursorClass}`}
                   >
-                    <div className="space-y-4">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-400/30 flex items-center justify-center text-amber-900 dark:text-amber-300 font-serif font-black text-lg shrink-0">
-                            {story.name.charAt(0)}
-                          </div>
-                          <div>
-                            <h4 className="text-base font-serif font-black text-slate-950 dark:text-white group-hover:text-amber-600 dark:group-hover:text-[#FFC000] transition-colors">
-                              {story.name}
-                            </h4>
-                            <p className="text-xs text-amber-700 dark:text-amber-300 font-medium">
-                              {story.designation || (lang === 'bn' ? 'প্রফেশনাল গ্র্যাজুয়েট' : 'Professional Graduate')}
-                              {story.company ? ` • ${story.company}` : ''}
-                            </p>
-                          </div>
-                        </div>
+                    {/* Background Visual Container */}
+                    <div className="absolute inset-0 bg-slate-900">
+                      <img
+                        src={bgImage}
+                        alt={story.name}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      {/* Heavy cinematic gradient overlay matching the reference image */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/30" />
+                      {/* Golden ambient border */}
+                      <div
+                        className={`absolute inset-0 rounded-3xl pointer-events-none transition-all ${
+                          isCenter
+                            ? 'border-2 border-amber-400/80 shadow-[0_0_50px_rgba(255,192,0,0.25)]'
+                            : 'border border-white/20'
+                        }`}
+                      />
+                    </div>
 
+                    {/* Top Card Badge / Controls */}
+                    <div className="relative z-10 p-5 sm:p-7 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
                         {story.batch && (
-                          <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-[10px] font-mono text-slate-700 dark:text-slate-300 font-bold shrink-0">
+                          <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-amber-400/50 text-[11px] font-mono font-bold text-[#FFC000]">
                             {story.batch}
+                          </span>
+                        )}
+                        {story.company && (
+                          <span className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[11px] font-bold text-white flex items-center gap-1.5">
+                            <Building2 className="w-3 h-3 text-[#FFC000]" />
+                            <span>{story.company}</span>
                           </span>
                         )}
                       </div>
 
-                      {/* Story Snippet */}
-                      <div className="relative pl-4 border-l-2 border-amber-400 dark:border-amber-400/60">
-                        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 line-clamp-4 leading-relaxed italic">
-                          "{story.story}"
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedStory(story)}
-                        className="text-xs font-bold text-amber-700 dark:text-[#FFC000] hover:underline flex items-center gap-1 cursor-pointer"
-                      >
-                        <span>{lang === 'bn' ? 'সম্পূর্ণ গল্প পড়ুন' : 'Read Full Story'}</span>
-                        <ChevronRight className="w-3.5 h-3.5" />
-                      </button>
-
                       {story.video_url && (
                         <button
                           type="button"
-                          onClick={() => setActiveVideoUrl(story.video_url || null)}
-                          className="px-2.5 py-1 rounded-lg bg-red-50 dark:bg-red-950/40 hover:bg-red-100 text-red-700 dark:text-red-300 text-[11px] font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveVideoUrl(story.video_url || null);
+                          }}
+                          className="px-3.5 py-1.5 rounded-full bg-red-600/90 hover:bg-red-600 text-white text-xs font-black flex items-center gap-1.5 shadow-lg transition-transform hover:scale-105 cursor-pointer backdrop-blur-md"
                         >
-                          <Play className="w-2.5 h-2.5 fill-red-500 text-red-500" />
-                          <span>{lang === 'bn' ? 'ভিডিও' : 'Video'}</span>
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* 3. BASE-TIER OF THE PYRAMID (3-Column Foundation Cards) */}
-            {baseStories.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto pt-2">
-                {baseStories.map((story) => (
-                  <div
-                    key={story.id}
-                    className="rounded-2xl bg-white dark:bg-zinc-950 p-5 border border-slate-200 dark:border-slate-800 hover:border-amber-400 shadow-sm hover:shadow-md transition-all flex flex-col justify-between gap-3 group"
-                  >
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-zinc-900 text-amber-700 dark:text-amber-400 font-serif font-black flex items-center justify-center text-sm border border-slate-200 dark:border-zinc-800">
-                            {story.name.charAt(0)}
-                          </div>
-                          <div>
-                            <h5 className="text-sm font-serif font-black text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-[#FFC000] transition-colors line-clamp-1">
-                              {story.name}
-                            </h5>
-                            <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1">
-                              {story.designation || 'Alumni'}
-                              {story.company ? ` • ${story.company}` : ''}
-                            </p>
-                          </div>
-                        </div>
-
-                        {story.batch && (
-                          <span className="text-[10px] font-mono text-amber-700 dark:text-amber-400 font-bold shrink-0">
-                            {story.batch}
-                          </span>
-                        )}
-                      </div>
-
-                      <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-3 leading-relaxed italic">
-                        "{story.story}"
-                      </p>
-                    </div>
-
-                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedStory(story)}
-                        className="text-[11px] font-bold text-amber-700 dark:text-amber-400 hover:underline cursor-pointer"
-                      >
-                        {lang === 'bn' ? 'বিস্তারিত' : 'View Details'}
-                      </button>
-
-                      {story.video_url && (
-                        <button
-                          type="button"
-                          onClick={() => setActiveVideoUrl(story.video_url || null)}
-                          className="text-[11px] font-bold text-red-600 dark:text-red-400 flex items-center gap-1 hover:underline cursor-pointer"
-                        >
-                          <Play className="w-2.5 h-2.5 fill-red-500" />
+                          <Play className="w-3 h-3 fill-white" />
                           <span>Video</span>
                         </button>
                       )}
                     </div>
+
+                    {/* Bottom Card Content: Category Pill, Bold Title, Quote & Author */}
+                    <div className="absolute inset-x-0 bottom-0 z-10 p-6 sm:p-8 space-y-3 bg-gradient-to-t from-black via-black/85 to-transparent">
+                      {/* Designation / Category Tag in gold font matching Meteor's orange category */}
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] sm:text-xs font-mono font-black tracking-widest uppercase text-[#FFC000]">
+                          {story.designation || 'ALUMNI SUCCESS STORY'}
+                        </span>
+                      </div>
+
+                      {/* Main Title: Student Name & Company */}
+                      <h3 className="text-xl sm:text-2xl md:text-3xl font-serif font-black text-white tracking-tight uppercase leading-snug">
+                        {story.name}
+                        {story.company ? `, ${story.company}` : ''}
+                      </h3>
+
+                      {/* Story Text Quote (Only fully readable on center active card) */}
+                      <div className="relative">
+                        <Quote className="absolute -top-1 -left-1 w-5 h-5 text-amber-400/40 rotate-180" />
+                        <p
+                          className={`text-xs sm:text-sm text-slate-200 pl-5 italic leading-relaxed line-clamp-3 sm:line-clamp-4 ${
+                            !isCenter ? 'opacity-80' : ''
+                          }`}
+                        >
+                          "{story.story}"
+                        </p>
+                      </div>
+
+                      {/* Bottom Footer Action */}
+                      {isCenter && (
+                        <div className="pt-2 flex items-center justify-between">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedStory(story);
+                            }}
+                            className="text-xs font-bold text-[#FFC000] hover:underline flex items-center gap-1 cursor-pointer"
+                          >
+                            <span>{lang === 'bn' ? 'সম্পূর্ণ গল্পটি পড়ুন' : 'Read Full Story'}</span>
+                            <ChevronRight className="w-3.5 h-3.5" />
+                          </button>
+
+                          <span className="text-[11px] font-mono text-slate-400">
+                            {idx + 1} / {totalStories}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
+                );
+              })}
+            </div>
+
+            {/* Pagination Dots Under Carousel */}
+            {totalStories > 1 && (
+              <div className="flex items-center justify-center gap-2 pt-6">
+                {stories.map((_, dotIdx) => (
+                  <button
+                    key={`dot-${dotIdx}`}
+                    type="button"
+                    onClick={() => setActiveIndex(dotIdx)}
+                    aria-label={`Go to story ${dotIdx + 1}`}
+                    className={`h-2 rounded-full transition-all cursor-pointer ${
+                      dotIdx === activeIndex
+                        ? 'w-8 bg-[#FFC000]'
+                        : 'w-2 bg-white/20 hover:bg-white/40'
+                    }`}
+                  />
                 ))}
               </div>
             )}
@@ -516,13 +537,13 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
         )}
 
         {/* Empty State when no stories returned from API */}
-        {!isLoading && stories.length === 0 && (
-          <div className="py-16 text-center space-y-3 bg-white dark:bg-zinc-950 rounded-3xl border border-slate-200 dark:border-slate-800 max-w-xl mx-auto p-6 shadow-sm">
-            <Trophy className="w-10 h-10 text-amber-500 dark:text-amber-400 mx-auto opacity-80" />
-            <h3 className="text-base font-serif font-black text-slate-900 dark:text-white">
+        {!isLoading && totalStories === 0 && (
+          <div className="py-16 text-center space-y-3 bg-white/5 rounded-3xl border border-white/10 max-w-xl mx-auto p-8 shadow-sm">
+            <Trophy className="w-10 h-10 text-amber-400 mx-auto opacity-80" />
+            <h3 className="text-base font-serif font-black text-white">
               {lang === 'bn' ? 'কোনো সাফল্যের গল্প পাওয়া যায়নি' : 'No Success Stories Yet'}
             </h3>
-            <p className="text-xs text-slate-600 dark:text-slate-400">
+            <p className="text-xs text-slate-300">
               {lang === 'bn'
                 ? 'প্রথম শিক্ষার্থী হিসেবে আপনার সাফল্যের অভিজ্ঞতা এখানে শেয়ার করুন!'
                 : 'Be the first graduate to share your transformative journey with us!'}
@@ -539,17 +560,19 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
           </div>
         )}
 
-        {/* Bottom Banner with Verification & Community Stats */}
-        <div className="p-6 rounded-2xl bg-white dark:bg-zinc-950 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+        {/* Bottom Banner */}
+        <div className="p-6 rounded-2xl bg-white/5 border border-white/10 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-[#FFC000] flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-amber-400/20 text-[#FFC000] flex items-center justify-center shrink-0">
               <TrendingUp className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-sm font-serif font-black text-slate-900 dark:text-white">
-                {lang === 'bn' ? 'আপনিও কি সফলতার এই যাত্রায় অংশ নিতে চান?' : 'Ready to build your corporate success story?'}
+              <h4 className="text-sm font-serif font-black text-white">
+                {lang === 'bn'
+                  ? 'আপনিও কি সফলতার এই যাত্রায় অংশ নিতে চান?'
+                  : 'Ready to build your corporate success story?'}
               </h4>
-              <p className="text-xs text-slate-600 dark:text-slate-400">
+              <p className="text-xs text-slate-300">
                 {lang === 'bn'
                   ? 'আমাদের কোর্সগুলো সম্পন্ন করে আজই নিজের ক্যারিয়ারকে নতুন উচ্চতায় নিয়ে যান।'
                   : 'Enroll in our practical executive masterclasses and become part of our elite alumni network.'}
@@ -560,9 +583,9 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
           <button
             type="button"
             onClick={() => setIsSubmitModalOpen(true)}
-            className="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-900 hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-900 dark:text-white border border-slate-200 dark:border-zinc-800 text-xs font-bold transition-all cursor-pointer shrink-0 flex items-center gap-1.5"
+            className="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition-all cursor-pointer shrink-0 flex items-center gap-1.5"
           >
-            <MessageSquare className="w-3.5 h-3.5 text-amber-600 dark:text-[#FFC000]" />
+            <MessageSquare className="w-3.5 h-3.5 text-[#FFC000]" />
             <span>{lang === 'bn' ? 'গল্প সাবমিট করুন' : 'Submit Story'}</span>
           </button>
         </div>
@@ -570,19 +593,19 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
 
       {/* MODAL 1: SUBMIT SUCCESS STORY FORM */}
       {isSubmitModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 dark:bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-zinc-950 text-slate-900 dark:text-white rounded-3xl border border-slate-200 dark:border-amber-400/40 shadow-2xl p-6 sm:p-8 space-y-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-slate-900 text-white rounded-3xl border border-amber-400/40 shadow-2xl p-6 sm:p-8 space-y-6">
             {/* Header */}
-            <div className="flex items-start justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
+            <div className="flex items-start justify-between gap-4 pb-4 border-b border-white/10">
               <div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-400/30 text-amber-950 dark:text-amber-300 text-xs font-bold mb-1.5">
-                  <Trophy className="w-3.5 h-3.5 text-amber-600 dark:text-[#FFC000]" />
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/20 border border-amber-400/30 text-[#FFC000] text-xs font-bold mb-1.5">
+                  <Trophy className="w-3.5 h-3.5" />
                   <span>{lang === 'bn' ? 'অ্যালামনাই সাফল্য বিবরণী' : 'Student Success Submission'}</span>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-serif font-black text-slate-950 dark:text-white">
+                <h3 className="text-xl sm:text-2xl font-serif font-black text-white">
                   {lang === 'bn' ? 'আপনার সাফল্যের গল্প জমা দিন' : 'Share Your Success Story'}
                 </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                <p className="text-xs text-slate-300 mt-1">
                   {lang === 'bn'
                     ? 'আপনার অভিজ্ঞতা ভবিষ্যৎ শিক্ষার্থীদের অনুপ্রাণিত করবে। অ্যাডমিন অনুমোদনের পর এটি হোমপেজে প্রদর্শিত হবে।'
                     : 'Your story will inspire future learners. Submissions are reviewed by the admin team before publication.'}
@@ -592,7 +615,7 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
               <button
                 type="button"
                 onClick={() => setIsSubmitModalOpen(false)}
-                className="p-2 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors cursor-pointer"
+                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -600,15 +623,15 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
 
             {/* Notification Messages */}
             {submitSuccess && (
-              <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-500/40 text-emerald-800 dark:text-emerald-200 flex items-start gap-2.5 text-xs sm:text-sm">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+              <div className="p-4 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 flex items-start gap-2.5 text-xs sm:text-sm">
+                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                 <span>{submitSuccess}</span>
               </div>
             )}
 
             {submitError && (
-              <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-500/40 text-rose-800 dark:text-rose-200 flex items-start gap-2.5 text-xs sm:text-sm">
-                <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
+              <div className="p-4 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-200 flex items-start gap-2.5 text-xs sm:text-sm">
+                <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
                 <span>{submitError}</span>
               </div>
             )}
@@ -616,10 +639,9 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
             {/* Form */}
             <form onSubmit={handleSubmitStory} className="space-y-4 text-xs sm:text-sm">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Student Name */}
                 <div className="space-y-1.5">
-                  <label className="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
-                    <User className="w-3.5 h-3.5 text-amber-600 dark:text-[#FFC000]" />
+                  <label className="font-bold text-slate-200 flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5 text-[#FFC000]" />
                     <span>{lang === 'bn' ? 'শিক্ষার্থীর নাম *' : 'Student Name *'}</span>
                   </label>
                   <input
@@ -629,14 +651,13 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
                     value={formData.student_name}
                     onChange={handleInputChange}
                     placeholder="e.g. Rahim Uddin"
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400"
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400"
                   />
                 </div>
 
-                {/* Email */}
                 <div className="space-y-1.5">
-                  <label className="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
-                    <Mail className="w-3.5 h-3.5 text-amber-600 dark:text-[#FFC000]" />
+                  <label className="font-bold text-slate-200 flex items-center gap-1.5">
+                    <Mail className="w-3.5 h-3.5 text-[#FFC000]" />
                     <span>{lang === 'bn' ? 'ইমেইল অ্যাড্রেস *' : 'Email Address *'}</span>
                   </label>
                   <input
@@ -646,14 +667,13 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder="e.g. rahim@example.com"
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400"
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400"
                   />
                 </div>
 
-                {/* Phone */}
                 <div className="space-y-1.5">
-                  <label className="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
-                    <Phone className="w-3.5 h-3.5 text-amber-600 dark:text-[#FFC000]" />
+                  <label className="font-bold text-slate-200 flex items-center gap-1.5">
+                    <Phone className="w-3.5 h-3.5 text-[#FFC000]" />
                     <span>{lang === 'bn' ? 'ফোন নম্বর' : 'Phone Number'}</span>
                   </label>
                   <input
@@ -662,14 +682,13 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
                     value={formData.phone}
                     onChange={handleInputChange}
                     placeholder="e.g. 01700000000"
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400"
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400"
                   />
                 </div>
 
-                {/* Batch */}
                 <div className="space-y-1.5">
-                  <label className="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-amber-600 dark:text-[#FFC000]" />
+                  <label className="font-bold text-slate-200 flex items-center gap-1.5">
+                    <Calendar className="w-3.5 h-3.5 text-[#FFC000]" />
                     <span>{lang === 'bn' ? 'ব্যাচ / সেশন' : 'Batch / Session'}</span>
                   </label>
                   <input
@@ -678,14 +697,13 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
                     value={formData.batch}
                     onChange={handleInputChange}
                     placeholder="e.g. Batch 12 or 2026"
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400"
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400"
                   />
                 </div>
 
-                {/* Designation */}
                 <div className="space-y-1.5">
-                  <label className="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
-                    <Briefcase className="w-3.5 h-3.5 text-amber-600 dark:text-[#FFC000]" />
+                  <label className="font-bold text-slate-200 flex items-center gap-1.5">
+                    <Briefcase className="w-3.5 h-3.5 text-[#FFC000]" />
                     <span>{lang === 'bn' ? 'পদবী' : 'Designation'}</span>
                   </label>
                   <input
@@ -694,14 +712,13 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
                     value={formData.designation}
                     onChange={handleInputChange}
                     placeholder="e.g. Finance Manager"
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400"
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400"
                   />
                 </div>
 
-                {/* Company */}
                 <div className="space-y-1.5">
-                  <label className="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
-                    <Building2 className="w-3.5 h-3.5 text-amber-600 dark:text-[#FFC000]" />
+                  <label className="font-bold text-slate-200 flex items-center gap-1.5">
+                    <Building2 className="w-3.5 h-3.5 text-[#FFC000]" />
                     <span>{lang === 'bn' ? 'কোম্পানি / প্রতিষ্ঠান' : 'Company / Organization'}</span>
                   </label>
                   <input
@@ -710,15 +727,14 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
                     value={formData.company}
                     onChange={handleInputChange}
                     placeholder="e.g. ABC Ltd"
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400"
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400"
                   />
                 </div>
               </div>
 
-              {/* Video URL */}
               <div className="space-y-1.5">
-                <label className="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
-                  <Video className="w-3.5 h-3.5 text-amber-600 dark:text-[#FFC000]" />
+                <label className="font-bold text-slate-200 flex items-center gap-1.5">
+                  <Video className="w-3.5 h-3.5 text-[#FFC000]" />
                   <span>{lang === 'bn' ? 'ভিডিও লিংক (ঐচ্ছিক)' : 'Video Link (Optional YouTube / Vimeo)'}</span>
                 </label>
                 <input
@@ -727,14 +743,13 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
                   value={formData.video_url}
                   onChange={handleInputChange}
                   placeholder="https://youtube.com/watch?v=..."
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400"
                 />
               </div>
 
-              {/* Story Details */}
               <div className="space-y-1.5">
-                <label className="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
-                  <Quote className="w-3.5 h-3.5 text-amber-600 dark:text-[#FFC000]" />
+                <label className="font-bold text-slate-200 flex items-center gap-1.5">
+                  <Quote className="w-3.5 h-3.5 text-[#FFC000]" />
                   <span>{lang === 'bn' ? 'আপনার সাফল্যের গল্প ও অভিজ্ঞতা *' : 'Your Success Story & Experience *'}</span>
                 </label>
                 <textarea
@@ -748,16 +763,15 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
                       ? 'কোর্সটি কিভাবে আপনার ক্যারিয়ারে ভূমিকা রাখল, প্রমোশন, নতুন জ্ঞান ও অভিজ্ঞতা সম্পর্কে বিস্তারিত লিখুন...'
                       : 'Describe how the course impacted your professional skills, promotions, real-world execution, and career growth...'
                   }
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 resize-y"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 resize-y"
                 />
               </div>
 
-              {/* Submit Buttons */}
               <div className="pt-2 flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setIsSubmitModalOpen(false)}
-                  className="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-900 hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-700 dark:text-slate-300 font-bold transition-colors cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold transition-colors cursor-pointer"
                 >
                   {lang === 'bn' ? 'বাতিল' : 'Cancel'}
                 </button>
@@ -765,7 +779,7 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-6 py-2.5 rounded-xl bg-[#FFC000] hover:bg-[#E6AC00] text-slate-950 font-serif font-black flex items-center gap-2 shadow-md transition-all cursor-pointer disabled:opacity-60"
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#FFC000] to-[#E6AC00] text-slate-950 font-serif font-black flex items-center gap-2 shadow-md transition-all cursor-pointer disabled:opacity-60"
                 >
                   {isSubmitting ? (
                     <>
@@ -787,21 +801,21 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
 
       {/* MODAL 2: FULL STORY DETAIL POPUP */}
       {selectedStory && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 dark:bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="relative w-full max-w-xl bg-white dark:bg-zinc-950 text-slate-900 dark:text-white rounded-3xl border border-slate-200 dark:border-amber-400/50 p-6 sm:p-8 space-y-5 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="relative w-full max-w-xl bg-slate-900 text-white rounded-3xl border border-amber-400/50 p-6 sm:p-8 space-y-5 shadow-2xl">
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-400/40 flex items-center justify-center font-serif font-black text-xl text-amber-900 dark:text-amber-300">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-amber-700 flex items-center justify-center font-serif font-black text-xl text-slate-950">
                   {selectedStory.name.charAt(0)}
                 </div>
                 <div>
-                  <h3 className="text-lg font-serif font-black text-slate-950 dark:text-white">{selectedStory.name}</h3>
-                  <p className="text-xs text-amber-700 dark:text-amber-300 font-medium">
+                  <h3 className="text-lg font-serif font-black text-white">{selectedStory.name}</h3>
+                  <p className="text-xs text-amber-300 font-medium">
                     {selectedStory.designation || 'Alumni'}
                     {selectedStory.company ? ` • ${selectedStory.company}` : ''}
                   </p>
                   {selectedStory.batch && (
-                    <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+                    <span className="text-[10px] text-slate-400 font-mono">
                       Batch: {selectedStory.batch}
                     </span>
                   )}
@@ -811,14 +825,14 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
               <button
                 type="button"
                 onClick={() => setSelectedStory(null)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors cursor-pointer"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 max-h-80 overflow-y-auto">
-              <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-200 leading-relaxed whitespace-pre-line italic">
+            <div className="p-4 rounded-xl bg-slate-800/90 border border-slate-700 max-h-80 overflow-y-auto">
+              <p className="text-xs sm:text-sm text-slate-200 leading-relaxed whitespace-pre-line italic">
                 "{selectedStory.story}"
               </p>
             </div>
@@ -832,9 +846,9 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
                     setSelectedStory(null);
                     setActiveVideoUrl(vid || null);
                   }}
-                  className="px-4 py-2 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-500/40 text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-red-600/20 text-red-300 border border-red-500/40 text-xs font-bold flex items-center gap-1.5 cursor-pointer"
                 >
-                  <Play className="w-3 h-3 fill-red-500 text-red-500" />
+                  <Play className="w-3 h-3 fill-red-400 text-red-400" />
                   <span>{lang === 'bn' ? 'ভিডিও দেখুন' : 'Watch Video'}</span>
                 </button>
               ) : <div />}
@@ -853,17 +867,17 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
 
       {/* MODAL 3: VIDEO PLAYER MODAL */}
       {activeVideoUrl && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 dark:bg-black/90 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="relative w-full max-w-3xl bg-white dark:bg-zinc-950 rounded-3xl border border-slate-200 dark:border-amber-400/50 overflow-hidden shadow-2xl">
-            <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-black border-b border-slate-200 dark:border-zinc-800">
-              <span className="text-xs font-serif font-black text-amber-700 dark:text-amber-400 flex items-center gap-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="relative w-full max-w-3xl bg-slate-950 rounded-3xl border border-amber-400/50 overflow-hidden shadow-2xl">
+            <div className="flex items-center justify-between p-4 bg-black border-b border-white/10">
+              <span className="text-xs font-serif font-black text-amber-400 flex items-center gap-2">
                 <Video className="w-4 h-4" />
                 <span>{lang === 'bn' ? 'সাফল্যের ভিডিও সাক্ষাৎকার' : 'Success Story Video Interview'}</span>
               </span>
               <button
                 type="button"
                 onClick={() => setActiveVideoUrl(null)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors cursor-pointer"
+                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
