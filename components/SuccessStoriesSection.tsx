@@ -1,10 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Trophy,
-  Sparkles,
-  Quote,
   Video,
   Building2,
   Calendar,
@@ -14,7 +12,6 @@ import {
   Play,
   X,
   PlusCircle,
-  TrendingUp,
   User,
   Mail,
   Phone,
@@ -23,11 +20,10 @@ import {
   ChevronRight,
   ExternalLink,
   MessageSquare,
-  Layers,
-  Crown,
   Eye,
-  RefreshCw,
-  Award
+  Quote,
+  Sparkles,
+  ArrowRight
 } from 'lucide-react';
 import { SuccessStoryItem } from '@/data/success-stories-data';
 import { useCfo } from '@/context/CfoContext';
@@ -36,24 +32,25 @@ interface SuccessStoriesSectionProps {
   lang: 'bn' | 'en';
 }
 
-// Curated professional architectural & corporate photo accents
-const STORY_BACKGROUNDS = [
-  'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1554469384-e58fac16e23a?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1200&auto=format&fit=crop',
+// Curated high-resolution corporate architecture & executive setting photos matching Meteor Lighting's showcase
+const STORY_COVER_IMAGES = [
+  'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1600&auto=format&fit=crop', // Modern commercial skyscraper
+  'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1600&auto=format&fit=crop', // Executive boardroom & conference
+  'https://images.unsplash.com/photo-1554469384-e58fac16e23a?q=80&w=1600&auto=format&fit=crop', // High-ceiling glass corporate center
+  'https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=1600&auto=format&fit=crop', // Executive finance professional
+  'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1600&auto=format&fit=crop', // Strategic team collaboration
+  'https://images.unsplash.com/photo-1450133064473-71024230f91b?q=80&w=1600&auto=format&fit=crop', // Financial governance & audit
 ];
 
 export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionProps) {
   const { theme } = useCfo();
   const isDark = theme === 'dark';
 
-  // Strictly dynamic: no static data
+  // Strictly dynamic data from API
   const [stories, setStories] = useState<SuccessStoryItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [activeIndex, setActiveIndex] = useState<number>(0);
-  const [viewMode, setViewMode] = useState<'stage' | 'stack'>('stage');
+  const [isAutoplayPaused, setIsAutoplayPaused] = useState<boolean>(false);
 
   // Modals
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState<boolean>(false);
@@ -75,9 +72,14 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const fetchStories = React.useCallback(async () => {
+  // Touch Swipe tracking
+  const touchStartX = useRef<number>(0);
+  const touchEndX = useRef<number>(0);
+
+  // Fetch live success stories from API (direct browser to local backend + Next.js server proxy)
+  const fetchStories = useCallback(async () => {
     try {
-      // 1. Direct browser fetch to local Laravel backend if running on 127.0.0.1:8000
+      // 1. Direct fetch to local Laravel backend if reachable from user's browser
       try {
         const directRes = await fetch('http://127.0.0.1:8000/api/success-stories', {
           signal: AbortSignal.timeout(2500),
@@ -99,7 +101,7 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
           }
         }
       } catch {
-        // Direct local backend unreachable or blocked by CORS, proceed to Next.js proxy
+        // Direct request unreachable, proceed to proxy
       }
 
       // 2. Query internal Next.js proxy route
@@ -136,15 +138,26 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
 
   const totalStories = stories.length;
 
-  const handlePrev = React.useCallback(() => {
+  const handlePrev = useCallback(() => {
     if (totalStories === 0) return;
     setActiveIndex((prev) => (prev > 0 ? prev - 1 : totalStories - 1));
   }, [totalStories]);
 
-  const handleNext = React.useCallback(() => {
+  const handleNext = useCallback(() => {
     if (totalStories === 0) return;
     setActiveIndex((prev) => (prev < totalStories - 1 ? prev + 1 : 0));
   }, [totalStories]);
+
+  // Autoplay functionality (pauses on hover)
+  useEffect(() => {
+    if (totalStories <= 1 || isAutoplayPaused || isSubmitModalOpen || selectedStory || activeVideoUrl) {
+      return;
+    }
+    const timer = setInterval(() => {
+      handleNext();
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [totalStories, isAutoplayPaused, handleNext, isSubmitModalOpen, selectedStory, activeVideoUrl]);
 
   // Keyboard arrow navigation
   useEffect(() => {
@@ -156,6 +169,25 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handlePrev, handleNext, isSubmitModalOpen, selectedStory, activeVideoUrl]);
+
+  // Touch Swipe handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    const distance = touchStartX.current - touchEndX.current;
+    if (distance > 50) {
+      handleNext();
+    } else if (distance < -50) {
+      handlePrev();
+    }
+    touchStartX.current = 0;
+    touchEndX.current = 0;
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -173,7 +205,7 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
       setSubmitError(
         lang === 'bn'
           ? 'অনুগ্রহ করে আপনার নাম, ইমেইল এবং সাফল্যের গল্পটি লিখুন।'
-          : 'Please provide student name, email, and story.'
+          : 'Please provide your name, email, and story.'
       );
       return;
     }
@@ -192,7 +224,7 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
       if (formData.phone.trim()) queryParams.set('phone', formData.phone.trim());
       if (formData.video_url.trim()) queryParams.set('video_url', formData.video_url.trim());
 
-      // 1. Direct fetch to local Laravel backend
+      // Direct post to local backend
       try {
         const directUrl = `http://127.0.0.1:8000/api/success-stories/submit?${queryParams.toString()}`;
         const directRes = await fetch(directUrl, {
@@ -209,10 +241,9 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
           submitted = true;
         }
       } catch {
-        // Direct request failed, fallback to server proxy
+        // Fallback to proxy
       }
 
-      // 2. Fallback to proxy route
       if (!submitted) {
         const proxyRes = await fetch('/api/success-stories/submit', {
           method: 'POST',
@@ -231,7 +262,7 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
 
       setSubmitSuccess(
         lang === 'bn'
-          ? 'ধন্যবাদ! আপনার সাফল্যের গল্পটি সফলভাবে জমা হয়েছে। অ্যাডমিন অনুমোদনের পর এটি ওয়েবসাইটে প্রদর্শিত হবে।'
+          ? 'ধন্যবাদ! আপনার সাফল্যের গল্পটি সফলভাবে জমা হয়েছে। অ্যাডমিন পর্যালোচনার পর এটি ওয়েবসাইটে প্রদর্শিত হবে।'
           : 'Thank you! Your success story has been submitted successfully and is pending admin review.'
       );
 
@@ -246,7 +277,7 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
         story: '',
       });
 
-      // Refresh stories list to pick up changes
+      // Refresh stories list to pick up newly approved updates
       fetchStories();
 
       setTimeout(() => {
@@ -282,48 +313,50 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
   return (
     <section
       id="success-stories"
+      onMouseEnter={() => setIsAutoplayPaused(true)}
+      onMouseLeave={() => setIsAutoplayPaused(false)}
       className={`relative py-16 sm:py-24 px-4 sm:px-6 lg:px-8 overflow-hidden transition-colors ${
         isDark
           ? 'bg-[#030712] text-white border-y border-slate-900'
           : 'bg-gradient-to-b from-[#FAF8F5] via-white to-[#F3F4F6] text-slate-900 border-y border-slate-200/90'
       }`}
     >
-      {/* Background ambient lighting */}
+      {/* Background ambient lighting matching Meteor Lighting's cinematic atmospheric aesthetic */}
       <div className="absolute inset-0 pointer-events-none">
         {isDark ? (
           <>
-            <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gradient-to-b from-[#C8963E]/15 via-[#FFC000]/8 to-transparent blur-[140px] rounded-full" />
+            <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[550px] bg-gradient-to-b from-[#C8963E]/15 via-[#FFC000]/8 to-transparent blur-[140px] rounded-full" />
             <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black via-black/40 to-transparent" />
           </>
         ) : (
           <>
-            <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-amber-200/35 via-amber-100/20 to-transparent blur-[120px] rounded-full" />
+            <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[850px] h-[450px] bg-gradient-to-b from-amber-200/35 via-amber-100/20 to-transparent blur-[120px] rounded-full" />
             <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-100/60 to-transparent" />
           </>
         )}
       </div>
 
       <div className="relative max-w-7xl mx-auto space-y-10 sm:space-y-12">
-        {/* Section Top Header & Pyramid Controls */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-2">
+        {/* Section Top Header & Navigation Buttons (Meteor Lighting exact header composition) */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-2">
           <div className="space-y-3 max-w-2xl">
-            {/* Pyramid Style Tag */}
+            {/* Pill Tag (Meteor Lighting style uppercase badge) */}
             <div
-              className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-mono tracking-widest uppercase transition-colors ${
+              className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1 text-xs font-mono font-bold tracking-widest uppercase transition-colors ${
                 isDark
-                  ? 'bg-white/10 border border-white/15 text-[#FFC000]'
-                  : 'bg-amber-100/90 border border-amber-300 text-amber-900 shadow-xs font-semibold'
+                  ? 'border border-white/20 bg-white/5 text-slate-400'
+                  : 'border border-slate-300/80 bg-white text-slate-600 shadow-xs'
               }`}
             >
               <Trophy className="w-3.5 h-3.5 text-[#FFC000] shrink-0" />
               <span>
-                {lang === 'bn' ? 'অ্যালামনাই সাফল্য পিরামিড' : 'EXECUTIVE SUCCESS PYRAMID'}
+                {lang === 'bn' ? 'অ্যালামনাই সাফল্যের গল্প' : 'FEATURED SUCCESS STORIES'}
               </span>
             </div>
 
             {/* Headline */}
             <h2
-              className={`text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight leading-tight ${
+              className={`text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight leading-snug ${
                 isDark ? 'text-white' : 'text-slate-950'
               }`}
             >
@@ -346,95 +379,58 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
 
             <p
               className={`text-xs sm:text-sm max-w-xl leading-relaxed ${
-                isDark ? 'text-slate-300' : 'text-slate-600'
+                isDark ? 'text-slate-400' : 'text-slate-600'
               }`}
             >
               {lang === 'bn'
-                ? 'সিএফও এডুকেশন বিডি থেকে প্রশিক্ষণ সম্পন্ন করে শীর্ষস্থানীয় কর্পোরেট প্রতিষ্ঠানে পদোন্নতি ও নেতৃত্বের অনুপ্রেরণাদায়ী সাফল্য।'
-                : 'Real achievements and leadership transformations of our graduates working across top tier companies.'}
+                ? 'সিএফও এডুকেশন বিডি থেকে প্রশিক্ষণ সম্পন্ন করে শীর্ষস্থানীয় প্রতিষ্ঠানে কর্মরত পেশাদারদের অনুপ্রেরণাদায়ী অভিজ্ঞতা।'
+                : 'Real achievements and transformative career advancements of our graduates across leading corporate enterprises.'}
             </p>
           </div>
 
-          {/* Right Action Bar: View Switcher, Write Story CTA, & Round Navigation Arrows */}
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
-            {/* Pyramid View Switcher (Stage vs Stack) */}
-            {totalStories > 1 && (
-              <div
-                className={`flex items-center p-1 rounded-full border text-xs font-bold ${
-                  isDark
-                    ? 'bg-slate-900/90 border-slate-800 text-slate-300'
-                    : 'bg-white border-slate-300 text-slate-700 shadow-xs'
-                }`}
-              >
-                <button
-                  type="button"
-                  onClick={() => setViewMode('stage')}
-                  className={`px-3 py-1.5 rounded-full flex items-center gap-1.5 transition-all cursor-pointer ${
-                    viewMode === 'stage'
-                      ? 'bg-[#FFC000] text-slate-950 font-black shadow-xs'
-                      : 'hover:text-amber-500'
-                  }`}
-                  title="3D Stepped Pyramid Stage"
-                >
-                  <Crown className="w-3.5 h-3.5" />
-                  <span>{lang === 'bn' ? 'পিরামিড স্টেজ' : 'Pyramid Stage'}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setViewMode('stack')}
-                  className={`px-3 py-1.5 rounded-full flex items-center gap-1.5 transition-all cursor-pointer ${
-                    viewMode === 'stack'
-                      ? 'bg-[#FFC000] text-slate-950 font-black shadow-xs'
-                      : 'hover:text-amber-500'
-                  }`}
-                  title="Pyramid Tier Grid"
-                >
-                  <Layers className="w-3.5 h-3.5" />
-                  <span>{lang === 'bn' ? 'টিয়ার ভিউ' : 'Tier Grid'}</span>
-                </button>
-              </div>
-            )}
-
-            {/* Share Story Button */}
+          {/* Right Action: Write Story CTA + Meteor Lighting Circular Arrow Buttons */}
+          <div className="flex items-center gap-3 shrink-0">
             <button
               type="button"
               onClick={() => setIsSubmitModalOpen(true)}
               className={`px-4 py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                 isDark
                   ? 'bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-amber-400'
-                  : 'bg-white hover:bg-amber-50 text-slate-900 border border-slate-300 hover:border-amber-400 shadow-sm'
+                  : 'bg-white hover:bg-amber-50 text-slate-900 border border-slate-300 hover:border-amber-400 shadow-xs'
               }`}
             >
               <PlusCircle className="w-4 h-4 text-[#FFC000]" />
               <span>{lang === 'bn' ? 'গল্প লিখুন' : 'Share Story'}</span>
             </button>
 
-            {/* Carousel Arrows (Active in Stage View) */}
-            {viewMode === 'stage' && totalStories > 1 && (
-              <div className="flex items-center gap-2">
+            {totalStories > 1 && (
+              <div className="flex items-center gap-2.5">
+                {/* Previous Button (Meteor Lighting exact style: group, round, backdrop-blur, arrow nudge) */}
                 <button
                   type="button"
                   onClick={handlePrev}
                   aria-label="Previous story"
-                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all cursor-pointer shadow-sm ${
+                  className={`group rounded-full p-3 backdrop-blur transition-all cursor-pointer shadow-sm ${
                     isDark
-                      ? 'bg-white/10 hover:bg-[#FFC000] text-white hover:text-slate-950 border border-white/20 hover:border-[#FFC000]'
-                      : 'bg-white hover:bg-[#FFC000] text-slate-800 hover:text-slate-950 border border-slate-300 hover:border-[#FFC000]'
+                      ? 'border border-white/20 bg-white/5 text-white hover:bg-white hover:text-slate-950'
+                      : 'border border-slate-300 bg-white text-slate-800 hover:bg-slate-950 hover:text-white'
                   }`}
                 >
-                  <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
+                  <ChevronLeft className="h-5 w-5 transition-transform group-hover:-translate-x-0.5 stroke-[2.2]" />
                 </button>
+
+                {/* Next Button */}
                 <button
                   type="button"
                   onClick={handleNext}
                   aria-label="Next story"
-                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all cursor-pointer shadow-sm ${
+                  className={`group rounded-full p-3 backdrop-blur transition-all cursor-pointer shadow-sm ${
                     isDark
-                      ? 'bg-white/10 hover:bg-[#FFC000] text-white hover:text-slate-950 border border-white/20 hover:border-[#FFC000]'
-                      : 'bg-white hover:bg-[#FFC000] text-slate-800 hover:text-slate-950 border border-slate-300 hover:border-[#FFC000]'
+                      ? 'border border-white/20 bg-white/5 text-white hover:bg-white hover:text-slate-950'
+                      : 'border border-slate-300 bg-white text-slate-800 hover:bg-slate-950 hover:text-white'
                   }`}
                 >
-                  <ChevronRight className="w-5 h-5 stroke-[2.5]" />
+                  <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5 stroke-[2.2]" />
                 </button>
               </div>
             )}
@@ -457,392 +453,246 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
           </div>
         )}
 
-        {/* 1. 3D STEPPED PYRAMID CAROUSEL STAGE */}
-        {!isLoading && totalStories > 0 && viewMode === 'stage' && (
-          <div className="relative w-full py-4 select-none">
-            {/* The 3D Stage with stepped pyramid elevation */}
-            <div className="relative h-[480px] sm:h-[540px] md:h-[590px] w-full flex items-center justify-center overflow-visible">
+        {/* METEOR LIGHTING EXACT 3D COVERFLOW PYRAMID CAROUSEL STAGE */}
+        {!isLoading && totalStories > 0 && (
+          <div
+            className="relative flex h-[58vh] min-h-[460px] sm:min-h-[500px] md:min-h-[550px] w-full items-center justify-center select-none overflow-hidden"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            <div className="relative flex h-full w-full items-center justify-center">
               {stories.map((story, idx) => {
+                // Calculate circular relative offset from activeIndex
                 let offset = idx - activeIndex;
                 if (offset < -Math.floor(totalStories / 2)) offset += totalStories;
                 if (offset > Math.floor(totalStories / 2)) offset -= totalStories;
 
-                const isApex = offset === 0;
+                const isCenter = offset === 0;
                 const isLeft1 = offset === -1;
                 const isRight1 = offset === 1;
                 const isLeft2 = offset === -2;
                 const isRight2 = offset === 2;
                 const isHidden = Math.abs(offset) > 2;
 
-                if (isHidden) return null;
+                // Meteor Lighting exact card positioning classes & cubic-bezier easing:
+                // transition-all duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-auto
+                let positionClasses = '';
+                let overlayClasses = '';
+                let contentOpacityClasses = 'pointer-events-none opacity-0';
 
-                // Geometrical Pyramid Step Transformation:
-                // Apex (Center): scale(1.02), translateY(0), zIndex 30
-                // Wing Tier 1: scale(0.85), translateY(28px) down the pyramid slope, zIndex 20
-                // Wing Tier 2: scale(0.70), translateY(56px) down the pyramid slope, zIndex 10
-                let transformClass = 'translate-x-0 translate-y-0 scale-100 z-30 opacity-100';
-                let cursorClass = 'cursor-default';
-
-                if (isLeft1) {
-                  transformClass =
-                    '-translate-x-[55%] sm:-translate-x-[62%] translate-y-6 sm:translate-y-8 scale-[0.84] z-20 opacity-70 hover:opacity-90';
-                  cursorClass = 'cursor-pointer';
+                if (isCenter) {
+                  positionClasses =
+                    'left-1/2 z-30 h-full w-[85vw] sm:w-[75vw] md:w-[55vw] lg:w-[48vw] -translate-x-1/2 scale-100 cursor-default';
+                  contentOpacityClasses = 'opacity-100';
+                  overlayClasses = isDark
+                    ? 'bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent'
+                    : 'bg-gradient-to-t from-white via-white/80 to-transparent';
                 } else if (isRight1) {
-                  transformClass =
-                    'translate-x-[55%] sm:translate-x-[62%] translate-y-6 sm:translate-y-8 scale-[0.84] z-20 opacity-70 hover:opacity-90';
-                  cursorClass = 'cursor-pointer';
-                } else if (isLeft2) {
-                  transformClass =
-                    '-translate-x-[96%] sm:-translate-x-[112%] translate-y-12 sm:translate-y-16 scale-[0.70] z-10 opacity-35 hover:opacity-60';
-                  cursorClass = 'cursor-pointer';
+                  positionClasses =
+                    'left-[95%] z-20 h-[80%] w-[55vw] -translate-x-full md:left-[88%] md:w-[32vw] lg:w-[28vw] cursor-pointer';
+                  overlayClasses = isDark ? 'bg-slate-950/70' : 'bg-white/70';
                 } else if (isRight2) {
-                  transformClass =
-                    'translate-x-[96%] sm:translate-x-[112%] translate-y-12 sm:translate-y-16 scale-[0.70] z-10 opacity-35 hover:opacity-60';
-                  cursorClass = 'cursor-pointer';
+                  positionClasses =
+                    'left-[110%] z-10 h-[65%] w-[45vw] -translate-x-full md:left-[102%] md:w-[22vw] lg:w-[18vw] cursor-pointer';
+                  overlayClasses = isDark ? 'bg-slate-950/80' : 'bg-white/80';
+                } else if (isLeft1) {
+                  positionClasses =
+                    'left-[5%] z-20 h-[80%] w-[55vw] translate-x-0 md:left-[12%] md:w-[32vw] lg:w-[28vw] cursor-pointer';
+                  overlayClasses = isDark ? 'bg-slate-950/70' : 'bg-white/70';
+                } else if (isLeft2) {
+                  positionClasses =
+                    'left-[-10%] z-10 h-[65%] w-[45vw] translate-x-0 md:left-[-2%] md:w-[22vw] lg:w-[18vw] cursor-pointer';
+                  overlayClasses = isDark ? 'bg-slate-950/80' : 'bg-white/80';
+                } else if (isHidden) {
+                  positionClasses =
+                    'pointer-events-none left-1/2 z-0 h-[60%] w-[40vw] -translate-x-1/2 scale-50 opacity-0';
                 }
 
-                const bgTexture = story.photo || STORY_BACKGROUNDS[idx % STORY_BACKGROUNDS.length];
+                const bgImage = story.photo || STORY_COVER_IMAGES[idx % STORY_COVER_IMAGES.length];
 
                 return (
                   <div
                     key={story.id}
                     onClick={() => {
-                      if (!isApex) setActiveIndex(idx);
+                      if (!isCenter) setActiveIndex(idx);
                     }}
-                    style={{
-                      transition:
-                        'transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.55s ease, box-shadow 0.55s ease',
-                    }}
-                    className={`absolute w-[88%] sm:w-[540px] md:w-[620px] lg:w-[660px] h-[450px] sm:h-[500px] md:h-[530px] rounded-3xl overflow-hidden ${transformClass} ${cursorClass} ${
+                    className={`absolute overflow-hidden rounded-2xl border shadow-2xl transition-all duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-auto ${positionClasses} ${
                       isDark
-                        ? isApex
-                          ? 'bg-slate-900 border-2 border-amber-400 shadow-[0_0_50px_rgba(255,192,0,0.3)] ring-2 ring-amber-400/20'
-                          : 'bg-slate-950/90 border border-slate-800 shadow-xl'
-                        : isApex
-                        ? 'bg-white border-2 border-amber-400 shadow-2xl shadow-amber-500/20 ring-2 ring-amber-400/30'
-                        : 'bg-white/95 border border-slate-200/90 shadow-xl shadow-slate-200/60'
+                        ? isCenter
+                          ? 'border-amber-400/80 bg-slate-900 shadow-[0_0_50px_rgba(255,192,0,0.22)]'
+                          : 'border-slate-800 bg-slate-900'
+                        : isCenter
+                        ? 'border-amber-400 bg-white shadow-2xl shadow-amber-500/15'
+                        : 'border-slate-200 bg-white'
                     }`}
                   >
-                    {/* Visual Header / Cover Texture */}
-                    <div className="relative h-44 sm:h-52 w-full overflow-hidden">
-                      <img
-                        src={bgTexture}
-                        alt={story.name}
-                        className="w-full h-full object-cover"
-                      />
-                      {/* Gradient overlay adapting to theme */}
-                      <div
-                        className={`absolute inset-0 ${
-                          isDark
-                            ? 'bg-gradient-to-t from-slate-900 via-slate-900/60 to-black/30'
-                            : 'bg-gradient-to-t from-white via-white/50 to-black/20'
-                        }`}
-                      />
-
-                      {/* Top Badges (Apex Crown + Batch / Company) */}
-                      <div className="absolute top-4 inset-x-4 flex items-center justify-between z-10">
-                        <div className="flex items-center gap-2">
-                          {isApex ? (
-                            <span className="px-3 py-1 rounded-full bg-[#FFC000] text-slate-950 text-[11px] font-mono font-black flex items-center gap-1.5 shadow-md">
-                              <Crown className="w-3.5 h-3.5 fill-slate-950" />
-                              <span>{lang === 'bn' ? 'পিরামিড শীর্ষ' : 'PYRAMID APEX'}</span>
-                            </span>
-                          ) : (
-                            <span
-                              className={`px-3 py-1 rounded-full text-[11px] font-mono font-bold backdrop-blur-md ${
-                                isDark
-                                  ? 'bg-black/60 text-slate-300 border border-white/20'
-                                  : 'bg-white/90 text-slate-700 border border-slate-300 shadow-xs'
-                              }`}
-                            >
-                              Step {Math.abs(offset)}
-                            </span>
-                          )}
-
-                          {story.batch && (
-                            <span
-                              className={`px-3 py-1 rounded-full text-[11px] font-mono font-bold backdrop-blur-md ${
-                                isDark
-                                  ? 'bg-black/60 text-[#FFC000] border border-amber-400/40'
-                                  : 'bg-white/90 text-amber-900 border border-amber-300 shadow-xs'
-                              }`}
-                            >
-                              {story.batch}
-                            </span>
-                          )}
-                        </div>
-
-                        {story.video_url && (
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setActiveVideoUrl(story.video_url || null);
-                            }}
-                            className="px-3.5 py-1.5 rounded-full bg-red-600 hover:bg-red-700 text-white text-xs font-black flex items-center gap-1.5 shadow-lg transition-transform hover:scale-105 cursor-pointer backdrop-blur-md"
-                          >
-                            <Play className="w-3 h-3 fill-white" />
-                            <span>Video</span>
-                          </button>
-                        )}
-                      </div>
-
-                      {/* Avatar initial badge positioned at the seam */}
-                      <div className="absolute -bottom-6 left-6 z-20">
-                        <div
-                          className={`w-14 h-14 rounded-2xl flex items-center justify-center font-serif font-black text-2xl shadow-xl border-2 ${
-                            isDark
-                              ? 'bg-gradient-to-br from-amber-400 to-[#C8963E] text-slate-950 border-slate-900'
-                              : 'bg-gradient-to-br from-[#FFC000] to-amber-600 text-white border-white'
-                          }`}
-                        >
-                          {story.name.charAt(0)}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Card Body Content */}
-                    <div className="p-6 sm:p-7 pt-9 space-y-3.5">
-                      {/* Designation & Company Row */}
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span
-                          className={`text-xs font-mono font-black uppercase tracking-wider ${
-                            isDark ? 'text-[#FFC000]' : 'text-amber-800'
-                          }`}
-                        >
-                          {story.designation || (lang === 'bn' ? 'সফল শিক্ষার্থী' : 'Alumni Graduate')}
-                        </span>
-                        {story.company && (
-                          <span
-                            className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-md ${
-                              isDark
-                                ? 'bg-white/10 text-slate-200'
-                                : 'bg-slate-100 text-slate-700'
-                            }`}
-                          >
-                            <Building2 className="w-3 h-3 text-[#FFC000]" />
-                            <span>{story.company}</span>
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Student Full Name */}
-                      <h3
-                        className={`text-xl sm:text-2xl md:text-3xl font-serif font-black tracking-tight leading-snug ${
-                          isDark ? 'text-white' : 'text-slate-950'
-                        }`}
-                      >
-                        {story.name}
-                      </h3>
-
-                      {/* Story Quote with quotation icon */}
-                      <div className="relative">
-                        <Quote
-                          className={`absolute -top-1 -left-1 w-5 h-5 rotate-180 ${
-                            isDark ? 'text-amber-400/40' : 'text-amber-500/40'
-                          }`}
+                    {/* Meteor Lighting Image Container with smooth zoom on hover */}
+                    <div className="group/image relative h-full w-full overflow-hidden">
+                      <div className="absolute inset-0 h-full w-full transition-transform duration-1000 ease-out group-hover/image:scale-105">
+                        <img
+                          src={bgImage}
+                          alt={story.name}
+                          className="h-full w-full object-cover"
                         />
-                        <p
-                          className={`text-xs sm:text-sm pl-5 italic leading-relaxed line-clamp-3 sm:line-clamp-4 ${
-                            isDark ? 'text-slate-200' : 'text-slate-700'
-                          }`}
-                        >
-                          &ldquo;{story.story}&rdquo;
-                        </p>
+                        {/* Shading overlay adapting to active status & theme */}
+                        <div
+                          className={`pointer-events-none absolute -inset-px transition-all duration-700 ${overlayClasses}`}
+                        />
                       </div>
 
-                      {/* Card Footer Controls (Read story modal trigger) */}
-                      {isApex && (
-                        <div
-                          className={`pt-3 flex items-center justify-between border-t ${
-                            isDark ? 'border-slate-800' : 'border-slate-100'
-                          }`}
-                        >
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedStory(story);
-                            }}
-                            className={`text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors ${
-                              isDark
-                                ? 'text-[#FFC000] hover:text-amber-300'
-                                : 'text-amber-800 hover:text-amber-950'
-                            }`}
-                          >
-                            <Eye className="w-3.5 h-3.5" />
-                            <span>{lang === 'bn' ? 'সম্পূর্ণ গল্পটি পড়ুন' : 'Read Full Story'}</span>
-                            <ChevronRight className="w-3.5 h-3.5" />
-                          </button>
+                      {/* Card Top Pill & Video Action (Active Center Card) */}
+                      {isCenter && (
+                        <div className="absolute top-0 inset-x-0 z-20 p-5 sm:p-7 flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            {story.batch && (
+                              <span
+                                className={`px-3 py-1 rounded-full text-[11px] font-mono font-bold backdrop-blur-md border ${
+                                  isDark
+                                    ? 'bg-black/60 border-amber-400/40 text-[#FFC000]'
+                                    : 'bg-white/90 border-amber-300 text-amber-900 shadow-xs'
+                                }`}
+                              >
+                                {story.batch}
+                              </span>
+                            )}
+                            {story.company && (
+                              <span
+                                className={`px-3 py-1 rounded-full text-[11px] font-bold backdrop-blur-md border flex items-center gap-1.5 ${
+                                  isDark
+                                    ? 'bg-white/10 border-white/20 text-white'
+                                    : 'bg-white/90 border-slate-300 text-slate-800 shadow-xs'
+                                }`}
+                              >
+                                <Building2 className="w-3 h-3 text-[#FFC000]" />
+                                <span>{story.company}</span>
+                              </span>
+                            )}
+                          </div>
 
-                          <span
-                            className={`text-[11px] font-mono ${
-                              isDark ? 'text-slate-400' : 'text-slate-500'
-                            }`}
-                          >
-                            {idx + 1} / {totalStories}
-                          </span>
+                          {story.video_url && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setActiveVideoUrl(story.video_url || null);
+                              }}
+                              className="px-3.5 py-1.5 rounded-full bg-red-600 hover:bg-red-700 text-white text-xs font-black flex items-center gap-1.5 shadow-lg transition-transform hover:scale-105 cursor-pointer backdrop-blur-md"
+                            >
+                              <Play className="w-3 h-3 fill-white" />
+                              <span>Video</span>
+                            </button>
+                          )}
                         </div>
                       )}
+
+                      {/* Card Bottom Content (Meteor Lighting exact text layout) */}
+                      <div
+                        className={`absolute right-0 bottom-0 left-0 z-10 p-6 sm:p-8 space-y-2.5 transition-opacity duration-300 ${contentOpacityClasses}`}
+                      >
+                        {/* Category / Designation Tag (Meteor Lighting uppercase border-bottom link) */}
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`text-xs font-mono font-bold tracking-widest uppercase border-b transition-colors ${
+                              isDark
+                                ? 'text-[#FFC000] border-[#FFC000]/50 hover:border-white hover:text-white'
+                                : 'text-amber-800 border-amber-600/50 hover:border-slate-900 hover:text-slate-900'
+                            }`}
+                          >
+                            {story.designation || (lang === 'bn' ? 'সফল শিক্ষার্থী' : 'Alumni Graduate')}
+                          </span>
+                        </div>
+
+                        {/* Title: Student Name & Company */}
+                        <h3
+                          className={`text-xl sm:text-2xl md:text-3xl font-bold uppercase tracking-tight transition-colors duration-300 ${
+                            isDark
+                              ? 'text-white group-hover/image:text-[#FFC000]'
+                              : 'text-slate-950 group-hover/image:text-amber-700'
+                          }`}
+                        >
+                          {story.name}
+                          {story.company ? `, ${story.company}` : ''}
+                        </h3>
+
+                        {/* Story Quote with quotation styling */}
+                        <div className="relative pt-1">
+                          <Quote
+                            className={`absolute -top-1 -left-1 w-4 h-4 rotate-180 ${
+                              isDark ? 'text-amber-400/40' : 'text-amber-500/40'
+                            }`}
+                          />
+                          <p
+                            className={`text-xs sm:text-sm pl-4 italic leading-relaxed line-clamp-3 sm:line-clamp-4 ${
+                              isDark ? 'text-slate-300' : 'text-slate-700'
+                            }`}
+                          >
+                            &ldquo;{story.story}&rdquo;
+                          </p>
+                        </div>
+
+                        {/* Bottom Action Footer for Center Card */}
+                        {isCenter && (
+                          <div
+                            className={`pt-3 flex items-center justify-between border-t ${
+                              isDark ? 'border-white/10' : 'border-slate-200'
+                            }`}
+                          >
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedStory(story);
+                              }}
+                              className={`text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors ${
+                                isDark
+                                  ? 'text-[#FFC000] hover:text-amber-300'
+                                  : 'text-amber-800 hover:text-slate-950'
+                              }`}
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                              <span>
+                                {lang === 'bn' ? 'সম্পূর্ণ গল্পটি পড়ুন' : 'Read Full Story'}
+                              </span>
+                              <ChevronRight className="w-3.5 h-3.5" />
+                            </button>
+
+                            <span
+                              className={`text-[11px] font-mono ${
+                                isDark ? 'text-slate-400' : 'text-slate-500'
+                              }`}
+                            >
+                              {idx + 1} / {totalStories}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );
               })}
             </div>
-
-            {/* Pagination Dots Under 3D Pyramid */}
-            {totalStories > 1 && (
-              <div className="flex items-center justify-center gap-2 pt-6">
-                {stories.map((_, dotIdx) => (
-                  <button
-                    key={`dot-${dotIdx}`}
-                    type="button"
-                    onClick={() => setActiveIndex(dotIdx)}
-                    aria-label={`Go to story ${dotIdx + 1}`}
-                    className={`h-2.5 rounded-full transition-all cursor-pointer ${
-                      dotIdx === activeIndex
-                        ? 'w-9 bg-[#FFC000]'
-                        : isDark
-                        ? 'w-2.5 bg-white/20 hover:bg-white/40'
-                        : 'w-2.5 bg-slate-300 hover:bg-slate-400'
-                    }`}
-                  />
-                ))}
-              </div>
-            )}
           </div>
         )}
 
-        {/* 2. PYRAMID TIER GRID (Alternate Geometric Structure) */}
-        {!isLoading && totalStories > 0 && viewMode === 'stack' && (
-          <div className="space-y-6 max-w-5xl mx-auto">
-            {/* Pyramid Apex Tier (Top 1 Highlight) */}
-            {stories[0] && (
-              <div
-                className={`p-6 sm:p-8 rounded-3xl border-2 border-amber-400 relative overflow-hidden transition-all shadow-xl ${
-                  isDark
-                    ? 'bg-slate-900/90 text-white ring-2 ring-amber-400/20'
-                    : 'bg-white text-slate-900 shadow-amber-500/10'
+        {/* Meteor Lighting Pagination Bar / Indicators */}
+        {!isLoading && totalStories > 1 && (
+          <div className="flex items-center justify-center gap-2 pt-2">
+            {stories.map((_, dotIdx) => (
+              <button
+                key={`dot-${dotIdx}`}
+                type="button"
+                onClick={() => setActiveIndex(dotIdx)}
+                aria-label={`Go to slide ${dotIdx + 1}`}
+                className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                  dotIdx === activeIndex
+                    ? 'w-10 bg-[#FFC000]'
+                    : isDark
+                    ? 'w-2 bg-white/20 hover:bg-white/40'
+                    : 'w-2 bg-slate-300 hover:bg-slate-400'
                 }`}
-              >
-                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                  <div className="space-y-3 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="px-3 py-1 rounded-full bg-[#FFC000] text-slate-950 text-xs font-mono font-black flex items-center gap-1.5">
-                        <Crown className="w-3.5 h-3.5 fill-slate-950" />
-                        <span>{lang === 'bn' ? 'পিরামিড চূড়া' : 'PYRAMID APEX TIER'}</span>
-                      </span>
-                      {stories[0].batch && (
-                        <span className="px-2.5 py-0.5 rounded-full text-xs font-mono bg-amber-500/15 text-amber-700 dark:text-[#FFC000] font-bold">
-                          {stories[0].batch}
-                        </span>
-                      )}
-                    </div>
-
-                    <h3 className="text-2xl sm:text-3xl font-serif font-black">
-                      {stories[0].name}
-                    </h3>
-                    <p className="text-xs font-mono font-bold text-amber-600 dark:text-[#FFC000]">
-                      {stories[0].designation || 'Alumni'}
-                      {stories[0].company ? ` • ${stories[0].company}` : ''}
-                    </p>
-
-                    <p
-                      className={`text-xs sm:text-sm italic leading-relaxed ${
-                        isDark ? 'text-slate-200' : 'text-slate-700'
-                      }`}
-                    >
-                      &ldquo;{stories[0].story}&rdquo;
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row gap-2.5 shrink-0 w-full sm:w-auto">
-                    {stories[0].video_url && (
-                      <button
-                        type="button"
-                        onClick={() => setActiveVideoUrl(stories[0].video_url || null)}
-                        className="px-4 py-2.5 rounded-xl bg-red-600 text-white text-xs font-black flex items-center justify-center gap-1.5 shadow-md cursor-pointer hover:bg-red-700"
-                      >
-                        <Play className="w-3.5 h-3.5 fill-white" />
-                        <span>Watch Video</span>
-                      </button>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => setSelectedStory(stories[0])}
-                      className="px-4 py-2.5 rounded-xl bg-[#FFC000] text-slate-950 text-xs font-black flex items-center justify-center gap-1.5 cursor-pointer hover:bg-[#E6AC00]"
-                    >
-                      <Eye className="w-3.5 h-3.5" />
-                      <span>{lang === 'bn' ? 'বিস্তারিত পড়ুন' : 'Full Story'}</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Pyramid Base Tier (Stories 1..n side-by-side forming the pyramid foundation) */}
-            {stories.length > 1 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {stories.slice(1).map((item, subIdx) => (
-                  <div
-                    key={item.id}
-                    className={`p-5 rounded-2xl border transition-all ${
-                      isDark
-                        ? 'bg-slate-900/60 border-slate-800 text-white hover:border-amber-400/60'
-                        : 'bg-white border-slate-200 text-slate-900 hover:border-amber-400 shadow-sm'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between pb-2">
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-amber-600 dark:text-[#FFC000] font-bold">
-                        {item.designation || 'Graduate'}
-                      </span>
-                      {item.batch && (
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                          {item.batch}
-                        </span>
-                      )}
-                    </div>
-
-                    <h4 className="text-base font-serif font-black">{item.name}</h4>
-                    {item.company && (
-                      <p className="text-xs text-slate-500 dark:text-slate-400 pb-2">
-                        {item.company}
-                      </p>
-                    )}
-
-                    <p
-                      className={`text-xs italic line-clamp-3 ${
-                        isDark ? 'text-slate-300' : 'text-slate-600'
-                      }`}
-                    >
-                      &ldquo;{item.story}&rdquo;
-                    </p>
-
-                    <div className="pt-4 flex items-center justify-between">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedStory(item)}
-                        className="text-xs font-bold text-amber-700 dark:text-[#FFC000] hover:underline cursor-pointer flex items-center gap-1"
-                      >
-                        <span>{lang === 'bn' ? 'পড়ুন' : 'Read'}</span>
-                        <ChevronRight className="w-3 h-3" />
-                      </button>
-
-                      {item.video_url && (
-                        <button
-                          type="button"
-                          onClick={() => setActiveVideoUrl(item.video_url || null)}
-                          className="text-[11px] font-bold text-red-600 dark:text-red-400 flex items-center gap-1 cursor-pointer"
-                        >
-                          <Play className="w-3 h-3 fill-current" />
-                          <span>Video</span>
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+              />
+            ))}
           </div>
         )}
 
@@ -876,43 +726,19 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
           </div>
         )}
 
-        {/* Bottom Banner */}
-        <div
-          className={`p-6 rounded-2xl border shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left transition-colors ${
-            isDark
-              ? 'bg-slate-900/50 border-slate-800 text-white'
-              : 'bg-white border-slate-200 text-slate-900'
-          }`}
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-400/20 text-[#FFC000] flex items-center justify-center shrink-0">
-              <TrendingUp className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-sm font-serif font-black">
-                {lang === 'bn'
-                  ? 'আপনিও কি সফলতার এই যাত্রায় অংশ নিতে চান?'
-                  : 'Ready to build your corporate success story?'}
-              </h4>
-              <p className={`text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
-                {lang === 'bn'
-                  ? 'আমাদের কোর্সগুলো সম্পন্ন করে আজই নিজের ক্যারিয়ারকে নতুন উচ্চতায় নিয়ে যান।'
-                  : 'Enroll in our practical executive masterclasses and become part of our alumni network.'}
-              </p>
-            </div>
-          </div>
-
+        {/* Meteor Lighting Bottom Footer Action (View All / Share Story banner) */}
+        <div className="relative z-10 text-center pt-2">
           <button
             type="button"
             onClick={() => setIsSubmitModalOpen(true)}
-            className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 flex items-center gap-1.5 ${
+            className={`group inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase transition-all cursor-pointer ${
               isDark
-                ? 'bg-white/10 hover:bg-white/20 text-white border border-white/20'
-                : 'bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 shadow-xs'
+                ? 'text-white/80 hover:text-[#FFC000]'
+                : 'text-slate-800 hover:text-amber-700'
             }`}
           >
-            <MessageSquare className="w-3.5 h-3.5 text-[#FFC000]" />
-            <span>{lang === 'bn' ? 'গল্প সাবমিট করুন' : 'Submit Story'}</span>
+            <span>{lang === 'bn' ? 'আপনার সাফল্যের গল্প জমা দিন' : 'Share Your Success Story'}</span>
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </button>
         </div>
       </div>
@@ -1189,7 +1015,7 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
                   onClick={() => setIsSubmitModalOpen(false)}
                   className={`px-5 py-2.5 rounded-xl font-bold transition-colors cursor-pointer ${
                     isDark
-                      ? 'bg-slate-850 hover:bg-slate-800 text-slate-300'
+                      ? 'bg-slate-800 hover:bg-slate-700 text-slate-300'
                       : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
                   }`}
                 >
