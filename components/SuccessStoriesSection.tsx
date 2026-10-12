@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { SuccessStoryItem } from '@/data/success-stories-data';
 import { useCfo } from '@/context/CfoContext';
+import { motion, AnimatePresence } from 'motion/react';
 
 interface SuccessStoriesSectionProps {
   lang: 'bn' | 'en';
@@ -515,12 +516,16 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
                   const bgImage = story.photo || STORY_COVER_IMAGES[itemIdx % STORY_COVER_IMAGES.length];
 
                   return (
-                    <div
-                      key={`slot-${offset}-${story.id}`}
+                    <motion.div
+                      layout
+                      key={`story-${story.id}-${offset === 0 ? 'center' : offset > 0 ? 'right' : 'left'}`}
                       onClick={() => {
                         if (!isCenter) setActiveIndex(itemIdx);
                       }}
-                      className={`absolute overflow-hidden rounded-2xl border shadow-2xl transition-all duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-auto ${positionClasses} ${
+                      transition={{
+                        layout: { duration: 0.7, ease: [0.25, 0.1, 0.25, 1] },
+                      }}
+                      className={`absolute overflow-hidden rounded-2xl border shadow-2xl transition-all duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1)] will-change-transform ${positionClasses} ${
                         isDark
                           ? isCenter
                             ? 'border-amber-400/80 bg-slate-900 shadow-[0_0_50px_rgba(255,192,0,0.22)]'
@@ -601,89 +606,98 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
                           </div>
                         )}
 
-                        {/* Card Bottom Content (Active Center Card text layout) */}
-                        <div
-                          className={`absolute right-0 bottom-0 left-0 z-10 p-5 sm:p-6 space-y-2 transition-opacity duration-300 ${contentOpacityClasses}`}
-                        >
-                          {/* Category / Designation Tag (Meteor Lighting uppercase border-bottom link) */}
-                          <div className="flex items-center gap-2">
-                            <span
-                              className={`text-[11px] sm:text-xs font-mono font-bold tracking-widest uppercase border-b transition-colors ${
-                                isDark
-                                  ? 'text-[#FFC000] border-[#FFC000]/50 hover:border-white hover:text-white'
-                                  : 'text-amber-800 border-amber-600/50 hover:border-slate-900 hover:text-slate-900'
-                              }`}
-                            >
-                              {story.designation || (lang === 'bn' ? 'সফল শিক্ষার্থী' : 'Alumni Graduate')}
-                            </span>
-                          </div>
-
-                          {/* Title: Student Name & Company */}
-                          <h3
-                            className={`text-lg sm:text-xl md:text-2xl font-bold uppercase tracking-tight transition-colors duration-300 ${
-                              isDark
-                                ? 'text-white group-hover/image:text-[#FFC000]'
-                                : 'text-slate-950 group-hover/image:text-amber-700'
-                            }`}
-                          >
-                            {story.name}
-                            {story.company ? `, ${story.company}` : ''}
-                          </h3>
-
-                          {/* Story Quote with quotation styling */}
-                          <div className="relative pt-0.5">
-                            <Quote
-                              className={`absolute -top-1 -left-1 w-3.5 h-3.5 rotate-180 ${
-                                isDark ? 'text-amber-400/40' : 'text-amber-500/40'
-                              }`}
-                            />
-                            <p
-                              className={`text-xs sm:text-sm pl-4 italic leading-relaxed line-clamp-2 sm:line-clamp-3 ${
-                                isDark ? 'text-slate-300' : 'text-slate-700'
-                              }`}
-                            >
-                              &ldquo;{story.story}&rdquo;
-                            </p>
-                          </div>
-
-                          {/* Bottom Action Footer for Center Card */}
-                          {isCenter && (
-                            <div
-                              className={`pt-2.5 flex items-center justify-between border-t ${
-                                isDark ? 'border-white/10' : 'border-slate-200'
-                              }`}
-                            >
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setSelectedStory(story);
-                                }}
-                                className={`text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors ${
-                                  isDark
-                                    ? 'text-[#FFC000] hover:text-amber-300'
-                                    : 'text-amber-800 hover:text-slate-950'
-                                }`}
+                        {/* Card Bottom Content (Active Center Card text layout with AnimatePresence transition) */}
+                        {isCenter && (
+                          <div className="absolute right-0 bottom-0 left-0 z-10 p-5 sm:p-6">
+                            <AnimatePresence mode="wait">
+                              <motion.div
+                                key={`content-${story.id}`}
+                                initial={{ opacity: 0, y: 14 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.45, ease: 'easeOut' }}
+                                className="space-y-2"
                               >
-                                <Eye className="w-3.5 h-3.5" />
-                                <span>
-                                  {lang === 'bn' ? 'সম্পূর্ণ গল্পটি পড়ুন' : 'Read Full Story'}
-                                </span>
-                                <ChevronRight className="w-3.5 h-3.5" />
-                              </button>
+                                {/* Category / Designation Tag (Meteor Lighting uppercase border-bottom link) */}
+                                <div className="flex items-center gap-2">
+                                  <span
+                                    className={`text-[11px] sm:text-xs font-mono font-bold tracking-widest uppercase border-b transition-colors ${
+                                      isDark
+                                        ? 'text-[#FFC000] border-[#FFC000]/50 hover:border-white hover:text-white'
+                                        : 'text-amber-800 border-amber-600/50 hover:border-slate-900 hover:text-slate-900'
+                                    }`}
+                                  >
+                                    {story.designation || (lang === 'bn' ? 'সফল শিক্ষার্থী' : 'Alumni Graduate')}
+                                  </span>
+                                </div>
 
-                              <span
-                                className={`text-[11px] font-mono ${
-                                  isDark ? 'text-slate-400' : 'text-slate-500'
-                                }`}
-                              >
-                                {itemIdx + 1} / {totalStories}
-                              </span>
-                            </div>
-                          )}
-                        </div>
+                                {/* Title: Student Name & Company */}
+                                <h3
+                                  className={`text-lg sm:text-xl md:text-2xl font-bold uppercase tracking-tight transition-colors duration-300 ${
+                                    isDark
+                                      ? 'text-white group-hover/image:text-[#FFC000]'
+                                      : 'text-slate-950 group-hover/image:text-amber-700'
+                                  }`}
+                                >
+                                  {story.name}
+                                  {story.company ? `, ${story.company}` : ''}
+                                </h3>
+
+                                {/* Story Quote with quotation styling */}
+                                <div className="relative pt-0.5">
+                                  <Quote
+                                    className={`absolute -top-1 -left-1 w-3.5 h-3.5 rotate-180 ${
+                                      isDark ? 'text-amber-400/40' : 'text-amber-500/40'
+                                    }`}
+                                  />
+                                  <p
+                                    className={`text-xs sm:text-sm pl-4 italic leading-relaxed line-clamp-2 sm:line-clamp-3 ${
+                                      isDark ? 'text-slate-300' : 'text-slate-700'
+                                    }`}
+                                  >
+                                    &ldquo;{story.story}&rdquo;
+                                  </p>
+                                </div>
+
+                                {/* Bottom Action Footer for Center Card */}
+                                <div
+                                  className={`pt-2.5 flex items-center justify-between border-t ${
+                                    isDark ? 'border-white/10' : 'border-slate-200'
+                                  }`}
+                                >
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedStory(story);
+                                    }}
+                                    className={`text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors ${
+                                      isDark
+                                        ? 'text-[#FFC000] hover:text-amber-300'
+                                        : 'text-amber-800 hover:text-slate-950'
+                                    }`}
+                                  >
+                                    <Eye className="w-3.5 h-3.5" />
+                                    <span>
+                                      {lang === 'bn' ? 'সম্পূর্ণ গল্পটি পড়ুন' : 'Read Full Story'}
+                                    </span>
+                                    <ChevronRight className="w-3.5 h-3.5" />
+                                  </button>
+
+                                  <span
+                                    className={`text-[11px] font-mono ${
+                                      isDark ? 'text-slate-400' : 'text-slate-500'
+                                    }`}
+                                  >
+                                    {itemIdx + 1} / {totalStories}
+                                  </span>
+                                </div>
+                              </motion.div>
+                            </AnimatePresence>
+                          </div>
+                        )}
                       </div>
-                    </div>
+                    </motion.div>
                   );
                 });
               })()}
