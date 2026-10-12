@@ -12,6 +12,7 @@ import StudentLmsModal from '@/components/StudentLmsModal';
 import LearningMethodology from '@/components/LearningMethodology';
 import CareerQuizModal from '@/components/CareerQuizModal';
 import FreeLiveDemoSection from '@/components/FreeLiveDemoSection';
+import SuccessStoriesSection from '@/components/SuccessStoriesSection';
 import FaqSection from '@/components/FaqSection';
 import Footer from '@/components/Footer';
 import AuthModal from '@/components/AuthModal';
@@ -210,6 +211,9 @@ export default function Home() {
 
       {/* Free Live Demo Class Section (Exact match to Ostad design) */}
       <FreeLiveDemoSection lang={lang} />
+
+      {/* Success Stories Section — Futuristic Pyramid Showcase & Submission Modal */}
+      <SuccessStoriesSection lang={lang} />
 
       {/* Learning Methodology (Chartered Officer Limited) */}
       <LearningMethodology
