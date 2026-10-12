@@ -41,12 +41,14 @@ function CoursesContent() {
   const [searchQuery, setSearchQuery] = useState<string>(urlSearch);
   const [sortBy, setSortBy] = useState<'featured' | 'rating' | 'price-asc' | 'price-desc'>('featured');
 
-  useEffect(() => {
+  const [prevUrl, setPrevUrl] = useState({ urlCategory, urlFilter });
+  if (prevUrl.urlCategory !== urlCategory || prevUrl.urlFilter !== urlFilter) {
+    setPrevUrl({ urlCategory, urlFilter });
     setSelectedCategory(urlCategory === 'free' ? 'all' : urlCategory);
     if (urlCategory.toLowerCase() === 'free' || urlFilter.toLowerCase() === 'free') {
       setPricingFilter('free');
     }
-  }, [urlCategory, urlFilter]);
+  }
 
   const filteredCourses = useMemo(() => {
     let list = [...(courses && courses.length > 0 ? courses : [])];
