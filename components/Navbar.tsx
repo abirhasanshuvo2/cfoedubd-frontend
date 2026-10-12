@@ -335,13 +335,6 @@ export default function Navbar({
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>{lang === 'bn' ? 'সনদ যাচাই' : 'Verify Certificate'}</span>
           </Link>
-          <a
-            href="/#success-stories"
-            className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors whitespace-nowrap flex items-center gap-1 text-amber-600 dark:text-[#FFC000]"
-          >
-            <Trophy className="w-3.5 h-3.5" />
-            <span>{lang === 'bn' ? 'সাফল্যের গল্প' : 'Success Stories'}</span>
-          </a>
           <Link
             href="/media-news"
             className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors whitespace-nowrap"
@@ -555,13 +548,6 @@ export default function Navbar({
             >
               {lang === 'bn' ? '🛡️ সনদ যাচাই' : '🛡️ Verify Certificate'}
             </Link>
-            <a
-              href="/#success-stories"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block px-3 py-2.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-amber-600 dark:text-[#FFC000]"
-            >
-              {lang === 'bn' ? '🏆 সাফল্যের গল্প' : '🏆 Success Stories'}
-            </a>
             <Link
               href="/media-news"
               onClick={() => setIsMobileMenuOpen(false)}
