@@ -369,10 +369,10 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
               className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1 text-xs font-mono font-bold tracking-widest uppercase transition-colors ${
                 isDark
                   ? 'border border-white/20 bg-white/5 text-slate-400'
-                  : 'border border-slate-300/80 bg-white text-slate-600 shadow-xs'
+                  : 'border border-slate-300 bg-white text-slate-800 shadow-xs'
               }`}
             >
-              <Trophy className="w-3.5 h-3.5 text-[#FFC000] shrink-0" />
+              <Trophy className="w-3.5 h-3.5 text-amber-500 dark:text-[#FFC000] shrink-0" />
               <span>
                 {lang === 'bn' ? 'অ্যালামনাই সাফল্যের গল্প' : 'FEATURED SUCCESS STORIES'}
               </span>
@@ -403,7 +403,7 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
 
             <p
               className={`text-xs sm:text-sm max-w-xl leading-relaxed ${
-                isDark ? 'text-slate-400' : 'text-slate-600'
+                isDark ? 'text-slate-400' : 'text-slate-700 font-normal'
               }`}
             >
               {lang === 'bn'
@@ -551,30 +551,26 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
                           alt={item.name}
                           className="h-full w-full object-cover"
                         />
-                        {/* Shading overlay adapting to active status & theme */}
+                        {/* Shading overlay adapting to active status & theme - rich gradient ensures 100% text contrast */}
                         <div
                           className={`pointer-events-none absolute -inset-px transition-all duration-700 ${
                             position === 'center'
-                              ? isDark
-                                ? 'bg-gradient-to-t from-slate-950/95 via-slate-950/40 to-transparent'
-                                : 'bg-gradient-to-t from-black/85 via-black/30 to-transparent'
-                              : isDark
-                              ? 'bg-slate-950/60'
-                              : 'bg-slate-900/40'
+                              ? 'bg-gradient-to-t from-slate-950 via-slate-950/75 via-45% to-transparent'
+                              : 'bg-slate-950/60'
                           }`}
                         />
                       </div>
 
                       {/* Beside Cards Teaser Preview: Name & Tag clearly visible on flanking images */}
                       <div
-                        className={`pointer-events-none absolute inset-x-0 bottom-0 z-20 p-3 sm:p-4 bg-gradient-to-t from-black/85 via-black/40 to-transparent text-white transition-opacity duration-300 ${
+                        className={`pointer-events-none absolute inset-x-0 bottom-0 z-20 p-3 sm:p-4 bg-gradient-to-t from-slate-950/90 via-slate-950/50 to-transparent text-white transition-opacity duration-300 ${
                           position === 'left' || position === 'right' ? 'opacity-100' : 'opacity-0'
                         }`}
                       >
-                        <p className="text-[10px] sm:text-xs font-mono uppercase tracking-wider text-[#FFC000] truncate">
+                        <p className="text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider text-[#FFC000] truncate drop-shadow-sm">
                           {item.designation || (lang === 'bn' ? 'সফল শিক্ষার্থী' : 'Alumni Graduate')}
                         </p>
-                        <p className="text-xs sm:text-sm font-bold truncate text-white">
+                        <p className="text-xs sm:text-sm font-bold truncate text-white drop-shadow-md">
                           {item.name}
                         </p>
                       </div>
@@ -587,24 +583,12 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
                       >
                         <div className="flex items-center gap-2">
                           {item.batch && (
-                            <span
-                              className={`px-3 py-1 rounded-full text-[11px] font-mono font-bold backdrop-blur-md border ${
-                                isDark
-                                  ? 'bg-black/60 border-amber-400/40 text-[#FFC000]'
-                                  : 'bg-white/90 border-amber-300 text-amber-900 shadow-xs'
-                              }`}
-                            >
+                            <span className="px-3 py-1 rounded-full text-[11px] font-mono font-bold backdrop-blur-md border bg-black/60 border-amber-400/40 text-[#FFC000] shadow-sm">
                               {item.batch}
                             </span>
                           )}
                           {item.company && (
-                            <span
-                              className={`px-3 py-1 rounded-full text-[11px] font-bold backdrop-blur-md border flex items-center gap-1.5 ${
-                                isDark
-                                  ? 'bg-white/10 border-white/20 text-white'
-                                  : 'bg-white/90 border-slate-300 text-slate-800 shadow-xs'
-                              }`}
-                            >
+                            <span className="px-3 py-1 rounded-full text-[11px] font-bold backdrop-blur-md border flex items-center gap-1.5 bg-black/60 border-white/20 text-white shadow-sm">
                               <Building2 className="w-3 h-3 text-[#FFC000]" />
                               <span>{item.company}</span>
                             </span>
@@ -634,62 +618,34 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
                       >
                         {/* Category / Designation Tag (Meteor Lighting uppercase border-bottom link) */}
                         <div className="flex items-center gap-2">
-                          <span
-                            className={`text-[11px] sm:text-xs font-mono font-bold tracking-widest uppercase border-b transition-colors ${
-                              isDark
-                                ? 'text-[#FFC000] border-[#FFC000]/50 hover:border-white hover:text-white'
-                                : 'text-amber-800 border-amber-600/50 hover:border-slate-900 hover:text-slate-900'
-                            }`}
-                          >
+                          <span className="text-[11px] sm:text-xs font-mono font-bold tracking-widest uppercase border-b text-[#FFC000] border-[#FFC000]/60 hover:border-white hover:text-white transition-colors drop-shadow-sm">
                             {item.designation || (lang === 'bn' ? 'সফল শিক্ষার্থী' : 'Alumni Graduate')}
                           </span>
                         </div>
 
                         {/* Title: Student Name & Company */}
-                        <h3
-                          className={`text-lg sm:text-xl md:text-2xl font-bold uppercase tracking-tight transition-colors duration-300 ${
-                            isDark
-                              ? 'text-white group-hover/image:text-[#FFC000]'
-                              : 'text-slate-950 group-hover/image:text-amber-700'
-                          }`}
-                        >
+                        <h3 className="text-lg sm:text-xl md:text-2xl font-bold uppercase tracking-tight text-white group-hover/image:text-[#FFC000] transition-colors duration-300 drop-shadow-md">
                           {item.name}
                           {item.company ? `, ${item.company}` : ''}
                         </h3>
 
                         {/* Story Quote with quotation styling */}
                         <div className="relative pt-0.5">
-                          <Quote
-                            className={`absolute -top-1 -left-1 w-3.5 h-3.5 rotate-180 ${
-                              isDark ? 'text-amber-400/40' : 'text-amber-500/40'
-                            }`}
-                          />
-                          <p
-                            className={`text-xs sm:text-sm pl-4 italic leading-relaxed line-clamp-2 sm:line-clamp-3 ${
-                              isDark ? 'text-slate-300' : 'text-slate-700'
-                            }`}
-                          >
+                          <Quote className="absolute -top-1 -left-1 w-3.5 h-3.5 rotate-180 text-amber-400 drop-shadow-xs" />
+                          <p className="text-xs sm:text-sm pl-4 italic leading-relaxed line-clamp-2 sm:line-clamp-3 text-slate-100 drop-shadow-sm font-medium">
                             &ldquo;{item.story}&rdquo;
                           </p>
                         </div>
 
                         {/* Bottom Action Footer for Center Card */}
-                        <div
-                          className={`pt-2.5 flex items-center justify-between border-t ${
-                            isDark ? 'border-white/10' : 'border-slate-200'
-                          }`}
-                        >
+                        <div className="pt-2.5 flex items-center justify-between border-t border-white/20">
                           <button
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelectedStory(item);
                             }}
-                            className={`text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors ${
-                              isDark
-                                ? 'text-[#FFC000] hover:text-amber-300'
-                                : 'text-amber-800 hover:text-slate-950'
-                            }`}
+                            className="text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors text-[#FFC000] hover:text-amber-200 drop-shadow-xs"
                           >
                             <Eye className="w-3.5 h-3.5" />
                             <span>
@@ -698,11 +654,7 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
                             <ChevronRight className="w-3.5 h-3.5" />
                           </button>
 
-                          <span
-                            className={`text-[11px] font-mono ${
-                              isDark ? 'text-slate-400' : 'text-slate-500'
-                            }`}
-                          >
+                          <span className="text-[11px] font-mono text-slate-300 drop-shadow-xs">
                             {item.originalIndex + 1} / {totalStories}
                           </span>
                         </div>
@@ -733,10 +685,12 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
                   aria-label={`Go to slide ${dotIdx + 1}`}
                   className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                     dotIdx === activeOriginalIndex
-                      ? 'w-10 bg-[#FFC000]'
+                      ? isDark
+                        ? 'w-10 bg-[#FFC000]'
+                        : 'w-10 bg-amber-500 shadow-sm shadow-amber-500/40'
                       : isDark
                       ? 'w-2 bg-white/20 hover:bg-white/40'
-                      : 'w-2 bg-slate-300 hover:bg-slate-400'
+                      : 'w-2 bg-slate-300 hover:bg-slate-500'
                   }`}
                 />
               );
@@ -757,7 +711,7 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
             <h3 className="text-base font-serif font-black">
               {lang === 'bn' ? 'কোনো সাফল্যের গল্প পাওয়া যায়নি' : 'No Success Stories Yet'}
             </h3>
-            <p className={`text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+            <p className={`text-xs ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
               {lang === 'bn'
                 ? 'প্রথম শিক্ষার্থী হিসেবে আপনার সাফল্যের অভিজ্ঞতা এখানে শেয়ার করুন!'
                 : 'Be the first graduate to share your transformative journey with us!'}
@@ -779,10 +733,10 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
           <button
             type="button"
             onClick={() => setIsSubmitModalOpen(true)}
-            className={`group inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase transition-all cursor-pointer ${
+            className={`group inline-flex items-center gap-2 text-xs font-extrabold tracking-widest uppercase transition-all cursor-pointer ${
               isDark
                 ? 'text-white/80 hover:text-[#FFC000]'
-                : 'text-slate-800 hover:text-amber-700'
+                : 'text-slate-900 hover:text-amber-600'
             }`}
           >
             <span>{lang === 'bn' ? 'আপনার সাফল্যের গল্প জমা দিন' : 'Share Your Success Story'}</span>
