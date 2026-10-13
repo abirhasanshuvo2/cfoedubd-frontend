@@ -65,7 +65,11 @@ export default function ContactPage() {
         } else if (directRes.status === 422) {
           const directJson = await directRes.json().catch(() => null);
           const firstError = directJson?.errors ? (Object.values(directJson.errors).flat()[0] as string) : null;
-          setErrorMessage(firstError || directJson?.message || 'তথ্য সঠিকভাবে পূরণ করুন।');
+          setErrorMessage(
+            firstError ||
+              directJson?.message ||
+              (lang === 'bn' ? 'তথ্য সঠিকভাবে পূরণ করুন।' : 'Please fill in all fields properly.')
+          );
           return;
         }
       } catch {
@@ -106,7 +110,9 @@ export default function ContactPage() {
   return (
     <div
       data-theme={theme}
-      className={`min-h-screen flex flex-col font-sans transition-colors ${theme === 'dark' ? 'dark bg-slate-950 text-slate-100' : 'bg-[#F8FAFC] text-slate-900'}`}
+      className={`min-h-screen flex flex-col font-sans transition-colors ${
+        theme === 'dark' ? 'dark bg-slate-950 text-slate-100' : 'bg-[#F8FAFC] text-slate-900'
+      }`}
     >
       <Navbar />
 
@@ -144,7 +150,7 @@ export default function ContactPage() {
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full space-y-12">
         {/* Contact Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-2xs space-y-3">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-2xs space-y-3 transition-colors">
             <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-[#C8963E] border border-amber-200 dark:border-amber-800 flex items-center justify-center">
               <MapPin className="w-6 h-6" />
             </div>
@@ -156,7 +162,7 @@ export default function ContactPage() {
             </p>
           </div>
 
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-2xs space-y-3">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-2xs space-y-3 transition-colors">
             <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 flex items-center justify-center">
               <Phone className="w-6 h-6" />
             </div>
@@ -176,96 +182,112 @@ export default function ContactPage() {
         {/* Message Form & Map */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Inquiry Form */}
-          <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-200 p-6 sm:p-10 shadow-lg">
+          <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-10 shadow-lg transition-colors">
             {formSubmitted ? (
-              <div className="p-8 rounded-2xl bg-emerald-50 border border-emerald-300 text-center space-y-3">
-                <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
-                <h4 className="text-lg font-serif font-bold text-emerald-950">
+              <div className="p-8 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-center space-y-3">
+                <CheckCircle2 className="w-12 h-12 text-emerald-600 dark:text-emerald-400 mx-auto" />
+                <h4 className="text-lg font-serif font-bold text-emerald-950 dark:text-emerald-100">
                   {lang === 'bn' ? 'আপনার বার্তা সফলভাবে পৌঁছাল!' : 'Your Message Has Been Sent!'}
                 </h4>
-                <p className="text-xs text-emerald-800 max-w-md mx-auto leading-relaxed">
-                  ধন্যবাদ! আমাদের অ্যাকাডেমিক কাউন্সেলর খুব শীঘ্রই আপনার সাথে যোগাযোগ করবেন।
+                <p className="text-xs text-emerald-800 dark:text-emerald-300 max-w-md mx-auto leading-relaxed">
+                  {lang === 'bn'
+                    ? 'ধন্যবাদ! আমাদের অ্যাকাডেমিক কাউন্সেলর খুব শীঘ্রই আপনার সাথে যোগাযোগ করবেন।'
+                    : 'Thank you! Our academic counselor will get in touch with you shortly.'}
                 </p>
                 <button
                   onClick={() => setFormSubmitted(false)}
-                  className="px-4 py-2 rounded-xl bg-[#0A192F] text-white text-xs font-bold cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl bg-[#0A192F] dark:bg-emerald-600 hover:bg-slate-800 dark:hover:bg-emerald-500 text-white text-xs font-bold cursor-pointer transition-colors"
                 >
-                  আরেকটি বার্তা পাঠান
+                  {lang === 'bn' ? 'আরেকটি বার্তা পাঠান' : 'Send Another Message'}
                 </button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4 text-xs">
                 <div>
-                  <h3 className="text-xl font-serif font-bold text-slate-900">
+                  <h3 className="text-xl font-serif font-bold text-slate-900 dark:text-white">
                     {lang === 'bn' ? 'পরামর্শ ও অনুসন্ধানের বার্তা পাঠান' : 'Send an Inquiry or Schedule a Visit'}
                   </h3>
-                  <p className="text-xs text-slate-500 mt-1">
-                    ফর্মটি পূরণ করুন, আমাদের প্রতিনিধি আপনার সকল প্রশ্নের বিস্তারিত উত্তর দেবেন।
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    {lang === 'bn'
+                      ? 'ফর্মটি পূরণ করুন, আমাদের প্রতিনিধি আপনার সকল প্রশ্নের বিস্তারিত উত্তর দেবেন।'
+                      : 'Fill out the form, and our representative will assist you with all your queries.'}
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="font-bold text-slate-700">আপনার নাম *</label>
+                    <label className="font-bold text-slate-700 dark:text-slate-300">
+                      {lang === 'bn' ? 'আপনার নাম *' : 'Your Name *'}
+                    </label>
                     <input
                       type="text"
                       required
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="যেমন: মো. কামরুল হাসান"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:border-[#C8963E]"
+                      placeholder={lang === 'bn' ? 'যেমন: মো. কামরুল হাসান' : 'e.g. Md. Kamrul Hasan'}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-[#C8963E]/40 focus:border-[#C8963E] transition-colors"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="font-bold text-slate-700">মোবাইল নম্বর *</label>
+                    <label className="font-bold text-slate-700 dark:text-slate-300">
+                      {lang === 'bn' ? 'মোবাইল নম্বর *' : 'Mobile Number *'}
+                    </label>
                     <input
                       type="tel"
                       required
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       placeholder="018XXXXXXXX"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:border-[#C8963E]"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-[#C8963E]/40 focus:border-[#C8963E] font-mono transition-colors"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="font-bold text-slate-700">ইমেইল ঠিকানা *</label>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">
+                    {lang === 'bn' ? 'ইমেইল ঠিকানা *' : 'Email Address *'}
+                  </label>
                   <input
                     type="email"
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="name@company.com"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:border-[#C8963E]"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-[#C8963E]/40 focus:border-[#C8963E] font-mono transition-colors"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="font-bold text-slate-700">আপনার প্রশ্ন বা বার্তা লিখুন *</label>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">
+                    {lang === 'bn' ? 'আপনার প্রশ্ন বা বার্তা লিখুন *' : 'Your Question or Message *'}
+                  </label>
                   <textarea
                     rows={4}
                     required
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    placeholder="আপনার প্রশ্ন বা জিজ্ঞাসা এখানে লিখুন..."
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:border-[#C8963E]"
+                    placeholder={lang === 'bn' ? 'আপনার প্রশ্ন বা জিজ্ঞাসা এখানে লিখুন...' : 'Write your question or inquiry here...'}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-[#C8963E]/40 focus:border-[#C8963E] transition-colors resize-y"
                   />
                 </div>
 
                 {errorMessage && (
-                  <p className="text-xs text-rose-600 font-semibold">{errorMessage}</p>
+                  <p className="text-xs text-rose-600 dark:text-rose-400 font-semibold">{errorMessage}</p>
                 )}
 
                 <div className="pt-2">
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full py-3 rounded-xl bg-gradient-to-r from-[#C8963E] to-[#B8860B] hover:from-[#d4af37] hover:to-[#C8963E] disabled:opacity-50 text-slate-950 font-serif font-black text-xs shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-[#DFB257] via-[#C8963E] to-[#A97B28] hover:brightness-110 active:scale-[0.99] disabled:opacity-50 text-slate-950 font-serif font-black text-xs shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 border border-[#C8963E]/30"
                   >
                     <Send className={`w-4 h-4 ${submitting ? 'animate-spin' : ''}`} />
-                    <span>{submitting ? (lang === 'bn' ? 'বার্তা পাঠানো হচ্ছে...' : 'Sending...') : (lang === 'bn' ? 'বার্তা পাঠান' : 'Send Message')}</span>
+                    <span>
+                      {submitting
+                        ? (lang === 'bn' ? 'বার্তা পাঠানো হচ্ছে...' : 'Sending Message...')
+                        : (lang === 'bn' ? 'বার্তা পাঠান' : 'Send Message')}
+                    </span>
                   </button>
                 </div>
               </form>
@@ -289,7 +311,9 @@ export default function ContactPage() {
               {/* Visual Map Representation */}
               <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-4 space-y-3">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-amber-700 dark:text-[#E5A93C]">Google Map Location</span>
+                  <span className="font-semibold text-amber-700 dark:text-[#E5A93C]">
+                    {lang === 'bn' ? 'গুগল ম্যাপ লোকেশন' : 'Google Map Location'}
+                  </span>
                 </div>
                 <div className="h-44 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center text-center p-4 space-y-2.5">
                   <MapPin className="w-8 h-8 text-[#C8963E] animate-bounce" />

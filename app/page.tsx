@@ -12,6 +12,7 @@ import StudentLmsModal from '@/components/StudentLmsModal';
 import CareerQuizModal from '@/components/CareerQuizModal';
 import FreeLiveDemoSection from '@/components/FreeLiveDemoSection';
 import SuccessStoriesSection from '@/components/SuccessStoriesSection';
+import ContactInquirySection from '@/components/ContactInquirySection';
 import FaqSection from '@/components/FaqSection';
 import Footer from '@/components/Footer';
 import AuthModal from '@/components/AuthModal';
@@ -213,6 +214,9 @@ export default function Home() {
 
       {/* Success Stories Section — Futuristic Pyramid Showcase & Submission Modal */}
       <SuccessStoriesSection lang={lang} />
+
+      {/* Inquiry & Consultation Section */}
+      <ContactInquirySection lang={lang} variant="homepage" />
 
       {/* FAQ Section */}
       <FaqSection lang={lang} />
