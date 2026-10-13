@@ -73,53 +73,76 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  // Custom Backend Configuration State
+  const [customBackendUrl, setCustomBackendUrl] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        return (localStorage.getItem('cfo_custom_backend_url') || '').trim();
+      } catch {
+        // ignore
+      }
+    }
+    return '';
+  });
+  const [isBackendConfigOpen, setIsBackendConfigOpen] = useState<boolean>(false);
+  const [backendTestStatus, setBackendTestStatus] = useState<string | null>(null);
+  const [isTestingBackend, setIsTestingBackend] = useState<boolean>(false);
+
   // Touch Swipe tracking
   const touchStartX = useRef<number>(0);
   const touchEndX = useRef<number>(0);
 
-  // Fetch live success stories from API (direct browser to local backend + Next.js server proxy)
+  // Fetch live success stories from API with client-cache merging
   const fetchStories = useCallback(async () => {
     try {
-      // 1. Direct fetch to local Laravel backend if reachable from user's browser
-      try {
-        const directRes = await fetch('http://127.0.0.1:8000/api/success-stories', {
-          signal: AbortSignal.timeout(2500),
-          headers: { Accept: 'application/json' },
-          cache: 'no-store',
-        });
-        if (directRes.ok) {
-          const directJson = await directRes.json();
-          if (
-            directJson &&
-            directJson.success &&
-            Array.isArray(directJson.data) &&
-            directJson.data.length > 0
-          ) {
-            setStories(directJson.data);
-            setActiveIndex(0);
-            setIsLoading(false);
-            return;
-          }
-        }
-      } catch {
-        // Direct request unreachable, proceed to proxy
+      const savedBackendUrl =
+        typeof window !== 'undefined'
+          ? (localStorage.getItem('cfo_custom_backend_url') || '').trim()
+          : '';
+
+      const headers: Record<string, string> = { Accept: 'application/json' };
+      if (savedBackendUrl) {
+        headers['x-custom-backend-url'] = savedBackendUrl;
       }
 
-      // 2. Query internal Next.js proxy route
-      const proxyRes = await fetch('/api/success-stories', { cache: 'no-store' });
+      // Query internal Next.js proxy route which queries backend + /tmp server cache
+      const proxyRes = await fetch('/api/success-stories', {
+        headers,
+        cache: 'no-store',
+      });
+
+      let fetchedList: SuccessStoryItem[] = [];
       if (proxyRes.ok) {
         const json = await proxyRes.json();
         if (json && json.success && Array.isArray(json.data) && json.data.length > 0) {
-          setStories(json.data);
-          setActiveIndex(0);
-        } else {
-          setStories([]);
+          fetchedList = json.data;
         }
+      }
+
+      // Also merge any client-cached stories from browser localStorage
+      let clientStories: SuccessStoryItem[] = [];
+      try {
+        const rawClient = localStorage.getItem('cfo_client_stories');
+        if (rawClient) {
+          const parsed = JSON.parse(rawClient);
+          if (Array.isArray(parsed)) clientStories = parsed;
+        }
+      } catch {
+        // ignore
+      }
+
+      const existingIds = new Set(fetchedList.map((item) => String(item.id)));
+      const uniqueClient = clientStories.filter((item) => !existingIds.has(String(item.id)));
+      const combined = [...uniqueClient, ...fetchedList];
+
+      if (combined.length > 0) {
+        setStories(combined);
+        setActiveIndex(0);
       } else {
         setStories([]);
       }
     } catch {
-      setStories([]);
+      // ignore
     } finally {
       setIsLoading(false);
     }
@@ -220,6 +243,44 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleSaveBackendUrl = (url: string) => {
+    const clean = url.trim().replace(/\/$/, '');
+    setCustomBackendUrl(clean);
+    try {
+      if (clean) {
+        localStorage.setItem('cfo_custom_backend_url', clean);
+      } else {
+        localStorage.removeItem('cfo_custom_backend_url');
+      }
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleTestBackendConnection = async () => {
+    setIsTestingBackend(true);
+    setBackendTestStatus(null);
+    try {
+      const urlToTest = customBackendUrl.trim() || 'http://127.0.0.1:8000';
+      const res = await fetch('/api/success-stories', {
+        headers: { 'x-custom-backend-url': urlToTest },
+        cache: 'no-store',
+      });
+      const data = await res.json().catch(() => null);
+      if (data?.isLive) {
+        setBackendTestStatus('Connected! Database is reachable and live.');
+      } else {
+        setBackendTestStatus(
+          `Unreachable: Could not connect to ${urlToTest} from cloud. If local, use an ngrok or public URL.`
+        );
+      }
+    } catch {
+      setBackendTestStatus('Connection failed. Please verify the URL.');
+    } finally {
+      setIsTestingBackend(false);
+    }
+  };
+
   const handleSubmitStory = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitError(null);
@@ -237,58 +298,79 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
     setIsSubmitting(true);
 
     try {
-      let submitted = false;
-      const queryParams = new URLSearchParams();
-      queryParams.set('student_name', formData.student_name.trim());
-      queryParams.set('email', formData.email.trim());
-      queryParams.set('story', formData.story.trim());
-      if (formData.designation.trim()) queryParams.set('designation', formData.designation.trim());
-      if (formData.company.trim()) queryParams.set('company', formData.company.trim());
-      if (formData.batch.trim()) queryParams.set('batch', formData.batch.trim());
-      if (formData.phone.trim()) queryParams.set('phone', formData.phone.trim());
-      if (formData.video_url.trim()) queryParams.set('video_url', formData.video_url.trim());
+      const savedBackendUrl =
+        typeof window !== 'undefined'
+          ? (localStorage.getItem('cfo_custom_backend_url') || '').trim()
+          : '';
 
-      // Direct post to local backend
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      };
+      if (savedBackendUrl) {
+        headers['x-custom-backend-url'] = savedBackendUrl;
+      }
+
+      const proxyRes = await fetch('/api/success-stories/submit', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(formData),
+      });
+
+      const json = await proxyRes.json().catch(() => null);
+
+      if (!proxyRes.ok || (json && json.success === false)) {
+        if (json?.status === 422 && json?.errors) {
+          const firstKey = Object.keys(json.errors)[0];
+          const firstErr = json.errors[firstKey];
+          const errText = Array.isArray(firstErr) ? firstErr[0] : json.message;
+          throw new Error(errText || 'Validation error from database.');
+        }
+        throw new Error(json?.message || 'Submission failed. Please check database connection.');
+      }
+
+      const isLiveBackend = json?.isLiveBackend === true;
+
+      // Create new story item to render immediately in the carousel
+      const newStoryItem: SuccessStoryItem = {
+        id: json?.data?.id || `story-${Date.now()}`,
+        name: formData.student_name.trim(),
+        designation: formData.designation.trim() || (lang === 'bn' ? 'সফল শিক্ষার্থী' : 'Alumni Graduate'),
+        company: formData.company.trim() || null,
+        batch: formData.batch.trim() || null,
+        story: formData.story.trim(),
+        video_url: formData.video_url.trim() || null,
+        created_at: new Date().toISOString(),
+        is_local: !isLiveBackend,
+      };
+
+      // Cache locally in browser
       try {
-        const directUrl = `http://127.0.0.1:8000/api/success-stories/submit?${queryParams.toString()}`;
-        const directRes = await fetch(directUrl, {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
-          signal: AbortSignal.timeout(5000),
-        });
-
-        if (directRes.ok) {
-          submitted = true;
-        }
+        const rawClient = localStorage.getItem('cfo_client_stories');
+        const existingList: SuccessStoryItem[] = rawClient ? JSON.parse(rawClient) : [];
+        existingList.unshift(newStoryItem);
+        localStorage.setItem('cfo_client_stories', JSON.stringify(existingList.slice(0, 30)));
       } catch {
-        // Fallback to proxy
+        // ignore
       }
 
-      if (!submitted) {
-        const proxyRes = await fetch('/api/success-stories/submit', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-          body: JSON.stringify(formData),
-        });
+      // Prepend to stories state immediately so user sees their new story right away
+      setStories((prev) => [newStoryItem, ...prev]);
+      setActiveIndex(0);
 
-        const json = await proxyRes.json().catch(() => null);
-        if (!proxyRes.ok && (!json || !json.success)) {
-          throw new Error(json?.message || 'Submission failed');
-        }
+      if (isLiveBackend) {
+        setSubmitSuccess(
+          lang === 'bn'
+            ? 'ধন্যবাদ! আপনার সাফল্যের গল্পটি ডেটাবেজে সফলভাবে সংরক্ষিত হয়েছে।'
+            : 'Success! Your story has been stored directly into the database.'
+        );
+      } else {
+        setSubmitSuccess(
+          lang === 'bn'
+            ? 'আপনার গল্পটি সফলভাবে সংরক্ষিত হয়েছে এবং ক্যারোসেলে প্রদর্শিত হচ্ছে! (ক্লাউড পরিবেশ থেকে 127.0.0.1:8000 কানেক্ট করা যায়নি; সরাসরি ডেটাবেজে পাঠাতে নিচে ব্যাকএন্ড API URL কনফিগার করতে পারেন)।'
+            : 'Story saved & visible in carousel! (Notice: Remote database at 127.0.0.1:8000 was unreachable from the cloud server. Provide a live backend URL in API Settings below to store directly).'
+        );
       }
-
-      setSubmitSuccess(
-        lang === 'bn'
-          ? 'ধন্যবাদ! আপনার সাফল্যের গল্পটি সফলভাবে জমা হয়েছে। অ্যাডমিন পর্যালোচনার পর এটি ওয়েবসাইটে প্রদর্শিত হবে।'
-          : 'Thank you! Your success story has been submitted successfully and is pending admin review.'
-      );
 
       setFormData({
         student_name: '',
@@ -301,13 +383,11 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
         story: '',
       });
 
-      // Refresh stories list to pick up newly approved updates
-      fetchStories();
-
+      // Keep success message visible then close
       setTimeout(() => {
         setIsSubmitModalOpen(false);
         setSubmitSuccess(null);
-      }, 2500);
+      }, 4000);
     } catch (err: any) {
       setSubmitError(
         err.message ||
@@ -593,6 +673,12 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
                               <span>{item.company}</span>
                             </span>
                           )}
+                          {item.is_local && (
+                            <span className="px-3 py-1 rounded-full text-[11px] font-bold backdrop-blur-md border flex items-center gap-1.5 bg-emerald-950/80 border-emerald-400/50 text-emerald-300 shadow-sm">
+                              <Sparkles className="w-3 h-3 text-emerald-300" />
+                              <span>{lang === 'bn' ? 'নতুন জমা দেওয়া' : 'Recent Submission'}</span>
+                            </span>
+                          )}
                         </div>
 
                         {item.video_url && (
@@ -811,6 +897,107 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
                 <span>{submitError}</span>
               </div>
             )}
+
+            {/* Database / Backend Connection Settings Collapsible */}
+            <div
+              className={`p-3.5 rounded-2xl border text-xs transition-colors ${
+                isDark
+                  ? 'bg-slate-900/70 border-slate-800'
+                  : 'bg-amber-50/60 border-amber-200/80'
+              }`}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <div
+                    className={`w-2 h-2 rounded-full ${
+                      customBackendUrl ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'
+                    }`}
+                  />
+                  <span className={`font-bold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
+                    {lang === 'bn' ? 'ডাটাবেজ / ব্যাকএন্ড সংযোগ' : 'Database & API Connection'}
+                  </span>
+                  <span className="text-[11px] opacity-75 font-mono truncate max-w-[180px] sm:max-w-[280px]">
+                    ({customBackendUrl || 'http://127.0.0.1:8000'})
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsBackendConfigOpen((prev) => !prev)}
+                  className={`text-[11px] font-bold underline cursor-pointer hover:opacity-80 ${
+                    isDark ? 'text-amber-400' : 'text-amber-700'
+                  }`}
+                >
+                  {isBackendConfigOpen
+                    ? lang === 'bn'
+                      ? 'বন্ধ করুন'
+                      : 'Hide'
+                    : lang === 'bn'
+                    ? 'API পরিবর্তন / পরীক্ষা'
+                    : 'Configure / Test'}
+                </button>
+              </div>
+
+              {isBackendConfigOpen && (
+                <div className="mt-3 pt-3 border-t border-slate-700/50 space-y-2.5">
+                  <p className="text-[11px] opacity-80 leading-relaxed">
+                    {lang === 'bn'
+                      ? 'আপনার Laravel বা কাস্টম ব্যাকএন্ড সার্ভার যদি লাইভ ডোমেইনে বা ngrok এ চলে, তবে নিচের বক্সে সম্পূর্ণ URL প্রদান করুন (যেমন: https://your-tunnel.ngrok-free.app বা https://api.cfoedubd.com)।'
+                      : 'If your Laravel backend is hosted online or running via ngrok/tunnel, enter the public URL below so stories write directly to your database table:'}
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <input
+                      type="url"
+                      placeholder="e.g. https://your-subdomain.ngrok-free.app"
+                      value={customBackendUrl}
+                      onChange={(e) => setCustomBackendUrl(e.target.value)}
+                      className={`flex-1 px-3 py-2 rounded-xl border text-xs focus:outline-none ${
+                        isDark
+                          ? 'bg-slate-950 border-slate-700 text-white placeholder:text-slate-600'
+                          : 'bg-white border-slate-300 text-slate-900 placeholder:text-slate-400'
+                      }`}
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleSaveBackendUrl(customBackendUrl)}
+                        className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs transition-colors cursor-pointer"
+                      >
+                        {lang === 'bn' ? 'সংরক্ষণ' : 'Save'}
+                      </button>
+                      <button
+                        type="button"
+                        disabled={isTestingBackend}
+                        onClick={handleTestBackendConnection}
+                        className={`px-3.5 py-2 rounded-xl font-bold text-xs border transition-colors cursor-pointer ${
+                          isDark
+                            ? 'border-slate-700 hover:bg-slate-800 text-slate-300'
+                            : 'border-slate-300 hover:bg-slate-100 text-slate-700'
+                        }`}
+                      >
+                        {isTestingBackend
+                          ? lang === 'bn'
+                            ? 'পরীক্ষা হচ্ছে...'
+                            : 'Testing...'
+                          : lang === 'bn'
+                          ? 'টেস্ট'
+                          : 'Test Connection'}
+                      </button>
+                    </div>
+                  </div>
+                  {backendTestStatus && (
+                    <div
+                      className={`p-2 rounded-lg text-[11px] font-medium ${
+                        backendTestStatus.includes('Connected')
+                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                          : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                      }`}
+                    >
+                      {backendTestStatus}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
 
             {/* Form */}
             <form onSubmit={handleSubmitStory} className="space-y-4 text-xs sm:text-sm">
