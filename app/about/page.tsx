@@ -37,48 +37,30 @@ export default function AboutPage() {
     };
   }, []);
 
-  // Compute dynamic metrics strictly from systemInfo & /api/about
-  const studentsVal = systemInfo.students
-    ? `${Number(systemInfo.students).toLocaleString()}+`
-    : aboutApiData?.metrics?.[0]?.number || '২,০০০+';
-  const studentsValEn = systemInfo.students
-    ? `${Number(systemInfo.students).toLocaleString()}+`
-    : aboutApiData?.metrics?.[0]?.numberEn || '2,000+';
+  // Build metrics strictly from dynamic systemInfo (Only if backend sends real numbers)
+  const dynamicMetrics: { number: string; label: string }[] = [];
 
-  const graduatesVal = systemInfo.graduates
-    ? (Number(systemInfo.graduates) <= 100 ? `${systemInfo.graduates}%` : `${Number(systemInfo.graduates).toLocaleString()}+`)
-    : aboutApiData?.metrics?.[1]?.number || '৯৮%';
-  const graduatesValEn = systemInfo.graduates
-    ? (Number(systemInfo.graduates) <= 100 ? `${systemInfo.graduates}%` : `${Number(systemInfo.graduates).toLocaleString()}+`)
-    : aboutApiData?.metrics?.[1]?.numberEn || '98%';
+  if (systemInfo.students && Number(systemInfo.students) > 0) {
+    dynamicMetrics.push({
+      number: `${Number(systemInfo.students).toLocaleString()}+`,
+      label: lang === 'bn' ? 'নিবন্ধিত শিক্ষার্থী' : 'Enrolled Students',
+    });
+  }
 
-  const classesVal = systemInfo.classes
-    ? `${Number(systemInfo.classes).toLocaleString()}+`
-    : aboutApiData?.metrics?.[2]?.number || '৯০+';
-  const classesValEn = systemInfo.classes
-    ? `${Number(systemInfo.classes).toLocaleString()}+`
-    : aboutApiData?.metrics?.[2]?.numberEn || '90+';
+  if (systemInfo.graduates && Number(systemInfo.graduates) > 0) {
+    const grad = Number(systemInfo.graduates);
+    dynamicMetrics.push({
+      number: grad <= 100 ? `${grad}%` : `${grad.toLocaleString()}+`,
+      label: lang === 'bn' ? 'সফল গ্র্যাজুয়েট' : 'Graduates',
+    });
+  }
 
-  const metrics = [
-    { 
-      number: studentsVal, 
-      numberEn: studentsValEn, 
-      label: aboutApiData?.metrics?.[0]?.label || (lang === 'bn' ? 'নিবন্ধিত শিক্ষার্থী' : 'Registered Students'), 
-      labelEn: aboutApiData?.metrics?.[0]?.labelEn || 'Registered Students' 
-    },
-    { 
-      number: graduatesVal, 
-      numberEn: graduatesValEn, 
-      label: aboutApiData?.metrics?.[1]?.label || (lang === 'bn' ? 'সফল গ্র্যাজুয়েট হার' : 'Success & Placement Rate'), 
-      labelEn: aboutApiData?.metrics?.[1]?.labelEn || 'Success Rate' 
-    },
-    { 
-      number: classesVal, 
-      numberEn: classesValEn, 
-      label: aboutApiData?.metrics?.[2]?.label || (lang === 'bn' ? 'ক্লাস ও প্রফেশনাল ল্যাব' : 'Specialized Classes & Labs'), 
-      labelEn: aboutApiData?.metrics?.[2]?.labelEn || 'Specialized Classes' 
-    }
-  ];
+  if (systemInfo.classes && Number(systemInfo.classes) > 0) {
+    dynamicMetrics.push({
+      number: `${Number(systemInfo.classes).toLocaleString()}+`,
+      label: lang === 'bn' ? 'ক্লাস ও ল্যাব' : 'Classes & Labs',
+    });
+  }
 
   // Dynamic video embed resolution
   const videoId =
@@ -158,26 +140,36 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Dynamic Metrics Banner */}
-      <section className="bg-white dark:bg-[#0D254C] text-slate-800 dark:text-white py-12 border-b border-slate-200 dark:border-[#1E3A8A] transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center max-w-4xl mx-auto">
-            {metrics.map((m, idx) => (
-              <div
-                key={idx}
-                className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-xs hover:border-amber-400 transition-all space-y-1"
-              >
-                <p className="text-3xl sm:text-4xl font-serif font-black text-amber-800 dark:text-[#FFC000]">
-                  {lang === 'bn' ? m.number : m.numberEn}
-                </p>
-                <p className="text-sm font-bold text-slate-900 dark:text-white">
-                  {lang === 'bn' ? m.label : m.labelEn}
-                </p>
-              </div>
-            ))}
+      {/* Dynamic Metrics Banner — ONLY renders if real numbers exist in backend */}
+      {dynamicMetrics.length > 0 && (
+        <section className="bg-white dark:bg-[#0D254C] text-slate-800 dark:text-white py-12 border-b border-slate-200 dark:border-[#1E3A8A] transition-colors">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div
+              className={`grid grid-cols-1 ${
+                dynamicMetrics.length === 1
+                  ? 'max-w-md'
+                  : dynamicMetrics.length === 2
+                  ? 'md:grid-cols-2 max-w-2xl'
+                  : 'md:grid-cols-3 max-w-4xl'
+              } gap-6 text-center mx-auto`}
+            >
+              {dynamicMetrics.map((m, idx) => (
+                <div
+                  key={idx}
+                  className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-xs hover:border-amber-400 transition-all space-y-1"
+                >
+                  <p className="text-3xl sm:text-4xl font-serif font-black text-amber-800 dark:text-[#FFC000]">
+                    {m.number}
+                  </p>
+                  <p className="text-sm font-bold text-slate-900 dark:text-white">
+                    {m.label}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Main Content */}
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full space-y-16">
