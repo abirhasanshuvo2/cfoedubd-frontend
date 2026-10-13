@@ -1,3 +1,15 @@
+export interface SystemFaqItem {
+  id: number | string;
+  question: string;
+  answer: string;
+}
+
+export interface SystemFaqData {
+  title?: string | null;
+  subtitle?: string | null;
+  items?: SystemFaqItem[] | null;
+}
+
 export interface SystemInformation {
   name: string;
   motto: string;
@@ -23,6 +35,7 @@ export interface SystemInformation {
   popup_link: string | null;
   terms_condition: string | null;
   privacy_policy: string | null;
+  faq?: SystemFaqData | null;
   about_first_section: string | null;
   about_second_section: string | null;
   about_video: string | null;
@@ -49,7 +62,7 @@ export const DEFAULT_SYSTEM_INFO: SystemInformation = {
   name: "Chartered Officer Limited",
   motto: "Building Financial Leaders for Tomorrow",
   tagline: "Practical Skills. Real Placement. Lasting Careers.",
-  description: "Chartered Officer Limited (COL) & CFO Education Bangladesh provide professional skill-development programs in Financial Leadership, Fintech, VAT & TAX, and Supply Chain Management. Participants gain hands-on, practical training designed to boost their on-the-job productivity, with personalized mentorship from industry experts.",
+  description: "The CFO Foundation of Bangladesh (CFO BD) is a non-profit organization comprised of current and future Chief Financial Officers (CFOs) that is registered with the Registrar of Joint Stock Companies and Firms (RJSC), Ministry of Commerce, Government of the People's Republic of Bangladesh, under registration number s-13064/2019. The mission of this organization is to exchange ideas, thoughts, and expertise through organizing knowledge-building conferences, seminars, and training, contributing to vital national policy, improving stakeholders, developing financial culture, and serving society as a whole",
   address: "City Centre 90/1, Level-25 (Lift-26), Motijheel C/A, Dhaka-1000",
   email: "cfoedubd@gmail.com",
   phone: "+880 1713378787",
@@ -62,20 +75,36 @@ export const DEFAULT_SYSTEM_INFO: SystemInformation = {
   twitter: "#",
   linked_in: "https://www.linkedin.com/company/chartered-officer-ltd/",
   youtube: "https://www.youtube.com/@charteredfinancialofficer-5894",
-  logo: null,
-  secondary_logo: null,
-  icon: null,
+  logo: "http://127.0.0.1:8000/system-images/logos/1-20251007100023-ssg-logo.png",
+  secondary_logo: "http://127.0.0.1:8000/system-images/secondary-logos/1-20251007100023-ssg-secondary.png",
+  icon: "http://127.0.0.1:8000/system-images/icons/1-20251007100024-ssg-icon.png",
   menu_logo: null,
   popup_image: null,
   popup_link: null,
   terms_condition: null,
   privacy_policy: null,
+  faq: {
+    title: "A new question",
+    subtitle: "a new description",
+    items: [
+      {
+        id: 1,
+        question: "a new question",
+        answer: "the answer of that question",
+      },
+      {
+        id: 2,
+        question: "What course do you offer for cfoedubd",
+        answer: "We offer a range of courses covering traditional and modern corporate topics like Chartered Financial Officer (CFO), VAT & TAX, Human Resource Management (HRM), Supply Chain Management (SCM), and Financial Technology (FinTech).",
+      },
+    ],
+  },
   about_first_section: null,
   about_second_section: null,
   about_video: null,
-  students: 50,
-  graduates: 3100,
-  classes: 2090,
+  students: null,
+  graduates: null,
+  classes: null,
   promo_code: "COL-EXEC",
   promo_discount: "10%",
   promo_text: "স্পেশাল সিজন ডিসকাউন্ট কোড: COL-EXEC ব্যবহার করে যেকোনো ব্যাচে অতিরিক্ত ছাড় উপভোগ করুন!",

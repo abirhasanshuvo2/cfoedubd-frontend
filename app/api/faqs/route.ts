@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { FAQS } from '@/data/cfo-data';
+import { DEFAULT_SYSTEM_INFO } from '@/data/system-info';
 
 export interface DynamicFaqItem {
   id: string;
@@ -90,7 +90,24 @@ export async function GET(req: Request) {
   const category = searchParams.get('category') || 'all';
   const query = (searchParams.get('q') || '').toLowerCase().trim();
 
-  let results = EXTENDED_FAQS;
+  // Try to load any live dynamic backend FAQs if available
+  let dynamicItems: DynamicFaqItem[] = [];
+  const systemFaq = DEFAULT_SYSTEM_INFO.faq;
+
+  if (systemFaq?.items && Array.isArray(systemFaq.items) && systemFaq.items.length > 0) {
+    dynamicItems = systemFaq.items.map((it, idx) => ({
+      id: `system-faq-${it.id || idx}`,
+      category: 'courses' as const,
+      categoryLabelBn: 'কোর্স ও সিলেবাস',
+      categoryLabelEn: 'Courses & Curriculum',
+      question: it.question,
+      questionEn: it.question,
+      answer: it.answer,
+      answerEn: it.answer,
+    }));
+  }
+
+  let results = [...dynamicItems, ...EXTENDED_FAQS];
 
   if (category !== 'all') {
     results = results.filter((item) => item.category === category);
@@ -108,6 +125,8 @@ export async function GET(req: Request) {
 
   return NextResponse.json({
     success: true,
+    title: systemFaq?.title || 'Frequently Asked Questions',
+    subtitle: systemFaq?.subtitle || 'Essential details about CFOEDUBD courses, instructors, online sessions, prerequisites, and corporate training.',
     count: results.length,
     data: results,
   });

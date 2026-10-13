@@ -230,11 +230,39 @@ export function CfoProvider({ children }: { children: React.ReactNode }) {
         const json = await res.json();
         if (json?.data) {
           setSystemInfo(json.data);
-          setIsLiveApiConnected(true);
+          if (json.isLive) {
+            setIsLiveApiConnected(true);
+            return;
+          }
         }
       }
     } catch {
       // Keep initial system info
+    }
+
+    // Also attempt direct client-side fetch if backend is local on 127.0.0.1:8000
+    if (typeof window !== 'undefined') {
+      try {
+        const directBase = (
+          process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://127.0.0.1:8000'
+        ).replace(/\/$/, '');
+        const directRes = await fetch(`${directBase}/api/system-information`, {
+          headers: { Accept: 'application/json' },
+          cache: 'no-store',
+        });
+        if (directRes.ok) {
+          const directJson = await directRes.json();
+          if (directJson?.data) {
+            setSystemInfo((prev) => ({
+              ...prev,
+              ...directJson.data,
+            }));
+            setIsLiveApiConnected(true);
+          }
+        }
+      } catch {
+        // Direct local backend fetch not reachable
+      }
     }
   }, []);
 

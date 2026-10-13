@@ -15,7 +15,7 @@ import {
   PhoneCall,
   Sparkles
 } from 'lucide-react';
-import { FAQS } from '@/data/cfo-data';
+import { useCfo } from '@/context/CfoContext';
 
 interface FaqSectionProps {
   lang: 'bn' | 'en';
@@ -30,6 +30,7 @@ interface FaqItemData {
   questionEn: string;
   answer: string;
   answerEn: string;
+  isDynamic?: boolean;
 }
 
 const FALLBACK_FAQS: FaqItemData[] = [
@@ -106,29 +107,26 @@ const CATEGORIES = [
 ];
 
 export default function FaqSection({ lang }: FaqSectionProps) {
-  const [faqsList, setFaqsList] = useState<FaqItemData[]>(FALLBACK_FAQS);
+  const { systemInfo } = useCfo();
+  const [apiFaqs, setApiFaqs] = useState<FaqItemData[]>(FALLBACK_FAQS);
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [openIndex, setOpenIndex] = useState<number | null>(0);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // Fetch dynamic FAQs from the API endpoint
   useEffect(() => {
     let isMounted = true;
     async function loadFaqs() {
       try {
-        setIsLoading(true);
         const res = await fetch('/api/faqs');
         if (res.ok) {
           const json = await res.json();
           if (json.data && Array.isArray(json.data) && json.data.length > 0 && isMounted) {
-            setFaqsList(json.data);
+            setApiFaqs(json.data);
           }
         }
-      } catch (err) {
-        // Fallback to FALLBACK_FAQS seamlessly
-      } finally {
-        if (isMounted) setIsLoading(false);
+      } catch {
+        // Fallback gracefully
       }
     }
     loadFaqs();
@@ -137,45 +135,112 @@ export default function FaqSection({ lang }: FaqSectionProps) {
     };
   }, []);
 
+  // Map dynamic FAQ items provided via system information
+  const dynamicSystemFaqs: FaqItemData[] = useMemo(() => {
+    const items = systemInfo?.faq?.items;
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return [];
+    }
+    return items.map((it, idx) => ({
+      id: `sys-faq-${it.id ?? idx}`,
+      category: 'courses',
+      categoryLabelBn: 'কোর্স ও সাধারণ',
+      categoryLabelEn: 'Courses & General',
+      question: it.question || '',
+      questionEn: it.question || '',
+      answer: it.answer || '',
+      answerEn: it.answer || '',
+      isDynamic: true,
+    }));
+  }, [systemInfo?.faq?.items]);
+
+  // Merge dynamic items from system info at the top of the FAQ list
+  const combinedFaqs = useMemo(() => {
+    if (dynamicSystemFaqs.length === 0) return apiFaqs;
+
+    const seenQuestions = new Set<string>();
+    const merged: FaqItemData[] = [];
+
+    // 1. Dynamic system FAQs first
+    for (const item of dynamicSystemFaqs) {
+      const q = (item.question || item.questionEn).toLowerCase().trim();
+      if (q && !seenQuestions.has(q)) {
+        seenQuestions.add(q);
+        merged.push(item);
+      }
+    }
+
+    // 2. Standard FAQs
+    for (const item of apiFaqs) {
+      const q = (item.question || '').toLowerCase().trim();
+      const qEn = (item.questionEn || '').toLowerCase().trim();
+      if ((q && !seenQuestions.has(q)) && (qEn && !seenQuestions.has(qEn))) {
+        if (q) seenQuestions.add(q);
+        if (qEn) seenQuestions.add(qEn);
+        merged.push(item);
+      }
+    }
+
+    return merged;
+  }, [dynamicSystemFaqs, apiFaqs]);
+
   const toggleFaq = (idx: number) => {
     setOpenIndex(openIndex === idx ? null : idx);
   };
 
-  // Filtered FAQs based on dynamic criteria
+  // Filtered FAQs based on category & search
   const filteredFaqs = useMemo(() => {
-    return faqsList.filter((item) => {
-      const matchCategory = activeCategory === 'all' || item.category === activeCategory;
+    return combinedFaqs.filter((item) => {
+      const matchCategory =
+        activeCategory === 'all' ||
+        item.category === activeCategory ||
+        item.category === 'all' ||
+        (item.isDynamic && (activeCategory === 'courses' || activeCategory === 'all'));
+
       if (!matchCategory) return false;
 
       if (!searchQuery.trim()) return true;
       const q = searchQuery.toLowerCase().trim();
-      return (
-        item.question.toLowerCase().includes(q) ||
-        item.questionEn.toLowerCase().includes(q) ||
-        item.answer.toLowerCase().includes(q) ||
-        item.answerEn.toLowerCase().includes(q)
-      );
+      const qBn = (item.question || '').toLowerCase();
+      const qEn = (item.questionEn || '').toLowerCase();
+      const aBn = (item.answer || '').toLowerCase();
+      const aEn = (item.answerEn || '').toLowerCase();
+
+      return qBn.includes(q) || qEn.includes(q) || aBn.includes(q) || aEn.includes(q);
     });
-  }, [faqsList, activeCategory, searchQuery]);
+  }, [combinedFaqs, activeCategory, searchQuery]);
+
+  // Dynamic titles from systemInfo if present
+  const dynamicSectionTitle =
+    systemInfo?.faq?.title?.trim() ||
+    (lang === 'bn' ? 'সচরাচর জিজ্ঞাসিত প্রশ্নসমূহ' : 'Frequently Asked Questions');
+
+  const dynamicSectionSubtitle =
+    systemInfo?.faq?.subtitle?.trim() ||
+    (lang === 'bn'
+      ? 'CFOEDUBD-এর কোর্স, প্রশিক্ষক, অনলাইন ক্লাস, পূর্বশর্ত ও করপোরেট ট্রেনিং সংক্রান্ত প্রয়োজনীয় তথ্য।'
+      : 'Essential details about CFOEDUBD courses, instructors, online sessions, prerequisites, and corporate training.');
 
   return (
     <section id="faqs" className="py-16 sm:py-24 bg-slate-50/70 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800 transition-colors">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header Badge & Title */}
+        {/* Header Badge & Dynamic Title */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/60 text-[#966718] dark:text-amber-300 border border-amber-300/80 dark:border-amber-800 text-xs font-bold mb-3 shadow-2xs">
             <HelpCircle className="w-3.5 h-3.5 text-[#C8963E]" />
-            <span>{lang === 'bn' ? 'সাধারণ প্রশ্নোত্তর ও অ্যাকাডেমিক নিয়মাবলী' : 'Frequently Asked Questions'}</span>
+            <span>
+              {lang === 'bn'
+                ? 'সাধারণ প্রশ্নোত্তর ও অ্যাকাডেমিক নিয়মাবলী'
+                : 'Frequently Asked Questions'}
+            </span>
           </div>
 
           <h2 className="text-2xl sm:text-4xl font-serif font-black text-slate-900 dark:text-white tracking-tight">
-            {lang === 'bn' ? 'সচরাচর জিজ্ঞাসিত প্রশ্নসমূহ' : 'Frequently Asked Questions'}
+            {dynamicSectionTitle}
           </h2>
 
           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-2.5 max-w-2xl mx-auto leading-relaxed">
-            {lang === 'bn'
-              ? 'CFOEDUBD-এর কোর্স, প্রশিক্ষক, অনলাইন ক্লাস, পূর্বশর্ত ও করপোরেট ট্রেনিং সংক্রান্ত প্রয়োজনীয় তথ্য।'
-              : 'Essential details about CFOEDUBD courses, instructors, online sessions, prerequisites, and corporate training.'}
+            {dynamicSectionSubtitle}
           </p>
         </div>
 
@@ -235,6 +300,15 @@ export default function FaqSection({ lang }: FaqSectionProps) {
           {filteredFaqs.length > 0 ? (
             filteredFaqs.map((faq, idx) => {
               const isOpen = openIndex === idx;
+              const questionText =
+                (lang === 'bn' ? faq.question : faq.questionEn) ||
+                faq.question ||
+                faq.questionEn;
+              const answerText =
+                (lang === 'bn' ? faq.answer : faq.answerEn) ||
+                faq.answer ||
+                faq.answerEn;
+
               return (
                 <div
                   key={faq.id || idx}
@@ -253,7 +327,7 @@ export default function FaqSection({ lang }: FaqSectionProps) {
                         {idx + 1}
                       </span>
                       <span className="font-serif font-bold text-slate-900 dark:text-white text-sm sm:text-base leading-snug">
-                        {lang === 'bn' ? faq.question : faq.questionEn}
+                        {questionText}
                       </span>
                     </div>
                     <ChevronDown
@@ -265,7 +339,7 @@ export default function FaqSection({ lang }: FaqSectionProps) {
 
                   {isOpen && (
                     <div className="px-5 sm:px-6 pb-5 pt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-slate-800/80 bg-slate-50/30 dark:bg-slate-950/20">
-                      {lang === 'bn' ? faq.answer : faq.answerEn}
+                      {answerText}
                     </div>
                   )}
                 </div>
@@ -298,22 +372,21 @@ export default function FaqSection({ lang }: FaqSectionProps) {
             </div>
             <div>
               <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-                {lang === 'bn' ? 'অন্য কোনো প্রশ্ন আছে বা পরামর্শ চান?' : 'Have more questions or need career guidance?'}
+                {lang === 'bn' ? 'আরও কোনো প্রশ্ন বা জিজ্ঞাসা আছে?' : 'Still have specific questions?'}
               </h4>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                 {lang === 'bn'
-                  ? 'আমাদের ক্যারিয়ার কাউন্সিলরদের সাথে সরাসরি কথা বলুন।'
-                  : 'Speak directly with our senior admission counselors.'}
+                  ? `আমাদের অ্যাডমিশন ও কাউন্সেলিং টিম সার্বক্ষণিক সহায়তায় প্রস্তুত: ${systemInfo?.phone || '+880 1713378787'}`
+                  : `Our academic advising team is available 24/7 to guide you: ${systemInfo?.phone || '+880 1713378787'}`}
               </p>
             </div>
           </div>
           <a
-            href="https://wa.me/8801700000000"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-bold text-xs hover:opacity-90 transition-opacity shrink-0 cursor-pointer shadow-xs"
+            href={`tel:${systemInfo?.phone || '+8801713378787'}`}
+            className="px-4 py-2.5 rounded-xl bg-[#C8963E] hover:bg-[#b08332] text-slate-950 font-bold text-xs transition-colors shrink-0 flex items-center gap-1.5 shadow-2xs"
           >
-            {lang === 'bn' ? 'কাউন্সিলরের সাথে কথা বলুন' : 'Talk to Counselor'}
+            <span>{lang === 'bn' ? 'সরাসরি কল করুন' : 'Call Support'}</span>
+            <Sparkles className="w-3.5 h-3.5" />
           </a>
         </div>
       </div>
