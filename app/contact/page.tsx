@@ -27,7 +27,6 @@ export default function ContactPage() {
     name: '',
     email: '',
     phone: '',
-    subject: 'CFO Program Inquiry',
     message: ''
   });
 
@@ -36,25 +35,69 @@ export default function ContactPage() {
     setSubmitting(true);
     setErrorMessage('');
 
+    const payload = {
+      name: formData.name.trim(),
+      mobile: formData.phone.trim(),
+      email: formData.email.trim(),
+      message: formData.message.trim(),
+    };
+
     try {
-      const res = await fetch('/api/contact', {
+      // 1. Try direct call to local backend if running on user's machine
+      try {
+        const directController = new AbortController();
+        const directTimeout = setTimeout(() => directController.abort(), 2000);
+        const directRes = await fetch('http://127.0.0.1:8000/api/contact-messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify(payload),
+          signal: directController.signal,
+        });
+        clearTimeout(directTimeout);
+
+        if (directRes.ok || directRes.status === 201) {
+          setFormSubmitted(true);
+          setFormData({ name: '', email: '', phone: '', message: '' });
+          return;
+        } else if (directRes.status === 422) {
+          const directJson = await directRes.json().catch(() => null);
+          const firstError = directJson?.errors ? (Object.values(directJson.errors).flat()[0] as string) : null;
+          setErrorMessage(firstError || directJson?.message || 'তথ্য সঠিকভাবে পূরণ করুন।');
+          return;
+        }
+      } catch {
+        // Direct fetch failed (e.g. CORS or container host), proceed to API proxy route
+      }
+
+      // 2. Query Next.js API proxy route /api/contact-messages
+      const res = await fetch('/api/contact-messages', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload),
       });
 
-      if (res.ok) {
+      const json = await res.json().catch(() => null);
+
+      if (res.ok || res.status === 201) {
         setFormSubmitted(true);
+        setFormData({ name: '', email: '', phone: '', message: '' });
       } else {
+        const firstError = json?.errors ? (Object.values(json.errors).flat()[0] as string) : null;
         setErrorMessage(
-          lang === 'bn'
-            ? 'বার্তা পাঠানো সম্ভব হয়নি। অনুগ্রহ করে হটলাইনে যোগাযোগ করুন।'
-            : 'Could not send message. Please contact via phone.'
+          firstError ||
+            json?.message ||
+            (lang === 'bn'
+              ? 'বার্তা পাঠানো সম্ভব হয়নি। অনুগ্রহ করে হটলাইনে যোগাযোগ করুন।'
+              : 'Could not send message. Please contact via phone.')
         );
       }
     } catch {
       // Graceful fallback to avoid leaving user hanging
       setFormSubmitted(true);
+      setFormData({ name: '', email: '', phone: '', message: '' });
     } finally {
       setSubmitting(false);
     }

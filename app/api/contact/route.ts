@@ -3,6 +3,14 @@ import { NextResponse } from 'next/server';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+
+    const payload = {
+      name: (body.name || '').trim(),
+      mobile: (body.mobile || body.phone || '').trim(),
+      email: (body.email || '').trim(),
+      message: (body.message || '').trim(),
+    };
+
     const backendBaseUrl = (
       process.env.BACKEND_API_URL ||
       process.env.NEXT_PUBLIC_BACKEND_API_URL ||
@@ -10,38 +18,47 @@ export async function POST(request: Request) {
     ).replace(/\/$/, '');
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4000);
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
 
     try {
-      const response = await fetch(`${backendBaseUrl}/api/contact`, {
+      const response = await fetch(`${backendBaseUrl}/api/contact-messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify(payload),
         signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
 
-      if (response.ok) {
-        const json = await response.json();
+      const json = await response.json().catch(() => null);
+
+      if (response.ok || response.status === 201) {
         return NextResponse.json({
           success: true,
-          message: json.message || 'Message sent successfully',
-          data: json,
+          message: json?.message || 'Message sent successfully',
+          data: json?.data || json,
         });
+      } else if (response.status === 422) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: json?.message || 'Validation error',
+            errors: json?.errors,
+          },
+          { status: 422 }
+        );
       }
     } catch {
-      // Backend not yet implementing /api/contact or offline
+      // Backend unreachable or offline
     }
 
-    // Graceful response so the user doesn't encounter a broken UI
     return NextResponse.json({
       success: true,
       message: 'Inquiry received successfully',
-      data: body,
+      data: payload,
       isSimulated: true,
     });
   } catch (error: any) {
