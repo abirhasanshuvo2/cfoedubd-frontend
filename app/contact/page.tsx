@@ -231,37 +231,37 @@ export default function ContactPage() {
 
           {/* Location Map & Details */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="bg-white dark:bg-[#0A192F] text-slate-900 dark:text-white rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-[#1E3A8A] space-y-4 shadow-sm transition-colors">
+            <div className="bg-white dark:bg-[#0A192F] text-slate-900 dark:text-white rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-[#1E3A8A] space-y-5 shadow-sm transition-colors">
               <span className="text-[11px] font-bold uppercase tracking-wider text-[#966718] dark:text-[#E5A93C] flex items-center gap-1.5">
                 <Building2 className="w-4 h-4 text-[#C8963E]" />
-                MOTIJHEEL CITY CENTRE
+                {lang === 'bn' ? 'ক্যাম্পাস ও প্রধান কার্যালয়' : 'Campus & Head Office'}
               </span>
 
-              <h4 className="text-xl font-serif font-bold text-slate-900 dark:text-white">
-                সিটি সেন্টার ক্যাম্পাস
-              </h4>
-
-              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                সিটি সেন্টার ঢাকার মতিঝিলে অবস্থিত দেশের সর্বোচ্চ আইকনিক বাণিজ্যিক ভবন। লেভেল ২৫-এ অবস্থিত আমাদের ক্যাম্পাসে রয়েছে এক্সিকিউটিভ ক্লাসরুম, এসএপি কম্পিউটার ল্যাব ও স্টাডি লাউঞ্জ।
-              </p>
+              {systemInfo.address && (
+                <h4 className="text-lg sm:text-xl font-serif font-bold text-slate-900 dark:text-white leading-snug">
+                  {systemInfo.address}
+                </h4>
+              )}
 
               {/* Visual Map Representation */}
               <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-4 space-y-3">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-semibold text-amber-700 dark:text-[#E5A93C]">Google Map Location</span>
-                  <span className="text-slate-500 dark:text-slate-400 font-mono">23.7289° N, 90.4174° E</span>
                 </div>
-                <div className="h-40 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center text-center p-4 space-y-2">
+                <div className="h-44 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center text-center p-4 space-y-2.5">
                   <MapPin className="w-8 h-8 text-[#C8963E] animate-bounce" />
-                  <p className="font-serif font-bold text-xs text-slate-900 dark:text-white">City Centre, Level 25</p>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400">Motijheel Commercial Area, Dhaka-1000</p>
+                  <p className="font-serif font-bold text-xs text-slate-900 dark:text-white line-clamp-2 max-w-xs">
+                    {systemInfo.address || 'Dhaka, Bangladesh'}
+                  </p>
                   <a
-                    href="https://maps.google.com/?q=City+Centre+Motijheel+Dhaka"
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                      systemInfo.address || 'City Centre Motijheel Dhaka'
+                    )}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-[#C8963E] text-slate-950 text-[10px] font-bold hover:bg-[#d4af37] transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#C8963E] hover:bg-[#d4af37] text-slate-950 text-xs font-bold transition-colors shadow-2xs"
                   >
-                    গুগল ম্যাপে খুলুন
+                    <span>{lang === 'bn' ? 'গুগল ম্যাপে দেখুন' : 'View on Google Maps'}</span>
                   </a>
                 </div>
               </div>
