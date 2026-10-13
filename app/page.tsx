@@ -9,7 +9,6 @@ import CourseCard from '@/components/CourseCard';
 import CourseDetailsModal from '@/components/CourseDetailsModal';
 import EnrollmentModal from '@/components/EnrollmentModal';
 import StudentLmsModal from '@/components/StudentLmsModal';
-import LearningMethodology from '@/components/LearningMethodology';
 import CareerQuizModal from '@/components/CareerQuizModal';
 import FreeLiveDemoSection from '@/components/FreeLiveDemoSection';
 import SuccessStoriesSection from '@/components/SuccessStoriesSection';
@@ -214,12 +213,6 @@ export default function Home() {
 
       {/* Success Stories Section — Futuristic Pyramid Showcase & Submission Modal */}
       <SuccessStoriesSection lang={lang} />
-
-      {/* Learning Methodology (Chartered Officer Limited) */}
-      <LearningMethodology
-        lang={lang}
-        onExploreCourses={scrollToCourses}
-      />
 
       {/* FAQ Section */}
       <FaqSection lang={lang} />
