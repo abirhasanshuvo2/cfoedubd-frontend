@@ -215,11 +215,11 @@ export default function Home() {
       {/* Success Stories Section — Futuristic Pyramid Showcase & Submission Modal */}
       <SuccessStoriesSection lang={lang} />
 
-      {/* Inquiry & Consultation Section */}
-      <ContactInquirySection lang={lang} variant="homepage" />
-
       {/* FAQ Section */}
       <FaqSection lang={lang} />
+
+      {/* Inquiry Form Section — Placed under FAQ */}
+      <ContactInquirySection lang={lang} variant="homepage" />
 
       {/* Footer */}
       <Footer lang={lang} />

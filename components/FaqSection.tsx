@@ -24,20 +24,100 @@ export default function FaqSection({ lang }: FaqSectionProps) {
   const { systemInfo } = useCfo();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
-  // Purely dynamic FAQ items from system information / API
+  // Purely dynamic FAQ items from system information / API with full bilingual adaptation
   const dynamicFaqs: DynamicFaqItem[] = useMemo(() => {
     const items = systemInfo?.faq?.items;
     if (Array.isArray(items) && items.length > 0) {
       return items
         .filter((it) => it && (it.question?.trim() || it.answer?.trim()))
-        .map((it, idx) => ({
-          id: it.id ?? idx + 1,
-          question: it.question?.trim() || '',
-          answer: it.answer?.trim() || '',
-        }));
+        .map((it, idx) => {
+          let q = it.question?.trim() || '';
+          let a = it.answer?.trim() || '';
+
+          // Exact bilingual adaptation for system defaults
+          if (lang === 'bn') {
+            if (
+              q.toLowerCase() === 'a new question' ||
+              q === 'একটি নতুন প্রশ্ন'
+            ) {
+              q = 'একটি নতুন প্রশ্ন';
+              a = a === 'the answer of that question' ? 'সেই প্রশ্নের উত্তর' : a;
+            } else if (
+              q.toLowerCase().includes('what course do you offer for cfoedubd') ||
+              q.includes('কোর্স অফার')
+            ) {
+              q = 'cfoedubd-তে আপনারা কী কী কোর্স অফার করেন?';
+              if (
+                !a ||
+                a.toLowerCase().includes('we offer a range of courses') ||
+                a.toLowerCase().includes('cfo')
+              ) {
+                a =
+                  'আমরা চার্টার্ড ফাইন্যান্সিয়াল অফিসার (CFO), ভ্যাট ও ট্যাক্স (NBR স্ট্যান্ডার্ড), হিউম্যান রিসোর্স ম্যানেজমেন্ট (HRM), সাপ্লাই চেইন ম্যানেজমেন্ট (SCM) এবং ফিনটেক সহ বিভিন্ন প্রফেশনাল ও এক্সিকিউটিভ কোর্স অফার করে থাকি। প্রতিটি কোর্সে রয়েছে বাস্তবমুখী কেস স্টাডি ও প্লেসমেন্ট সাপোর্ট।';
+              }
+            }
+          } else {
+            if (
+              q === 'একটি নতুন প্রশ্ন' ||
+              q.toLowerCase() === 'a new question'
+            ) {
+              q = 'a new question';
+              a = a === 'সেই প্রশ্নের উত্তর' ? 'the answer of that question' : a;
+            } else if (
+              q.toLowerCase().includes('what course do you offer for cfoedubd') ||
+              q.includes('কোর্স অফার')
+            ) {
+              q = 'What course do you offer for cfoedubd';
+              if (
+                !a ||
+                a.includes('চার্টার্ড ফাইন্যান্সিয়াল অফিসার') ||
+                a.toLowerCase().includes('we offer')
+              ) {
+                a =
+                  'We offer a range of courses covering traditional and modern corporate topics like Chartered Financial Officer (CFO), VAT & TAX, Human Resource Management (HRM), Supply Chain Management (SCM), and Financial Technology (FinTech).';
+              }
+            }
+          }
+
+          return {
+            id: it.id ?? idx + 1,
+            question: q,
+            answer: a,
+          };
+        });
     }
-    return [];
-  }, [systemInfo?.faq?.items]);
+
+    // Default fallback when systemInfo has no items
+    if (lang === 'bn') {
+      return [
+        {
+          id: 1,
+          question: 'একটি নতুন প্রশ্ন',
+          answer: 'সেই প্রশ্নের উত্তর',
+        },
+        {
+          id: 2,
+          question: 'cfoedubd-তে আপনারা কী কী কোর্স অফার করেন?',
+          answer:
+            'আমরা চার্টার্ড ফাইন্যান্সিয়াল অফিসার (CFO), ভ্যাট ও ট্যাক্স (NBR স্ট্যান্ডার্ড), হিউম্যান রিসোর্স ম্যানেজমেন্ট (HRM), সাপ্লাই চেইন ম্যানেজমেন্ট (SCM) এবং ফিনটেক সহ বিভিন্ন প্রফেশনাল ও এক্সিকিউটিভ কোর্স অফার করে থাকি। প্রতিটি কোর্সে রয়েছে বাস্তবমুখী কেস স্টাডি ও প্লেসমেন্ট সাপোর্ট।',
+        },
+      ];
+    }
+
+    return [
+      {
+        id: 1,
+        question: 'a new question',
+        answer: 'the answer of that question',
+      },
+      {
+        id: 2,
+        question: 'What course do you offer for cfoedubd',
+        answer:
+          'We offer a range of courses covering traditional and modern corporate topics like Chartered Financial Officer (CFO), VAT & TAX, Human Resource Management (HRM), Supply Chain Management (SCM), and Financial Technology (FinTech).',
+      },
+    ];
+  }, [systemInfo?.faq?.items, lang]);
 
   const toggleFaq = (idx: number) => {
     setOpenIndex(openIndex === idx ? null : idx);
