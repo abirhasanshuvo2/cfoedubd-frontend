@@ -73,9 +73,26 @@ export default function BrandLogo({
     const addSource = (rawUrl?: string | null) => {
       if (!rawUrl || typeof rawUrl !== 'string' || !rawUrl.trim()) return;
       const clean = rawUrl.trim();
-      // 1. Direct URL first
+
+      // If it's a localhost / 127.0.0.1 URL, extract the relative pathname first (e.g. /system-images/logos/...)
+      // This allows the browser on HTTPS to fetch the local asset without mixed-content or private network blocks
+      try {
+        if (clean.includes('127.0.0.1') || clean.includes('localhost')) {
+          const parsed = new URL(clean);
+          list.push(parsed.pathname); // e.g. /system-images/logos/1-...
+          list.push(clean);           // direct http://127.0.0.1:8000/...
+          list.push(`/api/image-proxy?url=${encodeURIComponent(clean)}`);
+          list.push(`https://cfoedubd.com${parsed.pathname}`);
+          return;
+        }
+      } catch {
+        // Fall through if not a full URL
+      }
+
+      // Direct URL
       list.push(clean);
-      // 2. Proxied URL fallback if absolute HTTP/HTTPS
+
+      // Proxied URL fallback if absolute HTTP/HTTPS
       if (clean.startsWith('http://') || clean.startsWith('https://')) {
         list.push(`/api/image-proxy?url=${encodeURIComponent(clean)}`);
       }
@@ -85,7 +102,13 @@ export default function BrandLogo({
     addSource(secondaryLogo);
     addSource(icon);
 
-    return list;
+    // Guaranteed local static assets from CFOEDUBD
+    list.push('/logo.png');
+    list.push('/secondary-logo.png');
+    list.push('/system-images/logos/col-logo.png');
+
+    // Deduplicate while preserving order
+    return Array.from(new Set(list));
   }, [logo, secondaryLogo, icon]);
 
   const [failedUrlKey, setFailedUrlKey] = useState<string>('');
