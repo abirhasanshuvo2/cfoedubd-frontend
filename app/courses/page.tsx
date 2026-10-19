@@ -9,6 +9,7 @@ import CourseCard from '@/components/CourseCard';
 import Footer from '@/components/Footer';
 import { COURSES, CATEGORIES, Course } from '@/data/cfo-data';
 import { useCfo } from '@/context/CfoContext';
+import BrandLoader from '@/components/BrandLoader';
 import {
   Sparkles,
   Search,
@@ -261,7 +262,14 @@ function CoursesContent() {
         </div>
 
         {/* Courses Grid */}
-        {filteredCourses.length > 0 ? (
+        {coursesLoading ? (
+          <div className="py-20 text-center">
+            <BrandLoader
+              size="lg"
+              label={lang === 'bn' ? 'কোর্স ক্যাটালগ লোড হচ্ছে...' : 'Loading courses from catalog...'}
+            />
+          </div>
+        ) : filteredCourses.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredCourses.map((course, idx) => (
               <CourseCard key={`${course.id}-${idx}`} course={course} lang={lang} />
@@ -325,7 +333,13 @@ function CoursesContent() {
 
 export default function CoursesPage() {
   return (
-    <Suspense fallback={<div className="p-10 text-center text-sm font-bold text-slate-600">Loading catalog...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-[60vh] flex items-center justify-center p-8 bg-[#F8FAFC] dark:bg-slate-950">
+          <BrandLoader size="lg" />
+        </div>
+      }
+    >
       <CoursesContent />
     </Suspense>
   );

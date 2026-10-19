@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CourseCard from '@/components/CourseCard';
+import BrandLoader from '@/components/BrandLoader';
 import { useCfo } from '@/context/CfoContext';
 import { COURSES } from '@/data/cfo-data';
 import {
@@ -23,7 +24,7 @@ import {
 } from 'lucide-react';
 
 export default function FreeCoursesPage() {
-  const { lang, courses, theme, systemInfo } = useCfo();
+  const { lang, courses, coursesLoading, theme, systemInfo } = useCfo();
   const [searchQuery, setSearchQuery] = useState('');
 
   // Extract all free courses (strictly price === 0)
@@ -166,7 +167,14 @@ export default function FreeCoursesPage() {
         </div>
 
         {/* Free Courses Grid */}
-        {freeCourses.length > 0 ? (
+        {coursesLoading ? (
+          <div className="py-16 flex justify-center">
+            <BrandLoader
+              size="lg"
+              label={lang === 'bn' ? 'ফ্রি কোর্স ক্যাটালগ লোড হচ্ছে...' : 'Loading free courses catalog...'}
+            />
+          </div>
+        ) : freeCourses.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {freeCourses.map((course, idx) => (
               <CourseCard key={`${course.id}-${idx}`} course={course} lang={lang} />

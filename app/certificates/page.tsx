@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useCfo } from '@/context/CfoContext';
+import BrandLoader from '@/components/BrandLoader';
 import {
   ShieldCheck,
   Search,
@@ -191,13 +192,15 @@ function CertificateDocumentCard({
       {/* Embedded API Certificate Viewer */}
       <div className="w-full relative min-h-[500px] sm:min-h-[680px] bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-center">
         {loadingPdf ? (
-          <div className="py-20 text-center space-y-3">
-            <div className="w-9 h-9 border-3 border-[#C8963E] border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-xs font-bold text-slate-600 dark:text-slate-300">
-              {lang === 'bn'
-                ? 'অফিসিয়াল সনদপত্র লোড হচ্ছে...'
-                : 'Loading official certificate...'}
-            </p>
+          <div className="py-20 text-center">
+            <BrandLoader
+              size="md"
+              label={
+                lang === 'bn'
+                  ? 'অফিসিয়াল সনদপত্র লোড হচ্ছে...'
+                  : 'Loading official certificate...'
+              }
+            />
           </div>
         ) : (
           viewerSrc && (
@@ -593,13 +596,13 @@ function CertificateContent() {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 py-8 w-full space-y-8">
-        {/* Loading Indicator */}
+        {/* Loading Indicator with Dynamic Icon */}
         {isLoading && (
-          <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-3">
-            <div className="w-10 h-10 border-3 border-[#C8963E] border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-sm font-bold text-slate-800 dark:text-slate-200">
-              {lang === 'bn' ? 'সনদপত্রের তথ্য লোড হচ্ছে...' : 'Loading certificate details...'}
-            </p>
+          <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800">
+            <BrandLoader
+              size="lg"
+              label={lang === 'bn' ? 'সনদপত্রের তথ্য লোড হচ্ছে...' : 'Loading certificate details...'}
+            />
           </div>
         )}
 
@@ -803,7 +806,7 @@ export default function CertificatePage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
-          <div className="w-10 h-10 border-3 border-[#C8963E] border-t-transparent rounded-full animate-spin" />
+          <BrandLoader size="lg" />
         </div>
       }
     >

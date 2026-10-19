@@ -8,6 +8,7 @@ import NewsImage from '@/components/NewsImage';
 import { useCfo } from '@/context/CfoContext';
 import { fetchNewsArticles, NewsPagination } from '@/lib/news-service';
 import { ApiNewsItem, INITIAL_API_NEWS } from '@/data/news-data';
+import BrandLoader from '@/components/BrandLoader';
 import {
   Newspaper,
   Calendar,
@@ -139,11 +140,13 @@ export default function MediaNewsPage() {
           ))}
         </div>
 
-        {/* Loading Spinner */}
+        {/* Loading State with Dynamic Icon */}
         {isLoading && (
-          <div className="text-center py-12">
-            <div className="w-8 h-8 border-3 border-[#C8963E] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-            <p className="text-xs text-slate-500 font-medium">Loading news updates...</p>
+          <div className="text-center py-16">
+            <BrandLoader
+              size="md"
+              label={lang === 'bn' ? 'সংবাদ লোড হচ্ছে...' : 'Loading media & news...'}
+            />
           </div>
         )}
 

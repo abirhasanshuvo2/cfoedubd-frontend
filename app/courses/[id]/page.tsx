@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import BrandLoader from '@/components/BrandLoader';
 import { COURSES, resolveCourseVideo } from '@/data/cfo-data';
 import { useCfo } from '@/context/CfoContext';
 import {
@@ -29,7 +30,7 @@ import {
 export default function CourseDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const unwrappedParams = use(params);
   const id = String(unwrappedParams?.id || '');
-  const { lang, courses, refreshCourses, theme, systemInfo } = useCfo();
+  const { lang, courses, refreshCourses, coursesLoading, theme, systemInfo } = useCfo();
 
   const [enrollmentPlan, setEnrollmentPlan] = useState<'personal' | 'group'>('personal');
   const [showFullAbout, setShowFullAbout] = useState(false);
@@ -58,6 +59,22 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
       (c.batchNumber && c.batchNumber.toLowerCase() === decodedId) ||
       ((c as any).apiId && String((c as any).apiId) === decodedId.replace(/^api-/, ''))
   );
+
+  // If still loading and course is not yet found in local cache, show dynamic brand loader
+  if (coursesLoading && !course) {
+    return (
+      <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-950 flex flex-col font-sans transition-colors">
+        <Navbar />
+        <div className="flex-1 flex flex-col items-center justify-center py-24">
+          <BrandLoader
+            size="lg"
+            label={lang === 'bn' ? 'কোর্সের বিস্তারিত লোড হচ্ছে...' : 'Loading course details...'}
+          />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!course) {
     notFound();

@@ -16,6 +16,7 @@ import ContactInquirySection from '@/components/ContactInquirySection';
 import FaqSection from '@/components/FaqSection';
 import Footer from '@/components/Footer';
 import AuthModal from '@/components/AuthModal';
+import BrandLoader from '@/components/BrandLoader';
 import { COURSES, Course } from '@/data/cfo-data';
 import { useCfo } from '@/context/CfoContext';
 import {

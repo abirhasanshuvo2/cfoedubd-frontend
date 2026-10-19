@@ -28,6 +28,7 @@ import {
 import { SuccessStoryItem } from '@/data/success-stories-data';
 import { useCfo } from '@/context/CfoContext';
 import { motion, AnimatePresence } from 'motion/react';
+import BrandLoader from '@/components/BrandLoader';
 
 interface SuccessStoriesSectionProps {
   lang: 'bn' | 'en';
@@ -505,17 +506,15 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
 
         {/* Loading State */}
         {isLoading && (
-          <div className="py-24 text-center space-y-4">
-            <div className="w-12 h-12 border-3 border-amber-400 border-t-transparent rounded-full animate-spin mx-auto" />
-            <p
-              className={`text-sm font-bold ${
-                isDark ? 'text-slate-300' : 'text-slate-600'
-              }`}
-            >
-              {lang === 'bn'
-                ? 'সাফল্যের গল্পগুলো লোড হচ্ছে...'
-                : 'Loading success stories from API...'}
-            </p>
+          <div className="py-20 text-center">
+            <BrandLoader
+              size="lg"
+              label={
+                lang === 'bn'
+                  ? 'সাফল্যের গল্পগুলো লোড হচ্ছে...'
+                  : 'Loading success stories...'
+              }
+            />
           </div>
         )}
 

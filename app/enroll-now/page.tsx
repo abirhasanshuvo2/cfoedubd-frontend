@@ -8,6 +8,7 @@ import Footer from '@/components/Footer';
 import { COURSES } from '@/data/cfo-data';
 import { useCfo } from '@/context/CfoContext';
 import { submitEnrollmentEnquiry } from '@/lib/enrollment-service';
+import BrandLoader from '@/components/BrandLoader';
 import {
   CheckCircle2,
   Award,
@@ -928,10 +929,7 @@ export default function EnrollNowPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-[#0A192F] flex items-center justify-center text-white">
-          <div className="text-center space-y-3">
-            <div className="w-8 h-8 border-3 border-[#C8963E] border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-sm font-bold">Loading Admission Enquiry Form...</p>
-          </div>
+          <BrandLoader size="lg" label="Loading Admission Enquiry Form..." />
         </div>
       }
     >

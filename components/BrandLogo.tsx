@@ -11,7 +11,7 @@ interface BrandLogoProps {
   imageClassName?: string;
   showText?: boolean;
   size?: 'sm' | 'md' | 'lg';
-  adaptTheme?: boolean;
+  contrastBadge?: boolean;
 }
 
 function DynamicLogoImage({
@@ -19,14 +19,14 @@ function DynamicLogoImage({
   name,
   className,
   imageClassName,
-  adaptTheme = true,
+  contrastBadge = true,
   onAllFailed,
 }: {
   candidateUrls: string[];
   name?: string | null;
   className: string;
   imageClassName: string;
-  adaptTheme?: boolean;
+  contrastBadge?: boolean;
   onAllFailed: () => void;
 }) {
   const [candidateIndex, setCandidateIndex] = useState<number>(0);
@@ -44,19 +44,32 @@ function DynamicLogoImage({
   if (!currentSrc) return null;
 
   return (
-    <div className={`inline-flex items-center gap-2.5 ${className}`}>
-      <img
-        key={currentSrc}
-        src={currentSrc}
-        alt={name || 'Logo'}
-        className={`${imageClassName} ${
-          adaptTheme ? 'brightness-0 dark:brightness-100' : ''
-        } transition-all duration-200 ${hasImageLoaded ? 'opacity-100' : 'opacity-90'}`}
-        onError={handleImageError}
-        onLoad={() => setHasImageLoaded(true)}
-        loading="eager"
-        referrerPolicy="no-referrer"
-      />
+    <div className={`inline-flex items-center ${className}`}>
+      {/* 
+        In light mode, when the uploaded logo is white or light-colored, 
+        an executive midnight navy background (#0A192F) ensures 100% visibility and contrast.
+        In dark mode, it seamlessly blends into the dark navbar/footer without extra background.
+      */}
+      <div
+        className={`${
+          contrastBadge
+            ? 'bg-[#0A192F] dark:bg-transparent px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl border border-slate-800/80 dark:border-transparent shadow-xs transition-all duration-200'
+            : ''
+        } flex items-center justify-center`}
+      >
+        <img
+          key={currentSrc}
+          src={currentSrc}
+          alt={name || 'Logo'}
+          className={`${imageClassName} transition-all duration-200 drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)] ${
+            hasImageLoaded ? 'opacity-100' : 'opacity-90'
+          }`}
+          onError={handleImageError}
+          onLoad={() => setHasImageLoaded(true)}
+          loading="eager"
+          referrerPolicy="no-referrer"
+        />
+      </div>
     </div>
   );
 }
@@ -67,10 +80,10 @@ export default function BrandLogo({
   icon,
   name = 'Chartered Officer Limited',
   className = '',
-  imageClassName = 'h-9 sm:h-10 w-auto max-w-[190px] object-contain',
+  imageClassName = 'h-8 sm:h-9 w-auto max-w-[190px] object-contain',
   showText = true,
   size = 'md',
-  adaptTheme = true,
+  contrastBadge = true,
 }: BrandLogoProps) {
   // Construct ordered list of candidate URLs to try
   const candidateUrls = useMemo(() => {
@@ -81,7 +94,7 @@ export default function BrandLogo({
       const clean = rawUrl.trim();
 
       // If it's a localhost / 127.0.0.1 URL, extract the relative pathname first (e.g. /system-images/logos/...)
-      // This allows the browser on HTTPS to fetch the local asset without mixed-content or private network blocks
+      // This allows the browser on HTTPS to fetch the local asset directly without mixed-content or private network blocks
       try {
         if (clean.includes('127.0.0.1') || clean.includes('localhost')) {
           const parsed = new URL(clean);
@@ -108,7 +121,9 @@ export default function BrandLogo({
     addSource(secondaryLogo);
     addSource(icon);
 
-    // Guaranteed local static assets from CFOEDUBD
+    // Guaranteed local static assets from user backend
+    list.push('/system-images/logos/1-20261019091913-1918716266-1383413678.png');
+    list.push('/system-images/secondary-logos/1-20261019091913-1674967601-379277783.png');
     list.push('/logo.png');
     list.push('/secondary-logo.png');
     list.push('/system-images/logos/col-logo.png');
@@ -130,7 +145,7 @@ export default function BrandLogo({
         name={name}
         className={className}
         imageClassName={imageClassName}
-        adaptTheme={adaptTheme}
+        contrastBadge={contrastBadge}
         onAllFailed={() => setFailedUrlKey(currentKey)}
       />
     );
