@@ -11,6 +11,7 @@ interface BrandLogoProps {
   imageClassName?: string;
   showText?: boolean;
   size?: 'sm' | 'md' | 'lg';
+  adaptTheme?: boolean;
 }
 
 function DynamicLogoImage({
@@ -18,12 +19,14 @@ function DynamicLogoImage({
   name,
   className,
   imageClassName,
+  adaptTheme = true,
   onAllFailed,
 }: {
   candidateUrls: string[];
   name?: string | null;
   className: string;
   imageClassName: string;
+  adaptTheme?: boolean;
   onAllFailed: () => void;
 }) {
   const [candidateIndex, setCandidateIndex] = useState<number>(0);
@@ -46,7 +49,9 @@ function DynamicLogoImage({
         key={currentSrc}
         src={currentSrc}
         alt={name || 'Logo'}
-        className={`${imageClassName} transition-opacity duration-300 ${hasImageLoaded ? 'opacity-100' : 'opacity-90'}`}
+        className={`${imageClassName} ${
+          adaptTheme ? 'brightness-0 dark:brightness-100' : ''
+        } transition-all duration-200 ${hasImageLoaded ? 'opacity-100' : 'opacity-90'}`}
         onError={handleImageError}
         onLoad={() => setHasImageLoaded(true)}
         loading="eager"
@@ -65,6 +70,7 @@ export default function BrandLogo({
   imageClassName = 'h-9 sm:h-10 w-auto max-w-[190px] object-contain',
   showText = true,
   size = 'md',
+  adaptTheme = true,
 }: BrandLogoProps) {
   // Construct ordered list of candidate URLs to try
   const candidateUrls = useMemo(() => {
@@ -124,6 +130,7 @@ export default function BrandLogo({
         name={name}
         className={className}
         imageClassName={imageClassName}
+        adaptTheme={adaptTheme}
         onAllFailed={() => setFailedUrlKey(currentKey)}
       />
     );
