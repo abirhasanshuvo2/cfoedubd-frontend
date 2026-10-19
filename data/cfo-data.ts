@@ -153,16 +153,15 @@ export function resolveCourseVideo(
   rawInput: string | null | undefined,
   backendBaseUrl: string = 'http://127.0.0.1:8000'
 ): ResolvedCourseVideo {
-  const defaultYoutubeId = '-HeZs3qthR8';
   const trimmed = typeof rawInput === 'string' ? rawInput.trim() : '';
 
-  if (!trimmed) {
+  if (!trimmed || trimmed === '#' || trimmed === 'null' || trimmed === 'undefined') {
     return {
       hasVideo: false,
-      rawUrl: `https://www.youtube.com/watch?v=${defaultYoutubeId}&t=1s`,
-      embedUrl: `https://www.youtube.com/embed/${defaultYoutubeId}?start=1&rel=0`,
-      autoplayEmbedUrl: `https://www.youtube.com/embed/${defaultYoutubeId}?autoplay=1&start=1&rel=0`,
-      thumbnailUrl: `https://img.youtube.com/vi/${defaultYoutubeId}/hqdefault.jpg`,
+      rawUrl: null,
+      embedUrl: '',
+      autoplayEmbedUrl: '',
+      thumbnailUrl: null,
       isDirectVideoFile: false,
       directVideoUrl: null,
     };
@@ -261,8 +260,8 @@ export const INITIAL_API_COURSES: ApiCourse[] = [
     educator: "Mr Teacher S",
     total_students: 0,
     meet_link: null,
-    vide: "https://www.youtube.com/watch?v=-HeZs3qthR8&t=1s",
-    video: "https://www.youtube.com/watch?v=-HeZs3qthR8&t=1s",
+    vide: null,
+    video: null,
     days: [],
     time: "morning",
     language: null,
@@ -282,8 +281,8 @@ export const INITIAL_API_COURSES: ApiCourse[] = [
     educator: "Md. Abir Hasan",
     total_students: 1,
     meet_link: "https://meet.google.com/def-uvw",
-    vide: "https://www.youtube.com/watch?v=-HeZs3qthR8&t=1s",
-    video: "https://www.youtube.com/watch?v=-HeZs3qthR8&t=1s",
+    vide: null,
+    video: null,
     days: ["Monday", "Wednesday", "Friday"],
     time: "evening",
     language: "English",
@@ -303,8 +302,8 @@ export const INITIAL_API_COURSES: ApiCourse[] = [
     educator: "Mr Teacher S",
     total_students: 2,
     meet_link: "https://meet.google.com/def-uvw",
-    vide: "https://www.youtube.com/watch?v=-HeZs3qthR8&t=1s",
-    video: "https://www.youtube.com/watch?v=-HeZs3qthR8&t=1s",
+    vide: null,
+    video: null,
     days: ["Monday", "Wednesday", "Friday"],
     time: "evening",
     language: "English",
@@ -324,8 +323,8 @@ export const INITIAL_API_COURSES: ApiCourse[] = [
     educator: "Mr Teacher S",
     total_students: 2,
     meet_link: null,
-    vide: "https://www.youtube.com/watch?v=-HeZs3qthR8&t=1s",
-    video: "https://www.youtube.com/watch?v=-HeZs3qthR8&t=1s",
+    vide: null,
+    video: null,
     days: [],
     time: "morning",
     language: "Bengali",

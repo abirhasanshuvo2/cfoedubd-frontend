@@ -44,8 +44,8 @@ export interface AboutData {
   };
   metrics: AboutMetric[];
   coreValues: CoreValue[];
-  videoUrl: string;
-  youtubeId: string;
+  videoUrl: string | null;
+  youtubeId: string | null;
 }
 
 export const OFFICIAL_ABOUT_DATA: AboutData = {
@@ -166,6 +166,6 @@ export const OFFICIAL_ABOUT_DATA: AboutData = {
       iconName: 'Building2',
     },
   ],
-  videoUrl: 'https://www.youtube.com/watch?v=-HeZs3qthR8&t=1s',
-  youtubeId: '-HeZs3qthR8',
+  videoUrl: null,
+  youtubeId: null,
 };

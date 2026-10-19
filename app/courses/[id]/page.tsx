@@ -126,6 +126,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
     course.video_url ||
     null;
   const videoInfo = resolveCourseVideo(rawCourseVideoLink);
+  const hasValidVideo = Boolean(videoInfo.hasVideo && (videoInfo.autoplayEmbedUrl || videoInfo.directVideoUrl));
 
   // Strictly dynamic items derived 100% from API fields
   const dynamicCourseHighlights = [
@@ -423,70 +424,102 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
             <div className="lg:col-span-5 lg:relative">
               <div className="lg:sticky lg:top-20 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.35)] border border-slate-200 dark:border-slate-800 p-3 sm:p-4 space-y-4 z-20">
                 
-                {/* Clean, Full-Visibility Demo Video Player Container */}
+                {/* Clean Course Video or Banner Container */}
                 <div className="relative rounded-xl overflow-hidden bg-slate-950 border border-slate-200 dark:border-slate-800 aspect-[16/9] group shadow-sm">
-                  {isPlayingInline ? (
-                    <div className="relative w-full h-full bg-black flex items-center justify-center">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsPlayingInline(false);
-                        }}
-                        className="absolute top-2.5 right-2.5 z-30 p-1.5 rounded-full bg-black/75 hover:bg-rose-600 text-white transition-colors cursor-pointer shadow-md"
-                        title="Close video"
+                  {hasValidVideo ? (
+                    isPlayingInline ? (
+                      <div className="relative w-full h-full bg-black flex items-center justify-center">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsPlayingInline(false);
+                          }}
+                          className="absolute top-2.5 right-2.5 z-30 p-1.5 rounded-full bg-black/75 hover:bg-rose-600 text-white transition-colors cursor-pointer shadow-md"
+                          title="Close video"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                        {videoInfo.isDirectVideoFile && videoInfo.directVideoUrl ? (
+                          <video
+                            src={videoInfo.directVideoUrl}
+                            controls
+                            autoPlay
+                            className="w-full h-full object-contain bg-black"
+                          />
+                        ) : (
+                          <iframe
+                            src={videoInfo.autoplayEmbedUrl}
+                            title={`${course.title} Video`}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="w-full h-full border-0"
+                          />
+                        )}
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => setIsPlayingInline(true)}
+                        className="w-full h-full cursor-pointer relative flex items-center justify-center"
                       >
-                        <X className="w-4 h-4" />
-                      </button>
-                      {videoInfo.isDirectVideoFile && videoInfo.directVideoUrl ? (
-                        <video
-                          src={videoInfo.directVideoUrl}
-                          controls
-                          autoPlay
-                          className="w-full h-full object-contain bg-black"
-                        />
-                      ) : (
-                        <iframe
-                          src={videoInfo.autoplayEmbedUrl}
-                          title={`${course.title} Video`}
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                          className="w-full h-full border-0"
-                        />
-                      )}
-                    </div>
-                  ) : (
-                    <div
-                      onClick={() => setIsPlayingInline(true)}
-                      className="w-full h-full cursor-pointer relative flex items-center justify-center"
-                    >
-                      {/* Crystal Clear Full-Opacity Thumbnail */}
-                      {videoInfo.thumbnailUrl ? (
-                        /* eslint-disable-next-line @next/next/no-img-element */
-                        <img
-                          src={videoInfo.thumbnailUrl}
-                          alt={course.title}
-                          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      ) : (
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#0A192F] via-[#0D254C] to-[#1E3A8A]" />
-                      )}
+                        {videoInfo.thumbnailUrl ? (
+                          /* eslint-disable-next-line @next/next/no-img-element */
+                          <img
+                            src={videoInfo.thumbnailUrl}
+                            alt={course.title}
+                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        ) : course.image ? (
+                          /* eslint-disable-next-line @next/next/no-img-element */
+                          <img
+                            src={course.image}
+                            alt={course.title}
+                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 bg-gradient-to-br from-[#0A192F] via-[#0D254C] to-[#1E3A8A]" />
+                        )}
 
-                      {/* Subtle Vignette for Play Button Contrast Only */}
-                      <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
+                        {/* Subtle Vignette for Play Button Contrast Only */}
+                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
 
-                      {/* Center Glowing Red YouTube-style Play Button */}
-                      <div className="relative z-10 flex items-center justify-center">
-                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-red-600/95 group-hover:bg-red-600 group-hover:scale-110 transition-all flex items-center justify-center shadow-[0_0_30px_rgba(220,38,38,0.6)] border-2 border-white/70">
-                          <Play className="w-6 h-6 text-white fill-white ml-1" />
+                        {/* Center Glowing Red YouTube-style Play Button */}
+                        <div className="relative z-10 flex items-center justify-center">
+                          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-red-600/95 group-hover:bg-red-600 group-hover:scale-110 transition-all flex items-center justify-center shadow-[0_0_30px_rgba(220,38,38,0.6)] border-2 border-white/70">
+                            <Play className="w-6 h-6 text-white fill-white ml-1" />
+                          </div>
+                        </div>
+
+                        {/* Bottom-left Pill: Watch Demo */}
+                        <div className="absolute bottom-2.5 left-2.5 z-10">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md text-white text-[11px] font-bold border border-white/20 shadow-md">
+                            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                            <span>{lang === 'bn' ? 'ডেমো ক্লাস দেখুন' : 'Watch Demo Class'}</span>
+                          </span>
                         </div>
                       </div>
-
-                      {/* Bottom-left Pill: Watch Demo */}
-                      <div className="absolute bottom-2.5 left-2.5 z-10">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md text-white text-[11px] font-bold border border-white/20 shadow-md">
-                          <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                          <span>{lang === 'bn' ? 'ডেমো ক্লাস দেখুন' : 'Watch Demo Class'}</span>
+                    )
+                  ) : (
+                    /* When there is NO video from API: render course cover image or banner without any dummy video or play button */
+                    <div className="w-full h-full relative flex items-center justify-center bg-slate-900 overflow-hidden">
+                      {course.image ? (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img
+                          src={course.image}
+                          alt={course.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-[#0A192F] via-[#0D254C] to-[#1E3A8A] flex flex-col items-center justify-center p-6 text-center space-y-2">
+                          <BookOpen className="w-10 h-10 text-[#FFC000]" />
+                          <p className="text-sm font-bold text-white line-clamp-2 max-w-xs">{course.title}</p>
+                          <span className="text-[11px] font-semibold text-slate-300">{course.categoryLabel}</span>
+                        </div>
+                      )}
+                      <div className="absolute top-2.5 left-2.5 z-10">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/80 backdrop-blur-md text-amber-400 text-[11px] font-bold border border-amber-400/30 shadow-md">
+                          <Radio className="w-2.5 h-2.5 animate-pulse text-amber-400" />
+                          <span>{isFree ? (lang === 'bn' ? 'ফ্রি কোর্স' : 'Free Course') : (lang === 'bn' ? 'লাইভ প্রোগ্রাম' : 'Live Program')}</span>
                         </span>
                       </div>
                     </div>
@@ -877,7 +910,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
       {/* =====================================================================
           5. INTERACTIVE DEMO CLASS PREVIEW MODAL (Plays API `vide` Link)
          ===================================================================== */}
-      {isDemoModalOpen && (
+      {isDemoModalOpen && hasValidVideo && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
           <div className="relative w-full max-w-2xl bg-slate-900 text-white rounded-2xl border border-slate-700 shadow-2xl overflow-hidden">
             <div className="px-5 py-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between">

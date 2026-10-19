@@ -11,7 +11,6 @@ interface BrandLogoProps {
   imageClassName?: string;
   showText?: boolean;
   size?: 'sm' | 'md' | 'lg';
-  contrastBadge?: boolean;
 }
 
 function DynamicLogoImage({
@@ -19,14 +18,12 @@ function DynamicLogoImage({
   name,
   className,
   imageClassName,
-  contrastBadge = true,
   onAllFailed,
 }: {
   candidateUrls: string[];
   name?: string | null;
   className: string;
   imageClassName: string;
-  contrastBadge?: boolean;
   onAllFailed: () => void;
 }) {
   const [candidateIndex, setCandidateIndex] = useState<number>(0);
@@ -46,30 +43,22 @@ function DynamicLogoImage({
   return (
     <div className={`inline-flex items-center ${className}`}>
       {/* 
-        In light mode, when the uploaded logo is white or light-colored, 
-        an executive midnight navy background (#0A192F) ensures 100% visibility and contrast.
-        In dark mode, it seamlessly blends into the dark navbar/footer without extra background.
+        Clean, seamless image rendering with NO box container in both light and dark mode.
+        - Dark Mode: original crisp white logo sits directly on the dark navbar (dark:brightness-100).
+        - Light Mode: crisp dark silhouette sits directly on the light navbar (brightness-0).
       */}
-      <div
-        className={`${
-          contrastBadge
-            ? 'bg-[#0A192F] dark:bg-transparent px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl border border-slate-800/80 dark:border-transparent shadow-xs transition-all duration-200'
-            : ''
-        } flex items-center justify-center`}
-      >
-        <img
-          key={currentSrc}
-          src={currentSrc}
-          alt={name || 'Logo'}
-          className={`${imageClassName} transition-all duration-200 drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)] ${
-            hasImageLoaded ? 'opacity-100' : 'opacity-90'
-          }`}
-          onError={handleImageError}
-          onLoad={() => setHasImageLoaded(true)}
-          loading="eager"
-          referrerPolicy="no-referrer"
-        />
-      </div>
+      <img
+        key={currentSrc}
+        src={currentSrc}
+        alt={name || 'Logo'}
+        className={`${imageClassName} transition-all duration-200 brightness-0 dark:brightness-100 ${
+          hasImageLoaded ? 'opacity-100' : 'opacity-90'
+        }`}
+        onError={handleImageError}
+        onLoad={() => setHasImageLoaded(true)}
+        loading="eager"
+        referrerPolicy="no-referrer"
+      />
     </div>
   );
 }
@@ -83,7 +72,6 @@ export default function BrandLogo({
   imageClassName = 'h-8 sm:h-9 w-auto max-w-[190px] object-contain',
   showText = true,
   size = 'md',
-  contrastBadge = true,
 }: BrandLogoProps) {
   // Construct ordered list of candidate URLs to try
   const candidateUrls = useMemo(() => {
@@ -145,7 +133,6 @@ export default function BrandLogo({
         name={name}
         className={className}
         imageClassName={imageClassName}
-        contrastBadge={contrastBadge}
         onAllFailed={() => setFailedUrlKey(currentKey)}
       />
     );
