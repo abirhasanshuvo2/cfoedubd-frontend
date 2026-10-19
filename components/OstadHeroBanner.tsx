@@ -45,16 +45,6 @@ export default function OstadHeroBanner({ onStartLearning }: OstadHeroBannerProp
           <div className="p-5 sm:p-7 lg:p-8 xl:p-10 flex flex-col justify-between space-y-4">
             
             <div className="space-y-3 sm:space-y-3.5">
-              {/* Accreditation Badge */}
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100/90 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-xs font-bold text-emerald-900 dark:text-emerald-300 w-fit shadow-2xs">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
-                <span>
-                  {lang === 'bn'
-                    ? 'চার্টার্ড অফিসার লিমিটেড (COL) • RJSC ও BTEB অনুমোদিত'
-                    : 'Chartered Officer Limited (COL) • RJSC & BTEB Registered'}
-                </span>
-              </div>
-
               {/* Main Slogan Headline: বাংলাদেশ শিখবে লাইভে 🔴 */}
               <h1 className="text-2xl sm:text-3xl lg:text-[34px] xl:text-[38px] font-black tracking-tight text-slate-950 dark:text-white flex flex-wrap items-center gap-2 leading-tight">
                 <span>{lang === 'bn' ? 'বাংলাদেশ শিখবে' : 'Bangladesh Will Learn'}</span>
@@ -63,13 +53,6 @@ export default function OstadHeroBanner({ onStartLearning }: OstadHeroBannerProp
                   <span className="inline-block w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#E62E2D] dark:bg-[#FF4D4D] animate-pulse shadow-sm" />
                 </span>
               </h1>
-
-              {/* Sub-headline */}
-              <p className="text-xs sm:text-sm lg:text-base font-bold text-slate-800 dark:text-slate-200 leading-snug">
-                {lang === 'bn'
-                  ? 'সিএফও ও ফাইন্যান্সিয়াল স্কিল শেখার মাধ্যমে বদলে ফেলুন নিজের ভবিষ্যৎ'
-                  : 'Transform your future by mastering CFO & corporate finance skills live'}
-              </p>
 
               {/* Concise Course Description */}
               <p className="text-xs sm:text-[13px] text-slate-600 dark:text-slate-400 max-w-xl leading-relaxed">

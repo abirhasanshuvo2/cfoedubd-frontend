@@ -16,6 +16,7 @@ import {
   CheckCircle,
 } from 'lucide-react';
 import { useCfo } from '@/context/CfoContext';
+import BrandLogo from '@/components/BrandLogo';
 
 interface FooterProps {
   lang?: 'bn' | 'en';
@@ -35,16 +36,14 @@ export default function Footer({ lang: propLang }: FooterProps = {}) {
           {/* Col 1: Brand & Community Socials (lg:col-span-4) */}
           <div className="lg:col-span-4 space-y-5">
             <Link href="/" className="inline-flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0A192F] via-[#0D254C] to-[#1E3A8A] flex items-center justify-center shadow-md border border-[#C8963E]/60 group-hover:scale-105 transition-transform shrink-0">
-                <span className="font-serif font-black text-sm text-[#FFC000] tracking-tight">
-                  COL
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-2xl font-serif font-black tracking-tight text-slate-950 dark:text-white leading-none">
-                  {systemInfo.name || 'Chartered Officer'}
-                </span>
-              </div>
+              <BrandLogo
+                logo={systemInfo?.secondary_logo || systemInfo?.logo}
+                secondaryLogo={systemInfo?.logo}
+                icon={systemInfo?.icon}
+                name={systemInfo?.name}
+                size="lg"
+                imageClassName="h-10 sm:h-12 w-auto max-w-[220px] object-contain"
+              />
             </Link>
 
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-w-sm">

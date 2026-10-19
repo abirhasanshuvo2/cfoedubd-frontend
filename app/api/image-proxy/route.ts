@@ -12,9 +12,11 @@ export async function GET(request: NextRequest) {
     const customBackendUrl = request.headers.get('x-custom-backend-url');
     let target = imageUrl;
 
-    // If it's a localhost:8000 URL and running on cloud, translate to local backend if configured
-    if (customBackendUrl && target.includes('localhost:8000')) {
-      target = target.replace('http://localhost:8000', customBackendUrl.replace(/\/$/, ''));
+    // If it's a localhost:8000 or 127.0.0.1:8000 URL and running on cloud, translate to local backend if configured
+    if (customBackendUrl && (target.includes('localhost:8000') || target.includes('127.0.0.1:8000'))) {
+      target = target
+        .replace('http://localhost:8000', customBackendUrl.replace(/\/$/, ''))
+        .replace('http://127.0.0.1:8000', customBackendUrl.replace(/\/$/, ''));
     }
 
     const response = await fetch(target, {

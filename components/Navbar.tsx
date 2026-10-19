@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { COURSES, CATEGORIES, Course } from '@/data/cfo-data';
 import { useCfo } from '@/context/CfoContext';
+import BrandLogo from '@/components/BrandLogo';
 
 interface NavbarProps {
   onSelectCourse?: (course: Course) => void;
@@ -53,7 +54,7 @@ export default function Navbar({
   onSelectCategory,
 }: NavbarProps) {
   const router = useRouter();
-  const { lang, setLang, courses, theme, toggleTheme } = useCfo();
+  const { lang, setLang, courses, theme, toggleTheme, systemInfo } = useCfo();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileCoursesOpen, setIsMobileCoursesOpen] = useState(false);
@@ -222,23 +223,16 @@ export default function Navbar({
   return (
     <header className="sticky top-0 z-50 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/90 dark:border-slate-800 shadow-xs transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-        {/* Left: Brand Logo (COL - Bold and Big) */}
+        {/* Left: Dynamic Brand Logo from API */}
         <div className="flex items-center gap-3 sm:gap-4 shrink-0">
           <Link href="/" className="inline-flex items-center gap-2.5 group whitespace-nowrap">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#0A192F] via-[#0D254C] to-[#1E3A8A] flex items-center justify-center shadow-md border border-[#FFC000]/70 relative group-hover:scale-105 transition-transform shrink-0">
-              <span className="font-serif font-black text-sm sm:text-base text-[#FFC000] tracking-tight">
-                COL
-              </span>
-              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#FFC000] rounded-full border border-white dark:border-slate-900" />
-            </div>
-            <div className="flex items-center gap-2 whitespace-nowrap">
-              <span className="font-serif font-black text-xl sm:text-2xl tracking-tight text-slate-950 dark:text-white leading-none">
-                COL<span className="text-[#FFC000]">.</span>
-              </span>
-              <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-800 hidden sm:inline-block">
-                cfoedubd.com
-              </span>
-            </div>
+            <BrandLogo
+              logo={systemInfo?.logo}
+              secondaryLogo={systemInfo?.secondary_logo}
+              icon={systemInfo?.icon}
+              name={systemInfo?.name}
+              imageClassName="h-9 sm:h-10 w-auto max-w-[200px] object-contain"
+            />
           </Link>
         </div>
 
