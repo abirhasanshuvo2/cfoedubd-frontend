@@ -294,7 +294,7 @@ export default function ContactPage() {
             )}
           </div>
 
-          {/* Location Map & Details */}
+          {/* Campus Details & Visiting Hours */}
           <div className="lg:col-span-5 space-y-6">
             <div className="bg-white dark:bg-[#0A192F] text-slate-900 dark:text-white rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-[#1E3A8A] space-y-5 shadow-sm transition-colors">
               <span className="text-[11px] font-bold uppercase tracking-wider text-[#966718] dark:text-[#E5A93C] flex items-center gap-1.5">
@@ -308,28 +308,38 @@ export default function ContactPage() {
                 </h4>
               )}
 
-              {/* Visual Map Representation */}
-              <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-4 space-y-3">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-amber-700 dark:text-[#E5A93C]">
-                    {lang === 'bn' ? 'গুগল ম্যাপ লোকেশন' : 'Google Map Location'}
-                  </span>
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                {lang === 'bn'
+                  ? 'মতিঝিল বাণিজ্যিক এলাকার কেন্দ্রস্থলে অবস্থিত সিটি সেন্টার বাংলাদেশের অন্যতম প্রধান বিজনেস টাওয়ার। লিফট-২৬ এ উঠে ২৫তম তলায় আমাদের কর্পোরেট এক্সিকিউটিভ ক্যাম্পাস।'
+                  : 'Located at City Centre Bangladesh, Motijheel Commercial Area. Take Lift-26 to Level-25 for our executive learning campus.'}
+              </p>
+
+              {/* Visiting Hours & Direct Helpline */}
+              <div className="pt-4 border-t border-slate-200/80 dark:border-slate-800 space-y-3.5">
+                <div className="flex items-start gap-3 text-xs">
+                  <Clock className="w-4 h-4 text-[#C8963E] shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-bold text-slate-900 dark:text-white">
+                      {lang === 'bn' ? 'সরাসরি ভিজিটের সময়সূচি' : 'Visiting Hours'}
+                    </p>
+                    <p className="text-slate-600 dark:text-slate-400 mt-0.5">
+                      {lang === 'bn'
+                        ? 'শনিবার - বৃহস্পতিবার: সকাল ৯:০০ - রাত ৮:০০'
+                        : 'Saturday - Thursday: 9:00 AM - 8:00 PM'}
+                    </p>
+                  </div>
                 </div>
-                <div className="h-44 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center text-center p-4 space-y-2.5">
-                  <MapPin className="w-8 h-8 text-[#C8963E] animate-bounce" />
-                  <p className="font-serif font-bold text-xs text-slate-900 dark:text-white line-clamp-2 max-w-xs">
-                    {systemInfo.address || 'Dhaka, Bangladesh'}
-                  </p>
-                  <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                      systemInfo.address || 'City Centre Motijheel Dhaka'
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#C8963E] hover:bg-[#d4af37] text-slate-950 text-xs font-bold transition-colors shadow-2xs"
-                  >
-                    <span>{lang === 'bn' ? 'গুগল ম্যাপে দেখুন' : 'View on Google Maps'}</span>
-                  </a>
+
+                <div className="flex items-start gap-3 text-xs">
+                  <Phone className="w-4 h-4 text-[#C8963E] shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-bold text-slate-900 dark:text-white">
+                      {lang === 'bn' ? 'অ্যাকাডেমিক কাউন্সেলিং ও হটলাইন' : 'Counseling & Direct Helpline'}
+                    </p>
+                    <p className="text-slate-600 dark:text-slate-400 mt-0.5 font-mono font-bold text-slate-900 dark:text-slate-200">
+                      {systemInfo.phone || '+880 1713378787'}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

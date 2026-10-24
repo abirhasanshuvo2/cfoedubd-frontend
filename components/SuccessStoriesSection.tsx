@@ -111,35 +111,41 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
       });
 
       let fetchedList: SuccessStoryItem[] = [];
+      let isBackendLive = false;
       if (proxyRes.ok) {
         const json = await proxyRes.json();
-        if (json && json.success && Array.isArray(json.data) && json.data.length > 0) {
+        if (json && json.success && Array.isArray(json.data)) {
           fetchedList = json.data;
+          isBackendLive = Boolean(json.isLive);
         }
       }
 
-      // Also merge any client-cached stories from browser localStorage
+      // If backend is connected/live, strictly use backend data. Clear any stale client stories.
       let clientStories: SuccessStoryItem[] = [];
-      try {
-        const rawClient = localStorage.getItem('cfo_client_stories');
-        if (rawClient) {
-          const parsed = JSON.parse(rawClient);
-          if (Array.isArray(parsed)) clientStories = parsed;
+      if (!isBackendLive) {
+        try {
+          const rawClient = localStorage.getItem('cfo_client_stories');
+          if (rawClient) {
+            const parsed = JSON.parse(rawClient);
+            if (Array.isArray(parsed)) clientStories = parsed;
+          }
+        } catch {
+          // ignore
         }
-      } catch {
-        // ignore
+      } else {
+        try {
+          localStorage.removeItem('cfo_client_stories');
+        } catch {
+          // ignore
+        }
       }
 
       const existingIds = new Set(fetchedList.map((item) => String(item.id)));
       const uniqueClient = clientStories.filter((item) => !existingIds.has(String(item.id)));
       const combined = [...uniqueClient, ...fetchedList];
 
-      if (combined.length > 0) {
-        setStories(combined);
-        setActiveIndex(0);
-      } else {
-        setStories([]);
-      }
+      setStories(combined);
+      setActiveIndex(0);
     } catch {
       // ignore
     } finally {
@@ -376,6 +382,10 @@ export default function SuccessStoriesSection({ lang }: SuccessStoriesSectionPro
     }
     return clean;
   };
+
+  if (totalStories === 0) {
+    return null;
+  }
 
   return (
     <section

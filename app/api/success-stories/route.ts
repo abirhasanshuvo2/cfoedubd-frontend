@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
 
       if (response.ok) {
         const json = await response.json();
-        let extracted: any[] = [];
+        let extracted: any[] | null = null;
 
         if (json && json.data && Array.isArray(json.data.data)) {
           extracted = json.data.data;
@@ -65,9 +65,9 @@ export async function GET(request: NextRequest) {
           extracted = json;
         }
 
-        if (extracted.length > 0) {
+        if (extracted !== null) {
           backendStories = extracted.map((item: any) => ({
-            id: item.id || `backend-${Math.random()}`,
+            id: item.id ?? `backend-${Math.random()}`,
             name: item.name || item.student_name || 'Graduate Alumni',
             designation: item.designation || item.title || null,
             company: item.company || item.organization || null,
@@ -89,13 +89,11 @@ export async function GET(request: NextRequest) {
   // Retrieve locally submitted stories from disk
   const localStories = getLocallySubmittedStories();
 
-  // Merge: locally submitted stories first (so newly posted stories appear immediately at the front)
-  let combinedStories: SuccessStoryItem[] = [...localStories, ...backendStories];
-
-  // If no stories exist in backend or disk, provide curated executive alumni stories as baseline
-  if (combinedStories.length === 0) {
-    combinedStories = INITIAL_SUCCESS_STORIES;
-  }
+  // If backend is connected and live, strictly reflect backend database stories.
+  // Never reinject deleted stories or fake fallbacks.
+  const combinedStories: SuccessStoryItem[] = isLive
+    ? backendStories
+    : [...localStories, ...backendStories];
 
   return NextResponse.json({
     success: true,
